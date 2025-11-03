@@ -7,11 +7,10 @@ class Scan : public Task {
 public:
   Scan();
   virtual void addCmd(TerminalCommand* __termCmd);
-  virtual bool setupTask(OutputInterface* __terminal) {return true;};
-  virtual bool executeTask() {return true;};
+  virtual bool setupTask(OutputInterface* __terminal) { return true; };
+  virtual bool executeTask() { return true; };
 
   void scani2c(OutputInterface* terminal);
-  std::function<void(TerminalLibrary::OutputInterface*)> scanCmd();
 
 private:
 };

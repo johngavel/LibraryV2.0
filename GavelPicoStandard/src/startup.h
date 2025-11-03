@@ -6,7 +6,7 @@
 #include <GavelSerialPort.h>
 #include <GavelTask.h>
 
-void setup0Start();
+void setup0Start(TerminalCommand* __termCmd);
 void setup0SerialPort(int __txPin, int __rxPin);
 void setup1Start();
 void setup0Complete();

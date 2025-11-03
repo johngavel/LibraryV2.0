@@ -11,7 +11,7 @@ TaskManager taskManager;
 SerialPort serialPort;
 Blink blink;
 
-void setup0Start() {
+void setup0Start(TerminalCommand* __termCmd) {
   startupMutex.take();
   serialPort.configureUSBSerial();
   serialPort.getUSBSerialTerminal()->setBannerFunction(banner);
@@ -22,9 +22,10 @@ void setup0Start() {
   taskManager.add(&serialPort);
   taskManager.add(&blink);
 
-  addStandardTerminalCommands();
-  TERM_CMD->addCmd("reboot", "", "Software Reboot the Pico", pico.rebootCmd());
-  TERM_CMD->addCmd("upload", "", "Software Reboot the Pico into USB mode", pico.uploadCmd());
+  addStandardTerminalCommands(__termCmd);
+  if (__termCmd) __termCmd->addCmd("reboot", "", "Software Reboot the Pico", [&](TerminalLibrary::OutputInterface* terminal) { pico.rebootPico(terminal); });
+  if (__termCmd)
+    __termCmd->addCmd("upload", "", "Software Reboot the Pico into USB mode", [&](TerminalLibrary::OutputInterface* terminal) { pico.uploadPico(terminal); });
 }
 
 void setup0SerialPort(int __txPin, int __rxPin) {

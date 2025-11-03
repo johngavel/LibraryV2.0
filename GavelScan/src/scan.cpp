@@ -1,14 +1,14 @@
 #include "scan.h"
+
 #include <GavelI2CWire.h>
 
 #define MAX_SCAN_DEVICES 6
 
 static char taskname[] = "I2CScanner";
-Scan::Scan() : Task(taskname) {
-}
+Scan::Scan() : Task(taskname) {}
 
 void Scan::addCmd(TerminalCommand* __termCmd) {
-  if (__termCmd) __termCmd->addCmd("scan", "", "I2c Scanner", scanCmd());
+  if (__termCmd) __termCmd->addCmd("scan", "", "I2c Scanner", [this](TerminalLibrary::OutputInterface* terminal) { scani2c(terminal); });
 }
 
 void Scan::scani2c(OutputInterface* terminal) {
@@ -55,8 +55,4 @@ void Scan::scani2c(OutputInterface* terminal) {
   else
     terminal->println(INFO, "done\n");
   terminal->prompt();
-}
-
-std::function<void(TerminalLibrary::OutputInterface*)> Scan::scanCmd() {
-  return std::bind(&Scan::scani2c, this, std::placeholders::_1);
 }

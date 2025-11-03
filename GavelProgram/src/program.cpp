@@ -46,7 +46,6 @@ void banner(OutputInterface* terminal) {
 
   terminal->println(INFO, sb.c_str());
   sb.clear();
-  sb + "Program: " + ProgramInfo::ProgramNumber;
   terminal->print(INFO, "Program: ");
   terminal->println(INFO, numToA(ProgramInfo::ProgramNumber, buffer, sizeof(buffer)));
   sb + "Build Date: " + ProgramInfo::compileDate + " Time: " + ProgramInfo::compileTime;

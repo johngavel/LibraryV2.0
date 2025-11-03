@@ -19,7 +19,6 @@ public:
   bool loop();
   bool executeTask();
   void system(OutputInterface* terminal);
-  std::function<void(TerminalLibrary::OutputInterface*)> getSystemCallback();
 
 private:
   ClassicQueue queue;

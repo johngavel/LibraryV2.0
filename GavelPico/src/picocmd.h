@@ -9,8 +9,6 @@ public:
   Callback rebootCallBacks;
   void uploadPico(OutputInterface* terminal);
   void rebootPico(OutputInterface* terminal);
-  std::function<void(TerminalLibrary::OutputInterface*)> uploadCmd();
-  std::function<void(TerminalLibrary::OutputInterface*)> rebootCmd();
 
 private:
 };

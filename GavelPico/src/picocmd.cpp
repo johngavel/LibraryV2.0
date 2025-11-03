@@ -13,11 +13,3 @@ void PicoCommand::rebootPico(OutputInterface* terminal) {
   delay(100);
   rp2040.reboot();
 }
-
-std::function<void(TerminalLibrary::OutputInterface*)> PicoCommand::uploadCmd() {
-  return std::bind(&PicoCommand::uploadPico, this, std::placeholders::_1);
-}
-
-std::function<void(TerminalLibrary::OutputInterface*)> PicoCommand::rebootCmd() {
-  return std::bind(&PicoCommand::rebootPico, this, std::placeholders::_1);
-}

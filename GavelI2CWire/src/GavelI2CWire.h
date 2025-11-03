@@ -1,15 +1,15 @@
 #ifndef GAVEL_I2C_WIRE_H
 #define GAVEL_I2C_WIRE_H
 
-#include <Wire.h>
 #include <GavelUtil.h>
+#include <Wire.h>
 
 class I2CWire {
 public:
   I2CWire(){};
   void begin(unsigned long __pinSDA, unsigned long __pinSCL) {
     wireTake();
-    pinSDA =__pinSDA;
+    pinSDA = __pinSDA;
     pinSCL = __pinSCL;
     wire = &Wire;
     wire->setSDA(pinSDA);
@@ -17,9 +17,10 @@ public:
     wire->begin();
     wireGive();
   }
-  TwoWire* getWire() {return wire;};
-  void wireTake() {lock.take();};
-  void wireGive() {lock.give();};
+  TwoWire* getWire() { return wire; };
+  void wireTake() { lock.take(); };
+  void wireGive() { lock.give(); };
+
 private:
   TwoWire* wire;
   unsigned long pinSDA;

@@ -90,7 +90,8 @@ bool TaskManager::executeTask() {
 }
 
 void TaskManager::addCmd(TerminalCommand* __termCmd) {
-  if (__termCmd) __termCmd->addCmd("system", "", "Prints a list of Tasks running in the system", getSystemCallback());
+  if (__termCmd)
+    __termCmd->addCmd("system", "", "Prints a list of Tasks running in the system", [this](TerminalLibrary::OutputInterface* terminal) { system(terminal); });
 }
 
 void TaskManager::add(Task* task) {
@@ -156,10 +157,6 @@ void TaskManager::system(OutputInterface* terminal) {
   }
   table.printDone("System Complete");
   terminal->prompt();
-}
-
-std::function<void(TerminalLibrary::OutputInterface*)> TaskManager::getSystemCallback() {
-  return std::bind(&TaskManager::system, this, std::placeholders::_1);
 }
 
 void TaskManager::setupIdle() {
