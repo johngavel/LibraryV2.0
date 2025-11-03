@@ -5,10 +5,10 @@
 
 class Scan : public Task {
 public:
-  Scan(){};
+  Scan();
   virtual void addCmd(TerminalCommand* __termCmd);
-  virtual bool setupTask(OutputInterface* __terminal);
-  virtual bool executeTask() {};
+  virtual bool setupTask(OutputInterface* __terminal) {return true;};
+  virtual bool executeTask() {return true;};
 
   void scani2c(OutputInterface* terminal);
   std::function<void(TerminalLibrary::OutputInterface*)> scanCmd();

@@ -1,11 +1,14 @@
 #include "scan.h"
+#include <GavelI2CWire.h>
 
 #define MAX_SCAN_DEVICES 6
 
-void Scan::setupTask(OutputInterface* terminal) {}
+static char taskname[] = "I2CScanner";
+Scan::Scan() : Task(taskname) {
+}
 
 void Scan::addCmd(TerminalCommand* __termCmd) {
-  TERM_CMD->addCmd("scan", "", "I2c Scanner", scanCmd);
+  if (__termCmd) __termCmd->addCmd("scan", "", "I2c Scanner", scanCmd());
 }
 
 void Scan::scani2c(OutputInterface* terminal) {
@@ -21,10 +24,10 @@ void Scan::scani2c(OutputInterface* terminal) {
     // The i2c_scanner uses the return value of
     // the Write.endTransmisstion to see if
     // a device did acknowledge to the address.
-    // COMM_TAKE;
-    // WIRE->beginTransmission(address);
-    // error = WIRE->endTransmission();
-    // COMM_GIVE;
+    i2cWire.wireTake();
+    i2cWire.getWire()->beginTransmission(address);
+    error = i2cWire.getWire()->endTransmission();
+    i2cWire.wireGive();
 
     if (error == 0) {
       terminal->print(INFO, "I2C device found at address 0x");
@@ -54,6 +57,6 @@ void Scan::scani2c(OutputInterface* terminal) {
   terminal->prompt();
 }
 
-std::function<void(TerminalLibrary::OutputInterface*)> PicoCommand::scanCmd() {
-  return std::bind(&PicoCommand::uploadPico, this, std::placeholders::_1);
+std::function<void(TerminalLibrary::OutputInterface*)> Scan::scanCmd() {
+  return std::bind(&Scan::scani2c, this, std::placeholders::_1);
 }
