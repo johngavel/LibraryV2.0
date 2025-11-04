@@ -5,7 +5,9 @@
 #define MAX_SCAN_DEVICES 6
 
 static char taskname[] = "I2CScanner";
-Scan::Scan() : Task(taskname) {}
+Scan::Scan() : Task(taskname) {
+  runTask(false);
+};
 
 void Scan::addCmd(TerminalCommand* __termCmd) {
   if (__termCmd) __termCmd->addCmd("scan", "", "I2c Scanner", [this](TerminalLibrary::OutputInterface* terminal) { scani2c(terminal); });

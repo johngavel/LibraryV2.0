@@ -26,10 +26,11 @@ bool EEpromMemory::setupTask(OutputInterface* __terminal) {
   terminal = __terminal;
 
   setRefreshMilli(1000);
-  dataSize = sizeof(PrivateAppInfo) + ((getData()) ? getData()->getLength() : 0);
-  if (memorySize == 0) { __terminal->println(ERROR, "EEPROM Memory Chip Unconfigured. "); }
+  dataSize = 0;
+  for (unsigned long i = 0; i < dataList.count(); i++) dataSize += ((IMemory*) dataList.get(i))->size();
+  if (memorySize == 0) { terminal->println(ERROR, "EEPROM Memory Chip Unconfigured. "); }
   if (dataSize > fullDataSize) {
-    __terminal->println(ERROR, "EEPROM Data Structure is too large: " + String(dataSize) + "/" + String(fullDataSize));
+    terminal->println(ERROR, "EEPROM Data Structure is too large: " + String(dataSize) + "/" + String(fullDataSize));
     dataSize = fullDataSize;
   }
   i2cWire.wireTake();
@@ -39,25 +40,8 @@ bool EEpromMemory::setupTask(OutputInterface* __terminal) {
   runTimer(i2c_eeprom->isConnected());
   i2cWire.wireGive();
   readEEPROM();
-  if ((appInfo.ProgramNumber != ProgramInfo::ProgramNumber) || (appInfo.MajorVersion != ProgramInfo::MajorVersion)) {
-    initMemory();
-    __terminal->println(ERROR, "EEPROM memory incorrect values, intializing default values");
-  } else {
-    __terminal->println(PASSED, "EEPROM memory success");
-  }
-  if ((appInfo.MinorVersion != ProgramInfo::MinorVersion)) {
-    appInfo.MajorVersion = ProgramInfo::MajorVersion;
-    appInfo.MinorVersion = ProgramInfo::MinorVersion;
-    breakSeal();
-  }
-  if (!getTimerRun()) __terminal->println(ERROR, "EEPROM Not Connected");
-  String memoryString =
-      "Memory Complete: PRG Num: " + String(appInfo.ProgramNumber) + " PRG Ver: " + String(appInfo.MajorVersion) + "." + String(appInfo.MinorVersion);
-  if (getData())
-    getData()->setup();
-  else
-    __terminal->println(WARNING, "No User Data Available!");
-  __terminal->println((getTimerRun()) ? PASSED : FAILED, memoryString);
+  if (!getTimerRun()) terminal->println(ERROR, "EEPROM Not Connected");
+  if (getNumberOfData() == 0) { terminal->println(WARNING, "No User Data Available!"); }
   return getTimerRun();
 }
 
@@ -77,14 +61,6 @@ void EEpromMemory::forceWrite() {
   writeEEPROM();
 }
 
-void EEpromMemory::initMemory() {
-  appInfo.ProgramNumber = ProgramInfo::ProgramNumber;
-  appInfo.MajorVersion = ProgramInfo::MajorVersion;
-  appInfo.MinorVersion = ProgramInfo::MinorVersion;
-  if (getData()) data->initMemory();
-  breakSeal();
-}
-
 unsigned long EEpromMemory::getLength() {
   return dataSize;
 }
@@ -101,14 +77,14 @@ void EEpromMemory::writeEEPROMbyte(unsigned long address, byte value) {
 }
 
 void EEpromMemory::readEEPROM() {
-  unsigned long index = 0;
-  unsigned char* appInfoData = (unsigned char*) &appInfo;
   if (getTimerRun()) {
     i2cWire.wireTake();
     mutex.take();
-    for (index = 0; index < sizeof(PrivateAppInfo); index++) { appInfoData[index] = readEEPROMbyte(index); }
-    if (getData()) {
-      for (index = 0; index < data->getLength(); index++) { data->getData()[index] = readEEPROMbyte(index + sizeof(PrivateAppInfo)); }
+    unsigned long eepromIndex = 0;
+    for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
+      IMemory* data = (IMemory*) dataList.get(dataIndex);
+      for (unsigned long i = 0; i < data->size(); i++) (*data)[i] = readEEPROMbyte(eepromIndex + i);
+      eepromIndex += data->size();
     }
     mutex.give();
     i2cWire.wireGive();
@@ -116,14 +92,14 @@ void EEpromMemory::readEEPROM() {
 }
 
 void EEpromMemory::writeEEPROM() {
-  unsigned long index = 0;
-  unsigned char* appInfoData = (unsigned char*) &appInfo;
   if (getTimerRun()) {
     i2cWire.wireTake();
     mutex.take();
-    for (index = 0; index < sizeof(PrivateAppInfo); index++) { writeEEPROMbyte(index, appInfoData[index]); }
-    if (getData()) {
-      for (index = 0; index < data->getLength(); index++) { writeEEPROMbyte(index + sizeof(PrivateAppInfo), data->getData()[index]); }
+    unsigned long eepromIndex = 0;
+    for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
+      IMemory* data = (IMemory*) dataList.get(dataIndex);
+      for (unsigned long i = 0; i < data->size(); i++) writeEEPROMbyte(eepromIndex + i, (*data)[i]);
+      eepromIndex += data->size();
     }
     mutex.give();
     i2cWire.wireGive();
@@ -131,21 +107,24 @@ void EEpromMemory::writeEEPROM() {
 }
 
 void EEpromMemory::wipe(OutputInterface* terminal) {
-  initMemory();
-  if (getData()) initMemory();
+  for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
+    IMemory* data = (IMemory*) dataList.get(dataIndex);
+    data->initMemory();
+  }
   terminal->println((getTimerRun()) ? PASSED : FAILED, "EEPROM Initialize Memory Complete.");
   terminal->prompt();
 }
 
 void EEpromMemory::mem(OutputInterface* terminal) {
-  terminal->println(PROMPT, String(ProgramInfo::AppName) + " Version: " + String(ProgramInfo::MajorVersion) + String(".") + String(ProgramInfo::MinorVersion) +
-                                String(".") + String(ProgramInfo::BuildVersion));
-  terminal->println(INFO, "Program: " + String(ProgramInfo::ProgramNumber));
   terminal->println(INFO, "EEPROM Size: " + String(getLength()) + "/" + String(getMemorySize() / 8) + " bytes.");
-  if (getData())
-    getData()->printData(terminal);
-  else
+  if (dataList.count() != 0) {
+    for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
+      IMemory* data = (IMemory*) dataList.get(dataIndex);
+      data->printData(terminal);
+    }
+  } else {
     terminal->println(WARNING, "No User Data Available!");
+  }
   terminal->println(INFO, "EEPROM Read Memory Complete");
   terminal->prompt();
 }

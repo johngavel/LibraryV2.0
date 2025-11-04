@@ -74,7 +74,7 @@ bool TaskManager::executeTask() {
   int running_core = rp2040.cpuid();
   for (unsigned long i = 0; i < queue.count(); i++) {
     Task* t = getTask(i);
-    if ((t->getID() != TASK_MANAGER_ID) && (t->getID() != IDLE_ID)) {
+    if (t->runTask() && (t->getID() != TASK_MANAGER_ID) && (t->getID() != IDLE_ID)) {
       if (t->getCore() == running_core) {
         loopValue = t->loop();
         returnValue &= loopValue;
@@ -129,22 +129,33 @@ void TaskManager::system(OutputInterface* terminal) {
   for (unsigned long i = 0; i < queue.count(); i++) {
     queue.get(i, &task);
     if (task->getID() != IDLE_ID) {
-      StringBuilder id = task->getID();
-      StringBuilder name = task->getName();
-      double time = task->getExecutionTime()->time();
-      StringBuilder timeString = (time / 1000.0);
-      double high = task->getExecutionTime()->highWaterMark();
-      StringBuilder highString = (high / 1000.0);
-      double low = task->getExecutionTime()->lowWaterMark();
-      StringBuilder lowString = (low / 1000.0);
-      double rate = task->getRefreshRate();
-      StringBuilder rateString = (rate / 1000);
-      double timePerSec = 1000000.0 / rate;
-      double timeTakenPerSec = timePerSec * time;
-      StringBuilder percentString = timeTakenPerSec / 1000000.0 * 100;
-      percentString + "%";
-      StringBuilder coreString = task->getCore();
-      coreUtil[task->getCore()] += timeTakenPerSec;
+      StringBuilder id;
+      StringBuilder name;
+      StringBuilder timeString = "-";
+      StringBuilder highString = "-";
+      StringBuilder lowString = "-";
+      StringBuilder rateString = "-";
+      StringBuilder percentString = "-";
+      StringBuilder coreString = "-";
+
+      id = task->getID();
+      name = task->getName();
+      if (task->runTask()) {
+        double time = task->getExecutionTime()->time();
+        timeString = (time / 1000.0);
+        double high = task->getExecutionTime()->highWaterMark();
+        highString = (high / 1000.0);
+        double low = task->getExecutionTime()->lowWaterMark();
+        lowString = (low / 1000.0);
+        double rate = task->getRefreshRate();
+        rateString = (rate / 1000);
+        double timePerSec = 1000000.0 / rate;
+        double timeTakenPerSec = timePerSec * time;
+        percentString = timeTakenPerSec / 1000000.0 * 100;
+        percentString + "%";
+        coreString = task->getCore();
+        coreUtil[task->getCore()] += timeTakenPerSec;
+      }
       table.printData(id.c_str(), coreString.c_str(), name.c_str(), timeString.c_str(), highString.c_str(), lowString.c_str(), rateString.c_str(),
                       percentString.c_str());
     }
