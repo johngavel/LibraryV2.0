@@ -21,13 +21,28 @@
 
 typedef enum { JAXSON, DRAGON, LIGHT, VUMETER, GAVEL, BITMAP_LENGTH } BITMAP;
 
+class ScreenInterface {
+public:
+  virtual void setScreen(String line1 = "", String line2 = "", String line3 = "", String line4 = "", String line5 = "", String line6 = "", String line7 = "",
+                         String line8 = "") = 0;
+  virtual void setScreen(BITMAP bitmap, String caption) = 0;
+  virtual void setScreen(unsigned char* bitmap, String caption, unsigned long width, unsigned long height) = 0;
+  virtual Adafruit_SSD1306* getDisplay() = 0;
+  virtual unsigned char* getBitmap(BITMAP bitmap) = 0;
+};
+
 class RefreshScreen {
 public:
   virtual void screen() = 0;
   unsigned long refresh;
+  void setScreen(ScreenInterface* __display) { display = __display; };
+  ScreenInterface* getScreen() { return display; };
+
+private:
+  ScreenInterface* display = nullptr;
 };
 
-class Screen : public Task {
+class Screen : public Task, public ScreenInterface {
 public:
   Screen();
   virtual void addCmd(TerminalCommand* __termCmd);
@@ -37,13 +52,14 @@ public:
   void setRefreshScreen(RefreshScreen* __refreshScreen, unsigned long __refresh) {
     refreshScreen = __refreshScreen;
     refreshScreen->refresh = __refresh;
+    refreshScreen->setScreen(this);
   };
-  void setScreen(String line1 = "", String line2 = "", String line3 = "", String line4 = "", String line5 = "", String line6 = "", String line7 = "",
-                 String line8 = "");
-  void setScreen(BITMAP bitmap, String caption);
-  void setScreen(unsigned char* bitmap, String caption, unsigned long width, unsigned long height);
-  Adafruit_SSD1306* getDisplay() { return &display; };
-  unsigned char* getBitmap(BITMAP bitmap);
+  virtual void setScreen(String line1 = "", String line2 = "", String line3 = "", String line4 = "", String line5 = "", String line6 = "", String line7 = "",
+                         String line8 = "");
+  virtual void setScreen(BITMAP bitmap, String caption);
+  virtual void setScreen(unsigned char* bitmap, String caption, unsigned long width, unsigned long height);
+  virtual Adafruit_SSD1306* getDisplay() { return &display; };
+  virtual unsigned char* getBitmap(BITMAP bitmap);
 
 private:
   Adafruit_SSD1306 display;
