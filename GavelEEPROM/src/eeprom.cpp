@@ -8,10 +8,6 @@
 static char taskname[] = "EEPromMemory";
 EEpromMemory::EEpromMemory() : Task(taskname) {}
 
-void EEpromMemory::breakSeal() {
-  seal = true;
-}
-
 void EEpromMemory::configure(unsigned long size) {
   memorySize = size;
 }
@@ -24,10 +20,16 @@ void EEpromMemory::addCmd(TerminalCommand* __termCmd) {
 bool EEpromMemory::setupTask(OutputInterface* __terminal) {
   unsigned int fullDataSize = memorySize / 8;
   terminal = __terminal;
+  StringBuilder sb;
 
   setRefreshMilli(1000);
   dataSize = 0;
+  sb + "Starting Data: " + dataList.count() + " Modules";
+  terminal->println(TRACE, sb.c_str());
+  sb.clear();
   for (unsigned long i = 0; i < dataList.count(); i++) dataSize += ((IMemory*) dataList.get(i))->size();
+  sb + "Data Size: " + dataSize;
+  terminal->println(TRACE, sb.c_str());
   if (memorySize == 0) { terminal->println(ERROR, "EEPROM Memory Chip Unconfigured. "); }
   if (dataSize > fullDataSize) {
     terminal->println(ERROR, "EEPROM Data Structure is too large: " + String(dataSize) + "/" + String(fullDataSize));
@@ -39,14 +41,22 @@ bool EEpromMemory::setupTask(OutputInterface* __terminal) {
   i2c_eeprom->begin();
   runTimer(i2c_eeprom->isConnected());
   i2cWire.wireGive();
+  terminal->println(TRACE, "Starting readEEPROM");
   readEEPROM();
+  terminal->println(TRACE, "Finished readEEPROM");
   if (!getTimerRun()) terminal->println(ERROR, "EEPROM Not Connected");
   if (getNumberOfData() == 0) { terminal->println(WARNING, "No User Data Available!"); }
   return getTimerRun();
 }
 
 bool EEpromMemory::executeTask() {
-  if (seal) {
+  bool updated = false;
+  for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
+    IMemory* data = (IMemory*) dataList.get(dataIndex);
+    if (data->getUpdated()) { updated = true; }
+  }
+
+  if (updated) {
     forceWrite();
   } else {
     setRefreshMilli(1000);
@@ -56,8 +66,6 @@ bool EEpromMemory::executeTask() {
 
 void EEpromMemory::forceWrite() {
   setRefreshMilli(5000);
-  seal = false;
-  reset();
   writeEEPROM();
 }
 
@@ -77,16 +85,25 @@ void EEpromMemory::writeEEPROMbyte(unsigned long address, byte value) {
 }
 
 void EEpromMemory::readEEPROM() {
+  StringBuilder sb;
   if (getTimerRun()) {
     i2cWire.wireTake();
-    mutex.take();
     unsigned long eepromIndex = 0;
     for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
       IMemory* data = (IMemory*) dataList.get(dataIndex);
-      for (unsigned long i = 0; i < data->size(); i++) (*data)[i] = readEEPROMbyte(eepromIndex + i);
+      sb + "readEEPROM - " + dataIndex + " Size: " + data->size();
+      terminal->println(TRACE, sb.c_str());
+      sb.clear();
+      sb + "EEPROM INDEX: " + eepromIndex;
+      terminal->println(TRACE, sb.c_str());
+      sb.clear();
+      for (unsigned long i = 0; i < data->size(); i++) ;//(*data)[i] = readEEPROMbyte(eepromIndex + i);
+      data->setUpdated(true);
       eepromIndex += data->size();
+      sb + "readEEPROM Finished- " + dataIndex + " Size: " + data->size();
+      terminal->println(TRACE, sb.c_str());
+      sb.clear();
     }
-    mutex.give();
     i2cWire.wireGive();
   }
 }
@@ -94,14 +111,13 @@ void EEpromMemory::readEEPROM() {
 void EEpromMemory::writeEEPROM() {
   if (getTimerRun()) {
     i2cWire.wireTake();
-    mutex.take();
     unsigned long eepromIndex = 0;
     for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
       IMemory* data = (IMemory*) dataList.get(dataIndex);
       for (unsigned long i = 0; i < data->size(); i++) writeEEPROMbyte(eepromIndex + i, (*data)[i]);
+      data->setUpdated(false);
       eepromIndex += data->size();
     }
-    mutex.give();
     i2cWire.wireGive();
   }
 }
@@ -110,6 +126,7 @@ void EEpromMemory::wipe(OutputInterface* terminal) {
   for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
     IMemory* data = (IMemory*) dataList.get(dataIndex);
     data->initMemory();
+    data->setUpdated(true);
   }
   terminal->println((getTimerRun()) ? PASSED : FAILED, "EEPROM Initialize Memory Complete.");
   terminal->prompt();
@@ -121,6 +138,9 @@ void EEpromMemory::mem(OutputInterface* terminal) {
     for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
       IMemory* data = (IMemory*) dataList.get(dataIndex);
       data->printData(terminal);
+      StringBuilder sb;
+      sb + "Data Retrieved from EEPROM: " + data->getUpdated();
+      terminal->println(INFO, sb.c_str());
     }
   } else {
     terminal->println(WARNING, "No User Data Available!");

@@ -36,6 +36,7 @@ char* numToA(double n, char* buffer, int size);
 class StringBuilder {
 public:
   StringBuilder() { clear(); };
+  StringBuilder(bool b) { *this = b; };
   StringBuilder(char* __string) { *this = __string; };
   StringBuilder(const char* __string) { *this = __string; };
   StringBuilder(char c) { *this = c; };
@@ -49,6 +50,7 @@ public:
   StringBuilder(float f) { *this = f; };
   StringBuilder(double d) { *this = d; };
 
+  StringBuilder& operator=(bool b);
   StringBuilder& operator=(char* __string);
   StringBuilder& operator=(const char* __string);
   StringBuilder& operator=(char c);
@@ -62,6 +64,7 @@ public:
   StringBuilder& operator=(float f);
   StringBuilder& operator=(double d);
 
+  StringBuilder& operator+(bool b);
   StringBuilder& operator+(char* __string);
   StringBuilder& operator+(const char* __string);
   StringBuilder& operator+(char c);

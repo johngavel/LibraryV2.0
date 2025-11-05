@@ -23,21 +23,21 @@ public:
 
 class ProgramMemory : public IMemory {
 public:
-  struct Data {
+  typedef struct {
     unsigned char ProgramNumber;
     unsigned char MajorVersion;
     unsigned char MinorVersion;
     unsigned char spare;
-  };
+  } ProgramData;
   // 4 bytes
-  static_assert(sizeof(Data) == 4, "ProgramMemory size unexpected - check packing/padding.");
+  static_assert(sizeof(ProgramData) == 4, "ProgramMemory size unexpected - check packing/padding.");
 
   typedef union {
-    Data data;
-    unsigned char buffer[sizeof(Data)];
-  } Memory;
+    ProgramData data;
+    unsigned char buffer[sizeof(ProgramData)];
+  } ProgramUnion;
 
-  ProgramMemory() { memset(memory.buffer, 0, sizeof(Data)); };
+  ProgramMemory() { memset(memory.buffer, 0, sizeof(ProgramUnion::buffer)); };
 
   // IMemory overrides
   const unsigned char& operator[](std::size_t index) const override { return memory.buffer[index]; }
@@ -46,7 +46,7 @@ public:
     return memory.buffer[index];
   }
 
-  std::size_t size() const noexcept override { return sizeof(Memory::buffer); }
+  std::size_t size() const noexcept override { return sizeof(ProgramUnion::buffer); }
 
   void initMemory() override {
     memory.data.ProgramNumber = ProgramInfo::ProgramNumber;
@@ -57,11 +57,11 @@ public:
 
   void printData(OutputInterface* terminal) override {
     StringBuilder sb;
-    terminal->println(HELP, "Program Memory: ");
+    terminal->println(HELP, "Program ProgramUnion: ");
     sb + "Program: " + memory.data.ProgramNumber + " Version: " + memory.data.MajorVersion + "." + memory.data.MinorVersion;
     terminal->println(INFO, sb.c_str());
   }
-  Memory memory;
+  ProgramUnion memory;
 
 private:
 };

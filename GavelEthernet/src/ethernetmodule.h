@@ -1,6 +1,7 @@
 #ifndef __GAVEL_ETHERNET_MODULE_H
 #define __GAVEL_ETHERNET_MODULE_H
 
+#include "ethernetmemory.h"
 #include "wiredserver.h"
 
 #include <Arduino.h>
@@ -17,31 +18,27 @@ public:
   virtual bool setupTask(OutputInterface* __terminal);
   virtual bool executeTask();
 
+  void configure();
+  void configure(byte* __macAddress, bool __isDHCP);
   void configure(byte* __macAddress, bool __isDHCP, byte* __ipAddress, byte* __dnsAddress, byte* __subnetMask, byte* __gatewayAddress);
-  void configure(byte* __macAddress, bool __isDHCP) { configure(__macAddress, __isDHCP, nullptr, nullptr, nullptr, nullptr); };
+
   bool linkStatus();
+  IMemory* getMemory() { return &memory; };
   IPAddress getIPAddress();
   IPAddress getSubnetMask();
   IPAddress getGateway();
   IPAddress getDNS();
-  byte* getMACAddress() { return macAddress; };
-  bool getDHCP() { return isDHCP; };
+  byte* getMACAddress() { return memory.memory.data.macAddress; };
+  bool getDHCP() { return memory.memory.data.isDHCP; };
   VirtualServer* getServer(int port);
-  bool ipChanged = false;
-  // Only used for initial configuration
-  bool isConfigured = false;
-  byte* macAddress = nullptr;
-  bool isDHCP = false;
 
 private:
   bool resetW5500();
   bool setupW5500();
+  bool updateMemory();
 
   // Only used for initial configuration
-  byte* ipAddress = nullptr;
-  byte* dnsAddress = nullptr;
-  byte* subnetMask = nullptr;
-  byte* gatewayAddress = nullptr;
+  EthernetMemory memory;
 
   OutputInterface* terminal;
 

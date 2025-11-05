@@ -22,15 +22,15 @@ bool EthernetModule::setupW5500() {
   spiWire.wireTake();
   Ethernet.init(17);
   spiWire.wireGive();
-  if (isDHCP) {
+  if (memory.memory.data.isDHCP) {
     spiWire.wireTake();
-    Ethernet.begin(macAddress, 3000, 1500);
+    Ethernet.begin(memory.memory.data.macAddress, 3000, 1500);
     spiWire.wireGive();
-    ipChanged = true;
   } else {
-    if ((macAddress != nullptr) && (ipAddress != nullptr) && (dnsAddress != nullptr) && (gatewayAddress != nullptr) && (subnetMask != nullptr)) {
+    if (memory.getUpdated()) {
       spiWire.wireTake();
-      Ethernet.begin(macAddress, ipAddress, dnsAddress, gatewayAddress, subnetMask);
+      Ethernet.begin(memory.memory.data.macAddress, memory.memory.data.ipAddress, memory.memory.data.dnsAddress, memory.memory.data.gatewayAddress,
+                     memory.memory.data.subnetMask);
       spiWire.wireGive();
     }
   }
@@ -48,17 +48,28 @@ bool EthernetModule::setupW5500() {
     status &= true;
     if (terminal) terminal->println(PASSED, "W5500 Ethernet controller detected.");
   }
+  status &= updateMemory();
   return status;
 }
 
+void EthernetModule::configure() {
+  memory.initMemory();
+  memory.setUpdated(false);
+}
+
+void EthernetModule::configure(byte* __macAddress, bool __isDHCP) {
+  unsigned char blankAddress[4] = {0, 0, 0, 0};
+  configure(__macAddress, __isDHCP, blankAddress, blankAddress, blankAddress, blankAddress);
+}
 void EthernetModule::configure(byte* __macAddress, bool __isDHCP, byte* __ipAddress, byte* __dnsAddress, byte* __subnetMask, byte* __gatewayAddress) {
-  isConfigured = true;
-  macAddress = __macAddress;
-  isDHCP = __isDHCP;
-  ipAddress = __ipAddress;
-  dnsAddress = __dnsAddress;
-  subnetMask = __subnetMask;
-  gatewayAddress = __gatewayAddress;
+  configure();
+  memcpy(memory.memory.data.macAddress, __macAddress, sizeof(memory.memory.data.macAddress));
+  memory.memory.data.isDHCP = __isDHCP;
+  memcpy(memory.memory.data.ipAddress, __ipAddress, sizeof(memory.memory.data.ipAddress));
+  memcpy(memory.memory.data.dnsAddress, __dnsAddress, sizeof(memory.memory.data.dnsAddress));
+  memcpy(memory.memory.data.subnetMask, __subnetMask, sizeof(memory.memory.data.subnetMask));
+  memcpy(memory.memory.data.gatewayAddress, __gatewayAddress, sizeof(memory.memory.data.gatewayAddress));
+  memory.setUpdated(true);
 }
 
 void EthernetModule::addCmd(TerminalCommand* __termCmd) {
@@ -71,7 +82,7 @@ bool EthernetModule::setupTask(OutputInterface* __terminal) {
   terminal = __terminal;
 
   setRefreshMilli(60000);
-  if (isConfigured) { status &= setupW5500(); }
+  if (memory.getUpdated()) { status &= setupW5500(); }
   runTimer(status);
   return status;
 }
@@ -80,7 +91,7 @@ bool EthernetModule::executeTask() {
   spiWire.wireTake();
   int maintain = Ethernet.maintain();
   spiWire.wireGive();
-  if (maintain == 4) { ipChanged = true; }
+  if (maintain == 4) { updateMemory(); }
   return true;
 }
 
@@ -129,27 +140,42 @@ bool EthernetModule::linkStatus() {
 }
 
 void EthernetModule::ipStat(OutputInterface* terminal) {
+  char buffer[20];
   IPAddress ipAddress = getIPAddress();
   bool linked = linkStatus();
   terminal->print(INFO, "MAC Address:  ");
-  terminal->print(INFO, String(macAddress[0], HEX) + ":");
-  terminal->print(INFO, String(macAddress[1], HEX) + ":");
-  terminal->print(INFO, String(macAddress[2], HEX) + ":");
-  terminal->print(INFO, String(macAddress[3], HEX) + ":");
-  terminal->print(INFO, String(macAddress[4], HEX) + ":");
-  terminal->println(INFO, String(macAddress[5], HEX));
-  terminal->println(INFO, "IP Address is " + String((isDHCP) ? "DHCP" : "Static"));
-  terminal->println(INFO, String((linked) ? "Connected" : "Unconnected"));
-  terminal->println(INFO, "  IP Address:  " + String(ipAddress[0]) + String(".") + String(ipAddress[1]) + String(".") + String(ipAddress[2]) + String(".") +
-                              String(ipAddress[3]));
-  ipAddress = getSubnetMask();
-  terminal->println(INFO, "  Subnet Mask: " + String(ipAddress[0]) + String(".") + String(ipAddress[1]) + String(".") + String(ipAddress[2]) + String(".") +
-                              String(ipAddress[3]));
-  ipAddress = getGateway();
-  terminal->println(INFO, "  Gateway:     " + String(ipAddress[0]) + String(".") + String(ipAddress[1]) + String(".") + String(ipAddress[2]) + String(".") +
-                              String(ipAddress[3]));
-  ipAddress = getDNS();
-  terminal->println(INFO, "  DNS Server:  " + String(ipAddress[0]) + String(".") + String(ipAddress[1]) + String(".") + String(ipAddress[2]) + String(".") +
-                              String(ipAddress[3]));
+  terminal->println(INFO, getMacString(memory.memory.data.macAddress, buffer, sizeof(buffer)));
+  terminal->print(INFO, "IP Address is ");
+  terminal->println(INFO, ((memory.memory.data.isDHCP) ? "DHCP" : "Static"));
+  terminal->println(INFO, ((linked) ? "Connected" : "Unconnected"));
+  terminal->print(INFO, "IP Address:  ");
+  terminal->println(INFO, getIPString(memory.memory.data.ipAddress, buffer, sizeof(buffer)));
+  terminal->print(INFO, "Subnet Mask:  ");
+  terminal->println(INFO, getIPString(memory.memory.data.subnetMask, buffer, sizeof(buffer)));
+  terminal->print(INFO, "Gateway:  ");
+  terminal->println(INFO, getIPString(memory.memory.data.gatewayAddress, buffer, sizeof(buffer)));
+  terminal->print(INFO, "DNS Address:  ");
+  terminal->println(INFO, getIPString(memory.memory.data.dnsAddress, buffer, sizeof(buffer)));
   terminal->prompt();
+}
+
+static void ipAddressToBuffer(IPAddress address, unsigned char* buffer) {
+  buffer[0] = address[0];
+  buffer[1] = address[1];
+  buffer[2] = address[2];
+  buffer[3] = address[3];
+}
+
+bool EthernetModule::updateMemory() {
+  unsigned char buffer[4];
+  ipAddressToBuffer(getIPAddress(), buffer);
+  memcpy(memory.memory.data.ipAddress, buffer, sizeof(memory.memory.data.ipAddress));
+  ipAddressToBuffer(getDNS(), buffer);
+  memcpy(memory.memory.data.ipAddress, buffer, sizeof(memory.memory.data.ipAddress));
+  ipAddressToBuffer(getSubnetMask(), buffer);
+  memcpy(memory.memory.data.ipAddress, buffer, sizeof(memory.memory.data.ipAddress));
+  ipAddressToBuffer(getGateway(), buffer);
+  memcpy(memory.memory.data.ipAddress, buffer, sizeof(memory.memory.data.ipAddress));
+  memory.setUpdated(true);
+  return true;
 }

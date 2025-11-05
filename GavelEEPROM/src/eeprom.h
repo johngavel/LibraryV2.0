@@ -18,26 +18,21 @@ public:
   virtual bool setupTask(OutputInterface* __terminal);
   virtual bool executeTask();
   void forceWrite();
-  void breakSeal();
-  bool getSeal() { return seal; };
   void setData(IMemory* __data) { dataList.push(__data); };
   IMemory* getData(unsigned long index) { return (IMemory*) dataList.get(index); };
   unsigned long getNumberOfData() { return dataList.count(); };
   unsigned long getLength();
   unsigned long getMemorySize() { return memorySize; };
-  Mutex* getMemoryLock() { return &mutex; };
 
 private:
   void readEEPROM();
   void writeEEPROM();
-  bool seal = false;
   byte readEEPROMbyte(unsigned long address);
   void writeEEPROMbyte(unsigned long address, byte value);
   I2C_eeprom* i2c_eeprom = nullptr;
   ClassicQueue dataList = ClassicQueue(MAX_DATA_SEGMENTS, sizeof(IMemory*));
   unsigned int memorySize = 0;
   unsigned int dataSize = 0;
-  Mutex mutex;
   OutputInterface* terminal;
 
   void wipe(OutputInterface* terminal);

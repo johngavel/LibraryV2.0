@@ -8,6 +8,7 @@
 
 class IMemory {
 public:
+  IMemory() : updated(false) {}
   virtual ~IMemory() = default;
 
   // Read-only access (const overload)
@@ -21,23 +22,28 @@ public:
 
   virtual void initMemory() = 0;
   virtual void printData(OutputInterface* terminal) = 0;
+  bool getUpdated() { return updated; };
+  void setUpdated(bool __updated) { updated = __updated; };
+ 
+private:
+  bool updated;
 };
 
 // class TemplateIMemory : public IMemory {
 // public:
-//   struct Data {
+//   typedef struct {
 //     unsigned char data[6];
 //     unsigned char spare[10];
-//   };
+//   } Data;
 //   // 6 + 10 = 16 bytes
 //   static_assert(sizeof(Data) == 16, "TemplateIMemory size unexpected - check packing/padding.");
 
 //   typedef union {
 //     Data data;
 //     unsigned char buffer[sizeof(Data)];
-//   } Memory;
+//   } Union;
 
-//   TemplateIMemory() { memset(memory.buffer, 0, sizeof(Data)); };
+//   TemplateIMemory() { memset(memory.buffer, 0, sizeof(Union.buffer)); };
 
 //   TemplateIMemory(const unsigned char* src, std::size_t n) {
 //     const std::size_t cap = sizeof(Memory::buffer);

@@ -150,6 +150,11 @@ char* numToA(double n, char* buffer, int size) {
   snprintf(buffer, size, "%0.1f", n);
   return buffer;
 }
+StringBuilder& StringBuilder::operator=(bool b) {
+  clear();
+  *this + b;
+  return *this;
+}
 
 StringBuilder& StringBuilder::operator=(char* __string) {
   clear();
@@ -223,6 +228,15 @@ StringBuilder& StringBuilder::operator=(double d) {
   return *this;
 }
 
+StringBuilder& StringBuilder::operator+(bool b) {
+  static const char* trueString = "True";
+  static const char* falseString = "FALSE";
+  if (b)
+    safeAppend(string, trueString, STRINGBUILDER_MAX);
+  else
+    safeAppend(string, falseString, STRINGBUILDER_MAX);
+  return *this;
+}
 StringBuilder& StringBuilder::operator+(char* __string) {
   safeAppend(string, __string, STRINGBUILDER_MAX);
   return *this;
