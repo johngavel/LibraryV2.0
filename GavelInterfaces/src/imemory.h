@@ -24,7 +24,7 @@ public:
   virtual void printData(OutputInterface* terminal) = 0;
   bool getUpdated() { return updated; };
   void setUpdated(bool __updated) { updated = __updated; };
- 
+
 private:
   bool updated;
 };

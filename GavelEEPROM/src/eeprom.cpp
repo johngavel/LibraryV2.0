@@ -97,7 +97,7 @@ void EEpromMemory::readEEPROM() {
       sb + "EEPROM INDEX: " + eepromIndex;
       terminal->println(TRACE, sb.c_str());
       sb.clear();
-      for (unsigned long i = 0; i < data->size(); i++) ;//(*data)[i] = readEEPROMbyte(eepromIndex + i);
+      for (unsigned long i = 0; i < data->size(); i++); //(*data)[i] = readEEPROMbyte(eepromIndex + i);
       data->setUpdated(true);
       eepromIndex += data->size();
       sb + "readEEPROM Finished- " + dataIndex + " Size: " + data->size();
