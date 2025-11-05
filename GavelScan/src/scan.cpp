@@ -43,8 +43,8 @@ void Scan::scani2c(OutputInterface* terminal) {
 
     } else if (error == 4) {
       terminal->print(WARNING, "Unknown error at address 0x");
-      if (address < 16) terminal->print(WARNING, "0");
-      terminal->println(WARNING, String(address, HEX));
+      if (address < 16) terminal->print(INFO, "0");
+      terminal->println(INFO, String(address, HEX));
     } else {
       // terminal->print(INFO, "No device found at address 0x");
       // if (address < 16) terminal->print(INFO, "0");

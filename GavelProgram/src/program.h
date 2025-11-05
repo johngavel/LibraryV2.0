@@ -57,7 +57,7 @@ public:
 
   void printData(OutputInterface* terminal) override {
     StringBuilder sb;
-    terminal->println(HELP, "Program ProgramUnion: ");
+    terminal->println(HELP, "Program Data: ");
     sb + "Program: " + memory.data.ProgramNumber + " Version: " + memory.data.MajorVersion + "." + memory.data.MinorVersion;
     terminal->println(INFO, sb.c_str());
   }

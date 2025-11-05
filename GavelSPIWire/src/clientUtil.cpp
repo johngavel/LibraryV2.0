@@ -1,4 +1,4 @@
-#include "networkinterface.h"
+#include "clientUtil.h"
 
 #include <Arduino.h>
 #include <GavelSPIWire.h>

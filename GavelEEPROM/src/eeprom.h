@@ -18,8 +18,8 @@ public:
   virtual bool setupTask(OutputInterface* __terminal);
   virtual bool executeTask();
   void forceWrite();
-  void setData(IMemory* __data) { dataList.push(__data); };
-  IMemory* getData(unsigned long index) { return (IMemory*) dataList.get(index); };
+  void setData(IMemory* __data) { dataList.push(&__data); };
+  IMemory* getData(unsigned long index) { return (IMemory*) *((IMemory**) dataList.get(index)); };
   unsigned long getNumberOfData() { return dataList.count(); };
   unsigned long getLength();
   unsigned long getMemorySize() { return memorySize; };
@@ -37,6 +37,7 @@ private:
 
   void wipe(OutputInterface* terminal);
   void mem(OutputInterface* terminal);
+  void raw(OutputInterface* terminal);
 };
 
 #endif

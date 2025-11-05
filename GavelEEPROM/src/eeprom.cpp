@@ -15,21 +15,16 @@ void EEpromMemory::configure(unsigned long size) {
 void EEpromMemory::addCmd(TerminalCommand* __termCmd) {
   if (__termCmd) __termCmd->addCmd("wipe", "", "Wipe and Initialize EEPROM Memory", [this](TerminalLibrary::OutputInterface* terminal) { wipe(terminal); });
   if (__termCmd) __termCmd->addCmd("mem", "", "Contents of Flash Memory", [this](TerminalLibrary::OutputInterface* terminal) { mem(terminal); });
+  if (__termCmd) __termCmd->addCmd("raw", "", "Raw Contents of Flash Memory", [this](TerminalLibrary::OutputInterface* terminal) { raw(terminal); });
 }
 
 bool EEpromMemory::setupTask(OutputInterface* __terminal) {
   unsigned int fullDataSize = memorySize / 8;
   terminal = __terminal;
-  StringBuilder sb;
 
   setRefreshMilli(1000);
   dataSize = 0;
-  sb + "Starting Data: " + dataList.count() + " Modules";
-  terminal->println(TRACE, sb.c_str());
-  sb.clear();
-  for (unsigned long i = 0; i < dataList.count(); i++) dataSize += ((IMemory*) dataList.get(i))->size();
-  sb + "Data Size: " + dataSize;
-  terminal->println(TRACE, sb.c_str());
+  for (unsigned long i = 0; i < dataList.count(); i++) dataSize += (getData(i))->size();
   if (memorySize == 0) { terminal->println(ERROR, "EEPROM Memory Chip Unconfigured. "); }
   if (dataSize > fullDataSize) {
     terminal->println(ERROR, "EEPROM Data Structure is too large: " + String(dataSize) + "/" + String(fullDataSize));
@@ -41,9 +36,7 @@ bool EEpromMemory::setupTask(OutputInterface* __terminal) {
   i2c_eeprom->begin();
   runTimer(i2c_eeprom->isConnected());
   i2cWire.wireGive();
-  terminal->println(TRACE, "Starting readEEPROM");
   readEEPROM();
-  terminal->println(TRACE, "Finished readEEPROM");
   if (!getTimerRun()) terminal->println(ERROR, "EEPROM Not Connected");
   if (getNumberOfData() == 0) { terminal->println(WARNING, "No User Data Available!"); }
   return getTimerRun();
@@ -52,8 +45,8 @@ bool EEpromMemory::setupTask(OutputInterface* __terminal) {
 bool EEpromMemory::executeTask() {
   bool updated = false;
   for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
-    IMemory* data = (IMemory*) dataList.get(dataIndex);
-    if (data->getUpdated()) { updated = true; }
+    IMemory* data = getData(dataIndex);
+    if (data->getInternal()) { updated = true; }
   }
 
   if (updated) {
@@ -85,24 +78,14 @@ void EEpromMemory::writeEEPROMbyte(unsigned long address, byte value) {
 }
 
 void EEpromMemory::readEEPROM() {
-  StringBuilder sb;
   if (getTimerRun()) {
     i2cWire.wireTake();
     unsigned long eepromIndex = 0;
     for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
-      IMemory* data = (IMemory*) dataList.get(dataIndex);
-      sb + "readEEPROM - " + dataIndex + " Size: " + data->size();
-      terminal->println(TRACE, sb.c_str());
-      sb.clear();
-      sb + "EEPROM INDEX: " + eepromIndex;
-      terminal->println(TRACE, sb.c_str());
-      sb.clear();
-      for (unsigned long i = 0; i < data->size(); i++); //(*data)[i] = readEEPROMbyte(eepromIndex + i);
-      data->setUpdated(true);
+      IMemory* data = getData(dataIndex);
+      for (unsigned long i = 0; i < data->size(); i++) (*data)[i] = readEEPROMbyte(eepromIndex + i);
+      data->setExternal(true);
       eepromIndex += data->size();
-      sb + "readEEPROM Finished- " + dataIndex + " Size: " + data->size();
-      terminal->println(TRACE, sb.c_str());
-      sb.clear();
     }
     i2cWire.wireGive();
   }
@@ -113,9 +96,9 @@ void EEpromMemory::writeEEPROM() {
     i2cWire.wireTake();
     unsigned long eepromIndex = 0;
     for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
-      IMemory* data = (IMemory*) dataList.get(dataIndex);
+      IMemory* data = getData(dataIndex);
       for (unsigned long i = 0; i < data->size(); i++) writeEEPROMbyte(eepromIndex + i, (*data)[i]);
-      data->setUpdated(false);
+      data->setInternal(false);
       eepromIndex += data->size();
     }
     i2cWire.wireGive();
@@ -124,9 +107,9 @@ void EEpromMemory::writeEEPROM() {
 
 void EEpromMemory::wipe(OutputInterface* terminal) {
   for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
-    IMemory* data = (IMemory*) dataList.get(dataIndex);
+    IMemory* data = getData(dataIndex);
     data->initMemory();
-    data->setUpdated(true);
+    data->setExternal(true);
   }
   terminal->println((getTimerRun()) ? PASSED : FAILED, "EEPROM Initialize Memory Complete.");
   terminal->prompt();
@@ -136,15 +119,61 @@ void EEpromMemory::mem(OutputInterface* terminal) {
   terminal->println(INFO, "EEPROM Size: " + String(getLength()) + "/" + String(getMemorySize() / 8) + " bytes.");
   if (dataList.count() != 0) {
     for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
-      IMemory* data = (IMemory*) dataList.get(dataIndex);
+      IMemory* data = getData(dataIndex);
       data->printData(terminal);
       StringBuilder sb;
-      sb + "Data Retrieved from EEPROM: " + data->getUpdated();
+      sb + "Data Retrieved from EEPROM: " + data->getExternal();
       terminal->println(INFO, sb.c_str());
     }
   } else {
     terminal->println(WARNING, "No User Data Available!");
   }
-  terminal->println(INFO, "EEPROM Read Memory Complete");
+  terminal->println();
   terminal->prompt();
+}
+
+#define BYTES_PER_LINE 16
+
+static void hexLine(char* string, unsigned long stringSize, unsigned char* valueBuffer, unsigned long valueSize) {
+  char hexString[4];
+  if (((valueSize * 3) + 1) > stringSize) return;
+  memset(string, 0, stringSize);
+  StringBuilder sb;
+  for (unsigned long i = 0; i < valueSize; i++) {
+    hexByteString(valueBuffer[i], hexString, sizeof(hexString));
+    sb + hexString + " ";
+  }
+  strncpy(string, sb.c_str(), stringSize);
+}
+
+static void printHexLine(OutputInterface* terminal, unsigned char* buffer, unsigned long lineNumber) {
+  char string[80];
+  StringBuilder sb;
+
+  hexLine(string, sizeof(string), buffer, BYTES_PER_LINE);
+  char hexLineNumber[4];
+  hexByteString(lineNumber, hexLineNumber, sizeof(hexLineNumber));
+  sb + "0x" + hexLineNumber + ": ";
+  terminal->print(HELP, sb.c_str());
+  terminal->println(INFO, string);
+}
+
+void EEpromMemory::raw(OutputInterface* terminal) {
+  StringBuilder sb;
+  unsigned char buffer[4096];
+  unsigned long lines = (dataSize / BYTES_PER_LINE);
+  unsigned long remainder = (dataSize % BYTES_PER_LINE);
+
+  terminal->println(HELP, "EEPROM Raw Contents");
+
+  i2cWire.wireTake();
+  for (unsigned long i = 0; i < dataSize; i++) buffer[i] = readEEPROMbyte(i);
+  i2cWire.wireGive();
+
+  sb + dataSize;
+  terminal->print(HELP, "Data Size: ");
+
+  terminal->println(INFO, sb.c_str());
+  for (unsigned long i = 0; i < lines; i++) { printHexLine(terminal, &buffer[i * BYTES_PER_LINE], i * BYTES_PER_LINE); }
+  printHexLine(terminal, &buffer[lines], remainder);
 }

@@ -2,6 +2,7 @@
 
 #include <GavelProgram.h>
 #include <GavelUtil.h>
+#include <GavelWatchdog.h>
 
 static Mutex startupMutex;
 static Mutex startupMutex1;
@@ -10,6 +11,7 @@ PicoCommand pico;
 TaskManager taskManager;
 SerialPort serialPort;
 Blink blink;
+Watchdog watchdog;
 
 void setup0Start(TerminalCommand* __termCmd) {
   startupMutex.take();
@@ -21,6 +23,7 @@ void setup0Start(TerminalCommand* __termCmd) {
 
   taskManager.add(&serialPort);
   taskManager.add(&blink);
+  taskManager.add(&watchdog);
 
   addStandardTerminalCommands(__termCmd);
   if (__termCmd) __termCmd->addCmd("reboot", "", "Software Reboot the Pico", [&](TerminalLibrary::OutputInterface* terminal) { pico.rebootPico(terminal); });
@@ -54,4 +57,12 @@ void setup1Complete() {
 
   startupMutex.take();
   startupMutex.give();
+}
+
+void loop_0(){
+  taskManager.loop();
+}
+
+void loop_1(){
+  taskManager.loop();
 }

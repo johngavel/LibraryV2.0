@@ -27,12 +27,13 @@ bool EthernetModule::setupW5500() {
     Ethernet.begin(memory.memory.data.macAddress, 3000, 1500);
     spiWire.wireGive();
   } else {
-    if (memory.getUpdated()) {
+    if (memory.getExternal() || memory.getInternal()) {
       spiWire.wireTake();
       Ethernet.begin(memory.memory.data.macAddress, memory.memory.data.ipAddress, memory.memory.data.dnsAddress, memory.memory.data.gatewayAddress,
                      memory.memory.data.subnetMask);
       spiWire.wireGive();
     }
+    memory.setExternal(false);
   }
   spiWire.wireTake();
   int hardwareStatus = Ethernet.hardwareStatus();
@@ -54,7 +55,7 @@ bool EthernetModule::setupW5500() {
 
 void EthernetModule::configure() {
   memory.initMemory();
-  memory.setUpdated(false);
+  memory.setInternal(false);
 }
 
 void EthernetModule::configure(byte* __macAddress, bool __isDHCP) {
@@ -69,7 +70,7 @@ void EthernetModule::configure(byte* __macAddress, bool __isDHCP, byte* __ipAddr
   memcpy(memory.memory.data.dnsAddress, __dnsAddress, sizeof(memory.memory.data.dnsAddress));
   memcpy(memory.memory.data.subnetMask, __subnetMask, sizeof(memory.memory.data.subnetMask));
   memcpy(memory.memory.data.gatewayAddress, __gatewayAddress, sizeof(memory.memory.data.gatewayAddress));
-  memory.setUpdated(true);
+  memory.setInternal(true);
 }
 
 void EthernetModule::addCmd(TerminalCommand* __termCmd) {
@@ -82,7 +83,7 @@ bool EthernetModule::setupTask(OutputInterface* __terminal) {
   terminal = __terminal;
 
   setRefreshMilli(60000);
-  if (memory.getUpdated()) { status &= setupW5500(); }
+  if (memory.getExternal() || memory.getInternal()) { status &= setupW5500(); }
   runTimer(status);
   return status;
 }
@@ -176,6 +177,6 @@ bool EthernetModule::updateMemory() {
   memcpy(memory.memory.data.ipAddress, buffer, sizeof(memory.memory.data.ipAddress));
   ipAddressToBuffer(getGateway(), buffer);
   memcpy(memory.memory.data.ipAddress, buffer, sizeof(memory.memory.data.ipAddress));
-  memory.setUpdated(true);
+  memory.setInternal(true);
   return true;
 }

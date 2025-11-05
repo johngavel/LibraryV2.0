@@ -16,7 +16,6 @@ bool Task::setup(OutputInterface* __terminal) {
 bool Task::loop() {
   bool returnValue = false;
   lock.take();
-  core = rp2040.cpuid();
   if (expired()) {
     execution.start();
     returnValue = executeTask();

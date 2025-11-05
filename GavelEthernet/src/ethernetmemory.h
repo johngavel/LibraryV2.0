@@ -62,7 +62,7 @@ public:
   void printData(OutputInterface* terminal) override {
     StringBuilder sb;
     char buffer[20];
-    terminal->println(HELP, "Ethernet Module EthernetUnion: ");
+    terminal->println(HELP, "Ethernet Module Data: ");
     sb + "DHCP: " + memory.data.isDHCP;
     terminal->println(INFO, sb.c_str());
     sb = "MAC Address: ";

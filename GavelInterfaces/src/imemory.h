@@ -8,7 +8,7 @@
 
 class IMemory {
 public:
-  IMemory() : updated(false) {}
+  IMemory() : updatedInternal(false), updatedExternal(false) {}
   virtual ~IMemory() = default;
 
   // Read-only access (const overload)
@@ -22,11 +22,17 @@ public:
 
   virtual void initMemory() = 0;
   virtual void printData(OutputInterface* terminal) = 0;
-  bool getUpdated() { return updated; };
-  void setUpdated(bool __updated) { updated = __updated; };
+
+  // These flags for for signaling between the owner of the memory
+  // And for those who consume the memory.
+  bool getInternal() { return updatedInternal; };
+  void setInternal(bool __updated) { updatedInternal = __updated; };
+  bool getExternal() { return updatedExternal; };
+  void setExternal(bool __updated) { updatedExternal = __updated; };
 
 private:
-  bool updated;
+  bool updatedInternal;
+  bool updatedExternal;
 };
 
 // class TemplateIMemory : public IMemory {
