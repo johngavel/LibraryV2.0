@@ -7,6 +7,7 @@
 #include "lock.h"
 #include "parameter.h"
 #include "stopwatch.h"
+#include "stringbuilder.h"
 #include "stringutils.h"
 #include "timer.h"
 

@@ -158,22 +158,23 @@ static void printHexLine(OutputInterface* terminal, unsigned char* buffer, unsig
   terminal->println(INFO, string);
 }
 
+static unsigned char buffer[4096];
 void EEpromMemory::raw(OutputInterface* terminal) {
   StringBuilder sb;
-  unsigned char buffer[4096];
+  memset(buffer, 0, 4096);
   unsigned long lines = (dataSize / BYTES_PER_LINE);
   unsigned long remainder = (dataSize % BYTES_PER_LINE);
 
   terminal->println(HELP, "EEPROM Raw Contents");
+  sb + dataSize;
+  terminal->println(HELP, "Data Size: ", sb.c_str());
 
   i2cWire.wireTake();
   for (unsigned long i = 0; i < dataSize; i++) buffer[i] = readEEPROMbyte(i);
   i2cWire.wireGive();
 
-  sb + dataSize;
-  terminal->print(HELP, "Data Size: ");
-
-  terminal->println(INFO, sb.c_str());
   for (unsigned long i = 0; i < lines; i++) { printHexLine(terminal, &buffer[i * BYTES_PER_LINE], i * BYTES_PER_LINE); }
   printHexLine(terminal, &buffer[lines], remainder);
+  terminal->println();
+  terminal->prompt();
 }

@@ -1,5 +1,7 @@
 #include "../src/stringutils.h"
 
+#include "../src/stringbuilder.cpp"
+#include "../src/stringbuilder.h"
 #include "../src/stringutils.cpp"
 
 #include <cassert>
@@ -56,7 +58,7 @@ void testBufferLimit() {
   for (int i = 0; i < 200; i++) {
     sb + "X"; // Will truncate silently
   }
-  assert(strlen(sb.c_str()) == (STRINGBUILDER_MAX - 1));
+  assert(strlen(sb.c_str()) == (StringBuilder::STRINGBUILDER_MAX - 1));
   printf("Buffer limit handling: PASS (truncation occurs)\n");
 }
 

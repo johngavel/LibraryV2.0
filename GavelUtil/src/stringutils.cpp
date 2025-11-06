@@ -22,25 +22,71 @@ int safeCompare(char* string1, char* string2) {
 char* safeAppend(char* dest, const char* src, int destSize) {
   if (!dest || !src || destSize == 0) return dest;
 
-  int destLen = strlen(dest);
-  int spaceLeft = (destSize > destLen) ? (destSize - destLen - 1) : 0;
+  int destLen = 0;
+  while (destLen < destSize && dest[destLen] != '\0') ++destLen;
+  if (destLen >= destSize) { // force terminate
+    dest[destSize - 1] = '\0';
+    destLen = destSize - 1;
+  }
+  int spaceLeft = destSize - destLen - 1;
 
-  if (spaceLeft > 0) { strncat(dest, src, spaceLeft); }
+  if (spaceLeft > 0) {
+    // Copy up to spaceLeft (not relying on strncat semantics)
+    int i = 0;
+    for (; i < spaceLeft && src[i] != '\0'; ++i) dest[destLen + i] = src[i];
+    dest[destLen + i] = '\0';
+  }
+
   return dest;
 }
 
+#define MAX_TAB_LENGTH 32
 char* tab(int tabLength, char* buffer, int size) {
-  if (tabLength <= 0 || size <= 0) return buffer; // No space to write
+  if (!buffer || tabLength <= 0 || size <= 0) return buffer;
 
-  int totalLength = strlen(buffer);
-  int remainder = totalLength % tabLength;
-  int spaces = (remainder == 0) ? 0 : (tabLength - remainder);
+  // Clamp tab length to prevent excessively wide tabs.
+  int tabLen = tabLength;
+  if (tabLen > MAX_TAB_LENGTH) tabLen = MAX_TAB_LENGTH;
 
-  // Prevent buffer overflow
-  if (spaces + totalLength >= size) spaces = size - totalLength - 1;
+  // Find current length within bounds (do not assume prior NUL).
+  int curLen = 0;
+  while (curLen < size && buffer[curLen] != '\0') ++curLen;
+  if (curLen >= size) {
+    // Force-terminate if not already NUL-terminated within 'size'.
+    buffer[size - 1] = '\0';
+    curLen = size - 1;
+  }
+
+  // Compute how many spaces to reach the next tab stop.
+  int remainder = (tabLen > 0) ? (curLen % tabLen) : 0;
+  int spaces = (remainder == 0) ? 0 : (tabLen - remainder);
+
+  // Trim spaces if they don't fit.
+  if (spaces + curLen >= size) spaces = size - curLen - 1;
   if (spaces < 0) spaces = 0;
 
-  for (int i = 0; i < spaces; i++) { safeAppend(buffer, " ", size); }
+  // Append all required spaces in one go.
+  if (spaces > 0) {
+    // Create a small local run of spaces (bounded).
+    // For very large 'spaces', we can append in chunks.
+    const int CHUNK = 32;
+    char pad[CHUNK + 1];
+    memset(pad, ' ', CHUNK);
+    pad[CHUNK] = '\0';
+
+    while (spaces > 0) {
+      int n = (spaces > CHUNK) ? CHUNK : spaces;
+      char saved = pad[n]; // temporarily terminate at 'n'
+      pad[n] = '\0';
+      safeAppend(buffer, pad, size);
+      pad[n] = saved;
+      spaces -= n;
+
+      // Recompute curLen/remaining optional; safeAppend already guards NUL.
+      // If you want to be extra safe, you could also break if buffer is full.
+    }
+  }
+
   return buffer;
 }
 
@@ -149,171 +195,4 @@ char* numToA(float n, char* buffer, int size) {
 char* numToA(double n, char* buffer, int size) {
   snprintf(buffer, size, "%0.1f", n);
   return buffer;
-}
-StringBuilder& StringBuilder::operator=(bool b) {
-  clear();
-  *this + b;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator=(char* __string) {
-  clear();
-  *this + __string;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator=(const char* __string) {
-  clear();
-  *this + __string;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator=(char c) {
-  clear();
-  *this + c;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator=(unsigned char c) {
-  clear();
-  *this + c;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator=(long l) {
-  clear();
-  *this + l;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator=(unsigned long l) {
-  clear();
-  *this + l;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator=(int i) {
-  clear();
-  *this + i;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator=(unsigned int i) {
-  clear();
-  *this + i;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator=(short s) {
-  clear();
-  *this + s;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator=(unsigned short s) {
-  clear();
-  *this + s;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator=(float f) {
-  clear();
-  *this + f;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator=(double d) {
-  clear();
-  *this + d;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator+(bool b) {
-  static const char* trueString = "True";
-  static const char* falseString = "FALSE";
-  if (b)
-    safeAppend(string, trueString, STRINGBUILDER_MAX);
-  else
-    safeAppend(string, falseString, STRINGBUILDER_MAX);
-  return *this;
-}
-StringBuilder& StringBuilder::operator+(char* __string) {
-  safeAppend(string, __string, STRINGBUILDER_MAX);
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator+(const char* __string) {
-  safeAppend(string, __string, STRINGBUILDER_MAX);
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator+(char c) {
-  long value = (long) c;
-  *this + value;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator+(unsigned char c) {
-  unsigned long value = (unsigned long) c;
-  *this + value;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator+(long l) {
-  char buf[20];
-  numToA(l, buf, sizeof(buf));
-  *this + buf;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator+(unsigned long l) {
-  char buf[20];
-  numToA(l, buf, sizeof(buf));
-  *this + buf;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator+(int i) {
-  long value = (long) i;
-  *this + value;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator+(unsigned int i) {
-  unsigned long value = (unsigned long) i;
-  *this + value;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator+(short s) {
-  long value = (long) s;
-  *this + value;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator+(unsigned short s) {
-  unsigned long value = (unsigned long) s;
-  *this + value;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator+(float f) {
-  double value = (double) f;
-  *this + value;
-  return *this;
-}
-
-StringBuilder& StringBuilder::operator+(double d) {
-  char buf[20];
-  numToA(d, buf, sizeof(buf));
-  *this + buf;
-  return *this;
-}
-
-char* StringBuilder::c_str() {
-  return string;
-}
-
-void StringBuilder::clear() {
-  memset(string, 0, STRINGBUILDER_MAX);
 }

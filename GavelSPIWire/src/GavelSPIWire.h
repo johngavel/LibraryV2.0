@@ -2,6 +2,7 @@
 #define GAVEL_SPI_WIRE_H
 
 #include "clientUtil.h"
+
 #include <GavelUtil.h>
 #include <SPI.h>
 

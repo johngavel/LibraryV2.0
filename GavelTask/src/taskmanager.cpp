@@ -116,6 +116,11 @@ void TaskManager::system(OutputInterface* terminal) {
   Task* task;
   AsciiTable table(terminal);
   double coreUtil[CPU_CORES] = {0.0, 0.0};
+
+  bool verbose = false;
+  char* parameter = terminal->readParameter();
+  if ((parameter != NULL) && (safeCompare(parameter, "-v") == 0)) verbose = true;
+
   terminal->banner();
   table.addColumn(Magenta, "ID", 6);
   table.addColumn(Green, "Core", 6);
@@ -128,7 +133,7 @@ void TaskManager::system(OutputInterface* terminal) {
   table.printHeader();
   for (unsigned long i = 0; i < queue.count(); i++) {
     queue.get(i, &task);
-    if (task->getID() != IDLE_ID) {
+    if (verbose || (task->getID() != IDLE_ID)) {
       StringBuilder id;
       StringBuilder name;
       StringBuilder timeString = "-";

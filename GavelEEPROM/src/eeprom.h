@@ -31,8 +31,8 @@ private:
   void writeEEPROMbyte(unsigned long address, byte value);
   I2C_eeprom* i2c_eeprom = nullptr;
   ClassicQueue dataList = ClassicQueue(MAX_DATA_SEGMENTS, sizeof(IMemory*));
-  unsigned int memorySize = 0;
-  unsigned int dataSize = 0;
+  unsigned long memorySize = 0;
+  unsigned long dataSize = 0;
   OutputInterface* terminal;
 
   void wipe(OutputInterface* terminal);

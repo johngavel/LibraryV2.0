@@ -59,10 +59,10 @@ void setup1Complete() {
   startupMutex.give();
 }
 
-void loop_0(){
+void loop_0() {
   taskManager.loop();
 }
 
-void loop_1(){
+void loop_1() {
   taskManager.loop();
 }
