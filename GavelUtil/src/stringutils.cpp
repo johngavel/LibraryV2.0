@@ -13,7 +13,7 @@ bool isValidCString(const char* str, unsigned int maxLen) {
   return false; // No terminator within maxLen
 }
 
-int safeCompare(char* string1, char* string2) {
+int safeCompare(const char* string1, const char* string2) {
   if (!isValidCString(string1)) return INT_MAX;
   if (!isValidCString(string2)) return INT_MIN;
   return (strcmp(string1, string2));

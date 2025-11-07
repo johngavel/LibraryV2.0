@@ -6,9 +6,9 @@
 #include <cstddef> // std::size_t
 #include <string.h>
 
-class IMemory {
+class IMemory : public Identifiable {
 public:
-  IMemory() : updatedInternal(false), updatedExternal(false) {}
+  IMemory() : updatedInternal(false) {}
   virtual ~IMemory() = default;
 
   // Read-only access (const overload)
@@ -22,17 +22,16 @@ public:
 
   virtual void initMemory() = 0;
   virtual void printData(OutputInterface* terminal) = 0;
+  virtual void updateExternal() = 0;
 
   // These flags for for signaling between the owner of the memory
   // And for those who consume the memory.
   bool getInternal() { return updatedInternal; };
   void setInternal(bool __updated) { updatedInternal = __updated; };
-  bool getExternal() { return updatedExternal; };
-  void setExternal(bool __updated) { updatedExternal = __updated; };
 
 private:
   bool updatedInternal;
-  bool updatedExternal;
+  Mutex mutex;
 };
 
 // class TemplateIMemory : public IMemory {

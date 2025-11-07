@@ -8,7 +8,6 @@
 #define HTTP_PORT 80
 #define TEST_PORT 4242
 #define MAX_CLIENTS 16
-#define BUFFER_SIZE 1024
 
 class VirtualNetwork {
 public:

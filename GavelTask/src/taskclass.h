@@ -8,12 +8,9 @@
 #define TASK_MANAGER_ID 3000
 #define IDLE_ID 4000
 
-class Task : public Timer {
+class Task : public Timer, public Identifiable {
 public:
-  Task(char* __name) {
-    strncpy(name, __name, TASK_NAME_LENGTH);
-    id = count_id++;
-  };
+  Task(char* __name) { strncpy(name, __name, TASK_NAME_LENGTH); };
   bool setup(OutputInterface* __terminal);
   bool loop();
   virtual void addCmd(TerminalCommand* __termCmd) = 0;
@@ -34,14 +31,12 @@ public:
 
 protected:
   SemLock lock;
-  unsigned int id;
   OutputInterface* terminal = nullptr;
   AvgStopWatch execution;
 
 private:
   char name[TASK_NAME_LENGTH];
   int core = 0;
-  static unsigned int count_id;
   bool run = true;
 };
 

@@ -55,6 +55,8 @@ public:
     terminal->print(INFO, "Data: ");
     terminal->println(INFO, getMacString(memory.data.data, buffer, sizeof(buffer)));
   }
+
+  void updateExternal() override {}
   Memory memory;
 
 private:

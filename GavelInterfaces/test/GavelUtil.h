@@ -3,4 +3,6 @@
 char* getMacString(unsigned char* mac, char* buffer, unsigned long size) {
   return buffer;
 };
+
+class Mutex {};
 #endif //

@@ -42,7 +42,8 @@ private:
 
   OutputInterface* terminal;
 
-  void ipStat(OutputInterface* terminal);
+  void ipConfig(OutputInterface* terminal);
+  void ifConfig(OutputInterface* terminal);
 };
 
 #endif //__GAVEL_ETHERNET_MODULE_H

@@ -23,6 +23,7 @@ public:
   unsigned long getNumberOfData() { return dataList.count(); };
   unsigned long getLength();
   unsigned long getMemorySize() { return memorySize; };
+  void reinitializeMemory();
 
 private:
   void readEEPROM();

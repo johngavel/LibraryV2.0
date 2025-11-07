@@ -18,7 +18,7 @@ void setup0Start(TerminalCommand* __termCmd) {
   serialPort.configureUSBSerial();
   serialPort.getUSBSerialTerminal()->setBannerFunction(banner);
   StringBuilder sb = ProgramInfo::ShortName;
-  sb + ":\\> ";
+  sb + ":\\>";
   serialPort.getUSBSerialTerminal()->setPromptString(sb.c_str());
 
   taskManager.add(&serialPort);

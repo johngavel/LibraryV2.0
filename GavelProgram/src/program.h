@@ -61,9 +61,23 @@ public:
     sb + "Program: " + memory.data.ProgramNumber + " Version: " + memory.data.MajorVersion + "." + memory.data.MinorVersion;
     terminal->println(INFO, sb.c_str());
   }
+
+  void updateExternal() override {
+    if (memory.data.ProgramNumber != ProgramInfo::ProgramNumber) {
+      conflict = true;
+    } else {
+      conflict = false;
+    }
+    initMemory();
+    setInternal(true);
+  }
+
+  bool getConflict() { return conflict; };
+
   ProgramUnion memory;
 
 private:
+  bool conflict = false;
 };
 
 void banner(OutputInterface* terminal);

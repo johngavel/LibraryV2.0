@@ -2,8 +2,6 @@
 
 #include <GavelUtil.h>
 
-unsigned int Task::count_id = 6000;
-
 bool Task::setup(OutputInterface* __terminal) {
   bool returnValue = false;
   terminal = __terminal;

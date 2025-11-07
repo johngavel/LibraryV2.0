@@ -4,6 +4,16 @@
 
 // #define FULL_DATA_SIZE I2C_DEVICESIZE_24LC16 / 8
 // #define FULL_DATA_SIZE I2C_DEVICESIZE_24LC256 / 8
+typedef struct {
+  unsigned short id;
+  unsigned short size;
+  unsigned char spare[4];
+} DataStruct;
+
+typedef union {
+  DataStruct dataStruct;
+  unsigned char memoryBuffer[sizeof(DataStruct)];
+} DataHeader;
 
 static char taskname[] = "EEPromMemory";
 EEpromMemory::EEpromMemory() : Task(taskname) {}
@@ -19,15 +29,21 @@ void EEpromMemory::addCmd(TerminalCommand* __termCmd) {
 }
 
 bool EEpromMemory::setupTask(OutputInterface* __terminal) {
+  StringBuilder sb;
   unsigned int fullDataSize = memorySize / 8;
   terminal = __terminal;
 
   setRefreshMilli(1000);
   dataSize = 0;
-  for (unsigned long i = 0; i < dataList.count(); i++) dataSize += (getData(i))->size();
+  for (unsigned long i = 0; i < dataList.count(); i++) {
+    dataSize += sizeof(DataHeader);
+    dataSize += (getData(i))->size();
+  }
   if (memorySize == 0) { terminal->println(ERROR, "EEPROM Memory Chip Unconfigured. "); }
   if (dataSize > fullDataSize) {
-    terminal->println(ERROR, "EEPROM Data Structure is too large: " + String(dataSize) + "/" + String(fullDataSize));
+    sb + "EEPROM Data Structure is too large: " + dataSize + "/" + fullDataSize;
+    terminal->println(ERROR, sb.c_str());
+    sb.clear();
     dataSize = fullDataSize;
   }
   i2cWire.wireTake();
@@ -58,7 +74,7 @@ bool EEpromMemory::executeTask() {
 }
 
 void EEpromMemory::forceWrite() {
-  setRefreshMilli(5000);
+  // if (terminal) terminal->println(WARNING, "Writing to EEPROM.");
   writeEEPROM();
 }
 
@@ -73,8 +89,12 @@ byte EEpromMemory::readEEPROMbyte(unsigned long address) {
 }
 
 void EEpromMemory::writeEEPROMbyte(unsigned long address, byte value) {
-  if (i2c_eeprom->isConnected() && !i2c_eeprom->updateByteVerify(address, value))
-    if (terminal) terminal->println(ERROR, "Error in Writing EEPROM " + String(address) + " = " + String(value, HEX));
+  if (i2c_eeprom->isConnected() && !i2c_eeprom->updateByteVerify(address, value)) {
+    StringBuilder sb;
+    sb + "Error in Writing EEPROM " + address + " = " + value;
+    if (terminal) terminal->println(ERROR, sb.c_str());
+    sb.clear();
+  }
 }
 
 void EEpromMemory::readEEPROM() {
@@ -82,10 +102,22 @@ void EEpromMemory::readEEPROM() {
     i2cWire.wireTake();
     unsigned long eepromIndex = 0;
     for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
+      DataHeader dataHeader;
       IMemory* data = getData(dataIndex);
-      for (unsigned long i = 0; i < data->size(); i++) (*data)[i] = readEEPROMbyte(eepromIndex + i);
-      data->setExternal(true);
-      eepromIndex += data->size();
+      for (unsigned long i = 0; i < sizeof(DataHeader); i++) dataHeader.memoryBuffer[i] = readEEPROMbyte(eepromIndex + i);
+      eepromIndex += sizeof(DataHeader);
+      if ((dataHeader.dataStruct.id == data->getId()) && (dataHeader.dataStruct.size == data->size())) {
+        for (unsigned long i = 0; i < data->size(); i++) (*data)[i] = readEEPROMbyte(eepromIndex + i);
+        data->updateExternal();
+        eepromIndex += data->size();
+      } else {
+        StringBuilder sb;
+        sb + "Invalid Data Segment in EEPROM <" + dataHeader.dataStruct.id + "/" + data->getId() + "> ";
+        sb + "Size <" + dataHeader.dataStruct.size + "/" + data->size() + "> ";
+        data->initMemory();
+        data->updateExternal();
+        terminal->println(ERROR, sb.c_str());
+      }
     }
     i2cWire.wireGive();
   }
@@ -96,7 +128,13 @@ void EEpromMemory::writeEEPROM() {
     i2cWire.wireTake();
     unsigned long eepromIndex = 0;
     for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
+      DataHeader dataHeader;
+      memset(dataHeader.memoryBuffer, 0, sizeof(DataHeader));
       IMemory* data = getData(dataIndex);
+      dataHeader.dataStruct.id = data->getId();
+      dataHeader.dataStruct.size = data->size();
+      for (unsigned long i = 0; i < sizeof(DataHeader); i++) writeEEPROMbyte(eepromIndex + i, dataHeader.memoryBuffer[i]);
+      eepromIndex += sizeof(DataHeader);
       for (unsigned long i = 0; i < data->size(); i++) writeEEPROMbyte(eepromIndex + i, (*data)[i]);
       data->setInternal(false);
       eepromIndex += data->size();
@@ -105,25 +143,32 @@ void EEpromMemory::writeEEPROM() {
   }
 }
 
-void EEpromMemory::wipe(OutputInterface* terminal) {
+void EEpromMemory::reinitializeMemory() {
   for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
     IMemory* data = getData(dataIndex);
     data->initMemory();
-    data->setExternal(true);
+    data->updateExternal();
   }
+}
+
+void EEpromMemory::wipe(OutputInterface* terminal) {
+  reinitializeMemory();
   terminal->println((getTimerRun()) ? PASSED : FAILED, "EEPROM Initialize Memory Complete.");
   terminal->prompt();
 }
 
 void EEpromMemory::mem(OutputInterface* terminal) {
-  terminal->println(INFO, "EEPROM Size: " + String(getLength()) + "/" + String(getMemorySize() / 8) + " bytes.");
+  StringBuilder sb;
+  sb + "EEPROM Size: " + getLength() + "/" + (getMemorySize() / 8) + " bytes.";
+  terminal->println(INFO, sb.c_str());
+  sb.clear();
   if (dataList.count() != 0) {
     for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
       IMemory* data = getData(dataIndex);
+      sb + "Data ID: " + data->getId() + " Data Size: " + data->size();
+      terminal->println(PROMPT, sb.c_str());
+      sb.clear();
       data->printData(terminal);
-      StringBuilder sb;
-      sb + "Data Retrieved from EEPROM: " + data->getExternal();
-      terminal->println(INFO, sb.c_str());
     }
   } else {
     terminal->println(WARNING, "No User Data Available!");
@@ -143,16 +188,20 @@ static void hexLine(char* string, unsigned long stringSize, unsigned char* value
     hexByteString(valueBuffer[i], hexString, sizeof(hexString));
     sb + hexString + " ";
   }
-  strncpy(string, sb.c_str(), stringSize);
+  strncpy(string, sb.c_str(), stringSize - 1); // minimal safety: ensure null-termination
+  string[stringSize - 1] = '\0';
 }
 
-static void printHexLine(OutputInterface* terminal, unsigned char* buffer, unsigned long lineNumber) {
+// CHANGED: add 'count' so we can print less than BYTES_PER_LINE for the tail
+static void printHexLine(OutputInterface* terminal, unsigned char* buffer, unsigned long lineNumber, unsigned long count) {
   char string[80];
   StringBuilder sb;
 
-  hexLine(string, sizeof(string), buffer, BYTES_PER_LINE);
+  // CHANGED: use 'count' instead of always BYTES_PER_LINE
+  hexLine(string, sizeof(string), buffer, count);
+
   char hexLineNumber[4];
-  hexByteString(lineNumber, hexLineNumber, sizeof(hexLineNumber));
+  hexByteString(lineNumber, hexLineNumber, sizeof(hexLineNumber)); // kept as-is per "minimal"
   sb + "0x" + hexLineNumber + ": ";
   terminal->print(HELP, sb.c_str());
   terminal->println(INFO, string);
@@ -173,8 +222,12 @@ void EEpromMemory::raw(OutputInterface* terminal) {
   for (unsigned long i = 0; i < dataSize; i++) buffer[i] = readEEPROMbyte(i);
   i2cWire.wireGive();
 
-  for (unsigned long i = 0; i < lines; i++) { printHexLine(terminal, &buffer[i * BYTES_PER_LINE], i * BYTES_PER_LINE); }
-  printHexLine(terminal, &buffer[lines], remainder);
+  // Unchanged full lines, but pass the explicit count
+  for (unsigned long i = 0; i < lines; i++) { printHexLine(terminal, &buffer[i * BYTES_PER_LINE], i * BYTES_PER_LINE, BYTES_PER_LINE); }
+
+  // CHANGED: fix tail pointer and count
+  if (remainder > 0) { printHexLine(terminal, &buffer[lines * BYTES_PER_LINE], lines * BYTES_PER_LINE, remainder); }
+
   terminal->println();
   terminal->prompt();
 }

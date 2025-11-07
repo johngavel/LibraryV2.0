@@ -9,9 +9,9 @@ public:
   typedef struct {
     unsigned char macAddress[6];
     unsigned char ipAddress[4];
-    unsigned char dnsAddress[4];
     unsigned char subnetMask[4];
     unsigned char gatewayAddress[4];
+    unsigned char dnsAddress[4];
     bool isDHCP;
     unsigned char spare[9];
   } EthernetData;
@@ -28,6 +28,7 @@ public:
   // IMemory overrides
   const unsigned char& operator[](std::size_t index) const override { return memory.buffer[index]; }
   unsigned char& operator[](std::size_t index) override { return memory.buffer[index]; }
+  void updateExternal() { setInternal(true); };
 
   std::size_t size() const noexcept override { return sizeof(EthernetUnion::buffer); }
 
@@ -71,14 +72,14 @@ public:
     sb = "IP Address: ";
     sb + getIPString(memory.data.ipAddress, buffer, sizeof(buffer));
     terminal->println(INFO, sb.c_str());
-    sb = "DNS Address: ";
-    sb + getIPString(memory.data.dnsAddress, buffer, sizeof(buffer));
-    terminal->println(INFO, sb.c_str());
     sb = "Subnet Mask: ";
     sb + getIPString(memory.data.subnetMask, buffer, sizeof(buffer));
     terminal->println(INFO, sb.c_str());
     sb = "Gateway Address: ";
     sb + getIPString(memory.data.gatewayAddress, buffer, sizeof(buffer));
+    terminal->println(INFO, sb.c_str());
+    sb = "DNS Address: ";
+    sb + getIPString(memory.data.dnsAddress, buffer, sizeof(buffer));
     terminal->println(INFO, sb.c_str());
   }
   EthernetUnion memory;

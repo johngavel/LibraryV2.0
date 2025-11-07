@@ -16,7 +16,6 @@ void Scan::addCmd(TerminalCommand* __termCmd) {
 void Scan::scani2c(OutputInterface* terminal) {
   byte error, address;
   int nDevices;
-  String devicesFound[MAX_SCAN_DEVICES];
 
   terminal->println(INFO, "I2C Scanner");
   terminal->println(INFO, "Scanning...");
@@ -36,11 +35,6 @@ void Scan::scani2c(OutputInterface* terminal) {
       if (address < 16) terminal->print(INFO, "0");
       terminal->print(INFO, String(address, HEX));
       terminal->println(INFO, "  !");
-
-      if (nDevices < MAX_SCAN_DEVICES) { devicesFound[nDevices] = String(nDevices) + ". 0x" + String(address, HEX); }
-
-      nDevices++;
-
     } else if (error == 4) {
       terminal->print(WARNING, "Unknown error at address 0x");
       if (address < 16) terminal->print(INFO, "0");

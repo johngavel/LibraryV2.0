@@ -3,7 +3,7 @@
 
 bool isValidCString(const char* str, unsigned int maxLen = 256);
 
-int safeCompare(char* string1, char* string2);
+int safeCompare(const char* string1, const char* string2);
 
 char* safeAppend(char* dest, const char* src, int destSize);
 

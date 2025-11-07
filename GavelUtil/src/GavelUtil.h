@@ -4,6 +4,7 @@
 // Header for GavelUtil
 #include "communication.h"
 #include "datastructure.h"
+#include "idgenerator.h"
 #include "lock.h"
 #include "parameter.h"
 #include "stopwatch.h"
