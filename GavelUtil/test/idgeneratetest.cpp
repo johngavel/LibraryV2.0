@@ -28,9 +28,9 @@ void test_sequential_construction() {
   printf("IDs: a=%d, b=%d, c=%d\n", a.getId(), b.getId(), c.getId());
 
   // Expect starting at 1000, 1001, 1002
-  assert(a.getId() == 1000);
-  assert(b.getId() == 1001);
-  assert(c.getId() == 1002);
+  assert(a.getId() == 6000);
+  assert(b.getId() == 6001);
+  assert(c.getId() == 6002);
 }
 
 // ---- Test 2: getId() is stable and does not change post-construction

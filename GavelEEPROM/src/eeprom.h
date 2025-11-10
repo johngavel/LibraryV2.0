@@ -14,9 +14,9 @@ class EEpromMemory : public Task {
 public:
   EEpromMemory();
   void configure(unsigned long size);
-  virtual void addCmd(TerminalCommand* __termCmd);
-  virtual bool setupTask(OutputInterface* __terminal);
-  virtual bool executeTask();
+  void addCmd(TerminalCommand* __termCmd) override;
+  bool setupTask(OutputInterface* __terminal) override;
+  bool executeTask() override;
   void forceWrite();
   void setData(IMemory* __data) { dataList.push(&__data); };
   IMemory* getData(unsigned long index) { return (IMemory*) *((IMemory**) dataList.get(index)); };

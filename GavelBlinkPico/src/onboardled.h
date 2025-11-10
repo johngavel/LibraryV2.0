@@ -6,9 +6,9 @@
 class Blink : public Task {
 public:
   Blink();
-  virtual void addCmd(TerminalCommand* __termCmd) {};
-  virtual bool setupTask(OutputInterface* __terminal);
-  virtual bool executeTask();
+  void addCmd(TerminalCommand* __termCmd) override {};
+  bool setupTask(OutputInterface* __terminal) override;
+  bool executeTask() override;
 
 private:
   static Blink* blink;

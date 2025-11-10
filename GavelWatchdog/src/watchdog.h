@@ -7,9 +7,9 @@
 class Watchdog : public Task {
 public:
   Watchdog(uint32_t timeout = 8300, uint32_t petCycle = 1000);
-  virtual void addCmd(TerminalCommand* __termCmd) override {};
-  virtual bool setupTask(OutputInterface* __terminal) override;
-  virtual bool executeTask() override;
+  void addCmd(TerminalCommand* __termCmd) override {};
+  bool setupTask(OutputInterface* __terminal) override;
+  bool executeTask() override;
 
   void monitor(unsigned long core, bool monitor);
 

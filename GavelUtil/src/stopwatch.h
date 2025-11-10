@@ -29,6 +29,7 @@ public:
   unsigned long time() { return average.getAverage(); };
   unsigned long lowWaterMark() {
     unsigned long i = lwm;
+    if (i == WINT_MAX) i = 0;
     lwm = WINT_MAX;
     return i;
   };

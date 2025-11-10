@@ -14,10 +14,10 @@ public:
   void add(Task* task);
   Task* getTask(unsigned long i);
   unsigned long getTaskCount();
-  void addCmd(TerminalCommand* __termCmd);
-  bool setupTask(OutputInterface* __terminal);
+  void addCmd(TerminalCommand* __termCmd) override;
+  bool setupTask(OutputInterface* __terminal) override;
   bool loop();
-  bool executeTask();
+  bool executeTask() override;
   void system(OutputInterface* terminal);
 
 private:

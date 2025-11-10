@@ -6,9 +6,9 @@
 class Scan : public Task {
 public:
   Scan();
-  virtual void addCmd(TerminalCommand* __termCmd);
-  virtual bool setupTask(OutputInterface* __terminal) { return true; };
-  virtual bool executeTask() { return true; };
+  void addCmd(TerminalCommand* __termCmd) override;
+  bool setupTask(OutputInterface* __terminal) override { return true; };
+  bool executeTask() override { return true; };
 
   void scani2c(OutputInterface* terminal);
 

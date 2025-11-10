@@ -8,9 +8,9 @@
 class SerialPort : public Task {
 public:
   SerialPort();
-  void addCmd(TerminalCommand* __termCmd);
-  bool setupTask(OutputInterface* __terminal);
-  bool executeTask();
+  void addCmd(TerminalCommand* __termCmd) override;
+  bool setupTask(OutputInterface* __terminal) override;
+  bool executeTask() override;
 
   void configureSerial1(int __txPin, int __rxPin);
   void configureUSBSerial();

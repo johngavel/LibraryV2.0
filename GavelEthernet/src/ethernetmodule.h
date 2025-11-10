@@ -14,9 +14,9 @@
 class EthernetModule : public Task, public VirtualNetwork, public VirtualServerFactory {
 public:
   EthernetModule();
-  virtual void addCmd(TerminalCommand* __termCmd);
-  virtual bool setupTask(OutputInterface* __terminal);
-  virtual bool executeTask();
+  void addCmd(TerminalCommand* __termCmd) override;
+  bool setupTask(OutputInterface* __terminal) override;
+  bool executeTask() override;
 
   void configure();
   void configure(byte* __macAddress, bool __isDHCP);

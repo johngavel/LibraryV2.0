@@ -32,11 +32,11 @@ public:
   ~ClassicQueue();
   ClassicQueue(const ClassicQueue&) = delete;
   ClassicQueue& operator=(const ClassicQueue&) = delete;
-  bool push(void* element);
-  bool pop(void* element = nullptr);
-  bool get(unsigned long index, void* element);
-  void* get(unsigned long index);
-  void clear();
+  bool push(void* element) override;
+  bool pop(void* element = nullptr) override;
+  bool get(unsigned long index, void* element) override;
+  void* get(unsigned long index) override;
+  void clear() override;
 
 private:
   unsigned long frontIndex;
@@ -49,11 +49,11 @@ public:
   ~ClassicStack();
   ClassicStack(const ClassicStack&) = delete;
   ClassicStack& operator=(const ClassicStack&) = delete;
-  bool push(void* element);
-  bool pop(void* element = nullptr);
-  bool get(unsigned long index, void* element);
-  void* get(unsigned long index);
-  void clear();
+  bool push(void* element) override;
+  bool pop(void* element = nullptr) override;
+  bool get(unsigned long index, void* element) override;
+  void* get(unsigned long index) override;
+  void clear() override;
 
 private:
 };

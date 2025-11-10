@@ -45,21 +45,21 @@ private:
 class Screen : public Task, public ScreenInterface {
 public:
   Screen();
-  virtual void addCmd(TerminalCommand* __termCmd);
-  virtual bool setupTask(OutputInterface* __terminal);
-  virtual bool executeTask();
+  void addCmd(TerminalCommand* __termCmd) override;
+  bool setupTask(OutputInterface* __terminal) override;
+  bool executeTask() override;
 
   void setRefreshScreen(RefreshScreen* __refreshScreen, unsigned long __refresh) {
     refreshScreen = __refreshScreen;
     refreshScreen->refresh = __refresh;
     refreshScreen->setScreen(this);
   };
-  virtual void setScreen(String line1 = "", String line2 = "", String line3 = "", String line4 = "", String line5 = "", String line6 = "", String line7 = "",
-                         String line8 = "");
-  virtual void setScreen(BITMAP bitmap, String caption);
-  virtual void setScreen(unsigned char* bitmap, String caption, unsigned long width, unsigned long height);
-  virtual Adafruit_SSD1306* getDisplay() { return &display; };
-  virtual unsigned char* getBitmap(BITMAP bitmap);
+  void setScreen(String line1 = "", String line2 = "", String line3 = "", String line4 = "", String line5 = "", String line6 = "", String line7 = "",
+                 String line8 = "") override;
+  void setScreen(BITMAP bitmap, String caption) override;
+  void setScreen(unsigned char* bitmap, String caption, unsigned long width, unsigned long height) override;
+  Adafruit_SSD1306* getDisplay() override { return &display; };
+  unsigned char* getBitmap(BITMAP bitmap) override;
 
 private:
   Adafruit_SSD1306 display;
