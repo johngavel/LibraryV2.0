@@ -1,5 +1,5 @@
-#ifndef __GAVEL_STOP_WATCH
-#define __GAVEL_STOP_WATCH
+#ifndef __GAVEL_STOP_WATCH_H
+#define __GAVEL_STOP_WATCH_H
 
 #include "average.h"
 
@@ -45,4 +45,4 @@ private:
   unsigned long hwm = 0;
 };
 
-#endif
+#endif //__GAVEL_STOP_WATCH_H

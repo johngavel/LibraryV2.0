@@ -1,5 +1,5 @@
-#ifndef __GAVEL_TEST_UTIL_H
-#define __GAVEL_TEST_UTIL_H
+#ifndef __GAVEL_INTERFACES_TEST_UTIL_H
+#define __GAVEL_INTERFACES_TEST_UTIL_H
 char* getMacString(unsigned char* mac, char* buffer, unsigned long size) {
   return buffer;
 };
@@ -18,4 +18,4 @@ protected:
   unsigned short id; // Unique ID for each object
 };
 
-#endif //
+#endif // __GAVEL_INTERFACES_TEST_UTIL_H

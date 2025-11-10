@@ -1,5 +1,5 @@
-#ifndef __GAVEL_SERIAL
-#define __GAVEL_SERIAL
+#ifndef __GAVEL_SERIAL_H
+#define __GAVEL_SERIAL_H
 
 #include <GavelTask.h>
 #include <GavelUtil.h>
@@ -23,4 +23,4 @@ private:
   Terminal* terminalUSB = nullptr;
 };
 
-#endif
+#endif // __GAVEL_SERIAL_H

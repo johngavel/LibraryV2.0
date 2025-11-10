@@ -1,5 +1,5 @@
-#ifndef __GAVEL_SCREEN
-#define __GAVEL_SCREEN
+#ifndef __GAVEL_SCREEN_CLASS_H
+#define __GAVEL_SCREEN_CLASS_H
 
 // #define SSD1306_NO_SPLASH
 
@@ -77,4 +77,4 @@ private:
   void bitmap(OutputInterface* terminal);
 };
 
-#endif
+#endif // __GAVEL_SCREEN_CLASS_H

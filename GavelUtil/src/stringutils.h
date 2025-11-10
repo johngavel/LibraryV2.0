@@ -1,5 +1,5 @@
-#ifndef GAVEL_STRING_H
-#define GAVEL_STRING_H
+#ifndef __GAVEL_STRING_H
+#define __GAVEL_STRING_H
 
 bool isValidCString(const char* str, unsigned int maxLen = 256);
 
@@ -32,4 +32,4 @@ char* numToA(unsigned long n, char* buffer, int size);
 char* numToA(float n, char* buffer, int size);
 char* numToA(double n, char* buffer, int size);
 
-#endif // GAVEL_STRING_H
+#endif // __GAVEL_STRING_H

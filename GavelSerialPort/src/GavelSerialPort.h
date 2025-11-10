@@ -1,6 +1,6 @@
-#ifndef GAVELSERIALPORT_H
-#define GAVELSERIALPORT_H
+#ifndef __GAVELSERIALPORT_H
+#define __GAVELSERIALPORT_H
 
 #include "serialport.h"
 
-#endif // GAVELSERIALPORT_H
+#endif // __GAVELSERIALPORT_H

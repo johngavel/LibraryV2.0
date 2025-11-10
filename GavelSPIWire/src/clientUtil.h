@@ -1,5 +1,5 @@
-#ifndef GAVEL_CLIENT_UTILS_H
-#define GAVEL_CLIENT_UTILS_H
+#ifndef __GAVEL_CLIENT_UTILS_H
+#define __GAVEL_CLIENT_UTILS_H
 
 #include <Arduino.h>
 #include <Client.h>
@@ -13,4 +13,4 @@ unsigned int clientWrite(Client* client, char* buffer, unsigned int length);
 bool clientConnected(Client* client);
 void clientClose(Client* client);
 
-#endif // GAVEL_CLIENT_UTILS_H
+#endif // __GAVEL_CLIENT_UTILS_H

@@ -1,5 +1,5 @@
-#ifndef __GAVEL_PARAMETER
-#define __GAVEL_PARAMETER
+#ifndef __GAVEL_PARAMETER_H
+#define __GAVEL_PARAMETER_H
 
 #include <Arduino.h>
 
@@ -30,4 +30,4 @@ private:
   int parameterCount;
 };
 
-#endif
+#endif // __GAVEL_PARAMETER_H

@@ -1,5 +1,5 @@
-#ifndef __GAVEL_EEPROM
-#define __GAVEL_EEPROM
+#ifndef __GAVEL_EEPROM_CLASS_H
+#define __GAVEL_EEPROM_CLASS_H
 
 #include <GavelInterfaces.h>
 #include <GavelProgram.h>
@@ -41,4 +41,4 @@ private:
   void raw(OutputInterface* terminal);
 };
 
-#endif
+#endif //__GAVEL_EEPROM_CLASS_H

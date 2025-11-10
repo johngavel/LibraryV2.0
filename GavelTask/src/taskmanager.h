@@ -26,4 +26,4 @@ private:
   IdleTask idleTask[CPU_CORES];
 };
 
-#endif
+#endif // __GAVEL_TASK_MANAGER_H

@@ -1,6 +1,6 @@
-#ifndef GAVELPICO_H
-#define GAVELPICO_H
+#ifndef __GAVELPICO_H
+#define __GAVELPICO_H
 
 #include "picocmd.h"
 
-#endif // GAVELPICO_H
+#endif // __GAVELPICO_H

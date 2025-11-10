@@ -1,5 +1,5 @@
-#ifndef __GAVEL_WATCHDOG
-#define __GAVEL_WATCHDOG
+#ifndef __GAVEL_WATCHDOG_CLASS_H
+#define __GAVEL_WATCHDOG_CLASS_H
 
 #include <GavelTask.h>
 #include <Terminal.h>
@@ -20,4 +20,4 @@ private:
   OutputInterface* terminal;
 };
 
-#endif
+#endif //__GAVEL_WATCHDOG_CLASS_H

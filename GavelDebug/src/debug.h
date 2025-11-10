@@ -1,6 +1,6 @@
-#ifndef __GAVEL_DEBUG_
-#define __GAVEL_DEBUG_
+#ifndef __GAVEL_DEBUG_H
+#define __GAVEL_DEBUG_H
 
 void DEBUG(char* s);
 
-#endif
+#endif // __GAVEL_DEBUG_H

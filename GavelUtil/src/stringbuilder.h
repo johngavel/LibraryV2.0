@@ -1,5 +1,5 @@
-#ifndef GAVEL_STRINGBUILDER_H
-#define GAVEL_STRINGBUILDER_H
+#ifndef __GAVEL_STRINGBUILDER_H
+#define __GAVEL_STRINGBUILDER_H
 
 class StringBuilder {
 public:
@@ -74,4 +74,4 @@ private:
   int size_ = 0;
 };
 
-#endif // GAVEL_STRINGBUILDER_H
+#endif // __GAVEL_STRINGBUILDER_H

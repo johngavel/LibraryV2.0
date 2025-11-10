@@ -1,5 +1,5 @@
-#ifndef __GAVEL_DATA_STRUCTURE
-#define __GAVEL_DATA_STRUCTURE
+#ifndef __GAVEL_DATA_STRUCTURE_H
+#define __GAVEL_DATA_STRUCTURE_H
 
 class ClassicList {
 public:
@@ -58,4 +58,4 @@ public:
 private:
 };
 
-#endif
+#endif // __GAVEL_DATA_STRUCTURE_H

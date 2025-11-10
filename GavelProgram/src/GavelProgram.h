@@ -1,6 +1,6 @@
-#ifndef GAVELPROGRAM_H
-#define GAVELPROGRAM_H
+#ifndef __GAVELPROGRAM_H
+#define __GAVELPROGRAM_H
 
 #include "program.h"
 
-#endif // GAVELPROGRAM_H
+#endif // __GAVELPROGRAM_H

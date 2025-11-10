@@ -1,5 +1,5 @@
-#ifndef __GAVEL_COMMUNICATION
-#define __GAVEL_COMMUNICATION
+#ifndef __GAVEL_COMMUNICATION_H
+#define __GAVEL_COMMUNICATION_H
 
 #include "datastructure.h"
 #include "lock.h"
@@ -63,4 +63,4 @@ private:
   bool queueError;
 };
 
-#endif
+#endif // __GAVEL_COMMUNICATION_H

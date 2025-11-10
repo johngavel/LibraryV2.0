@@ -1,5 +1,5 @@
-#ifndef __GAVEL_TELNET
-#define __GAVEL_TELNET
+#ifndef __GAVEL_TELNET_CLASS_H
+#define __GAVEL_TELNET_CLASS_H
 
 #include "networkinterface.h"
 
@@ -29,4 +29,4 @@ private:
   char promptString[20];
 };
 
-#endif
+#endif // __GAVEL_TELNET_CLASS_H

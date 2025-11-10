@@ -1,7 +1,7 @@
-#ifndef GAVELTASK_H
-#define GAVELTASK_H
+#ifndef __GAVELTASK_H
+#define __GAVELTASK_H
 
 #include "taskclass.h"
 #include "taskmanager.h"
 
-#endif // GAVELTASK_H
+#endif // __GAVELTASK_H

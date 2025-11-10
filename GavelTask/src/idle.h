@@ -32,4 +32,4 @@ private:
   unsigned int delay_ms = 0;
 };
 
-#endif
+#endif // __GAVEL_IDLE_H

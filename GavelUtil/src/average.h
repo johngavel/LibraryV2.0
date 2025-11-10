@@ -1,5 +1,5 @@
-#ifndef GAVEL_AVG_H
-#define GAVEL_AVG_H
+#ifndef __GAVEL_AVG_H
+#define __GAVEL_AVG_H
 
 #include <stdint.h>
 
@@ -30,4 +30,4 @@ private:
   int32_t alphaQ15; // Q15 scaled alpha
 };
 
-#endif
+#endif // __GAVEL_AVG_H

@@ -1,5 +1,5 @@
-#ifndef __GAVEL_BITMAP
-#define __GAVEL_BITMAP
+#ifndef __GAVEL_BITMAP_H
+#define __GAVEL_BITMAP_H
 
 #pragma once
 
@@ -222,4 +222,4 @@ const unsigned char bitmap_VUMeter[] PROGMEM = {
 // PROGMEM = 1040)
 const unsigned char* bitmap_allArray[5] = {bitmap_jaxson_small, bitmap_dragon, bitmap_light_bulb, bitmap_VUMeter, bitmap_gavel};
 
-#endif
+#endif // __GAVEL_BITMAP_H

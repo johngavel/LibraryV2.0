@@ -1,5 +1,5 @@
-#ifndef GAVELUTIL_H
-#define GAVELUTIL_H
+#ifndef __GAVELUTIL_H
+#define __GAVELUTIL_H
 
 // Header for GavelUtil
 #include "communication.h"
@@ -12,4 +12,4 @@
 #include "stringutils.h"
 #include "timer.h"
 
-#endif // GAVELUTIL_H
+#endif // __GAVELUTIL_H

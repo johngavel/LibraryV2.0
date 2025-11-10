@@ -1,7 +1,7 @@
-#ifndef GAVELDEBUG_H
-#define GAVELDEBUG_H
+#ifndef __GAVELDEBUG_H
+#define __GAVELDEBUG_H
 
 // Header for GavelDebug
 #include "debug.h"
 
-#endif // GAVELDEBUG_H
+#endif // __GAVELDEBUG_H

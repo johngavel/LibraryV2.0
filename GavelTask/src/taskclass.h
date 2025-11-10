@@ -40,4 +40,4 @@ private:
   bool run = true;
 };
 
-#endif
+#endif // __GAVEL_TASK_H

@@ -15,4 +15,4 @@ private:
   bool state = true;
 };
 
-#endif
+#endif //__GAVEL_BLINK_H

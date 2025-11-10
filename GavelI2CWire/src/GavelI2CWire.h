@@ -1,5 +1,5 @@
-#ifndef GAVEL_I2C_WIRE_H
-#define GAVEL_I2C_WIRE_H
+#ifndef __GAVEL_I2C_WIRE_H
+#define __GAVEL_I2C_WIRE_H
 
 #include <GavelUtil.h>
 #include <Wire.h>
@@ -30,4 +30,4 @@ private:
 
 extern I2CWire i2cWire;
 
-#endif // GAVEL_I2C_WIRE_H
+#endif // __GAVEL_I2C_WIRE_H

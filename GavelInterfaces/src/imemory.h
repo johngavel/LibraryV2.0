@@ -1,5 +1,5 @@
-#ifndef GAVEL_MEMORY_H_
-#define GAVEL_MEMORY_H_
+#ifndef __GAVEL_MEMORY_H
+#define __GAVEL_MEMORY_H
 
 #include <GavelUtil.h>
 #include <Terminal.h>
@@ -88,4 +88,4 @@ private:
 // private:
 // };
 
-#endif // GAVEL_MEMORY_H_
+#endif // __GAVEL_MEMORY_H

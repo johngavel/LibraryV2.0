@@ -1,5 +1,5 @@
-#ifndef __GAVEL_SCANNER
-#define __GAVEL_SCANNER
+#ifndef __GAVEL_SCANNER_H
+#define __GAVEL_SCANNER_H
 
 #include <GavelTask.h>
 
@@ -15,4 +15,4 @@ public:
 private:
 };
 
-#endif
+#endif // __GAVEL_SCANNER_H

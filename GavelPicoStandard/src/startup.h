@@ -1,5 +1,5 @@
-#ifndef __GAVEL_STARTUP
-#define __GAVEL_STARTUP
+#ifndef __GAVEL_STARTUP_H
+#define __GAVEL_STARTUP_H
 
 #include <GavelBlinkPico.h>
 #include <GavelPico.h>
@@ -21,4 +21,4 @@ extern SerialPort serialPort;
 extern Blink blink;
 extern Watchdog watchdog;
 
-#endif
+#endif // __GAVEL_STARTUP_H

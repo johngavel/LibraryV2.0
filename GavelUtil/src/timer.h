@@ -1,5 +1,5 @@
-#ifndef __GAVEL_TIMER
-#define __GAVEL_TIMER
+#ifndef __GAVEL_TIMER_H
+#define __GAVEL_TIMER_H
 
 #include <Arduino.h>
 
@@ -33,4 +33,4 @@ private:
   bool run;
 };
 
-#endif
+#endif //__GAVEL_TIMER_H

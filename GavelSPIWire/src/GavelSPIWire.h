@@ -1,5 +1,5 @@
-#ifndef GAVEL_SPI_WIRE_H
-#define GAVEL_SPI_WIRE_H
+#ifndef __GAVEL_SPI_WIRE_H
+#define __GAVEL_SPI_WIRE_H
 
 #include "clientUtil.h"
 
@@ -37,4 +37,4 @@ private:
 
 extern SPIWire spiWire;
 
-#endif // GAVEL_SPI_WIRE_H
+#endif // __GAVEL_SPI_WIRE_H

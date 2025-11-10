@@ -1,5 +1,5 @@
-#ifndef GAVEL_CALLBACK_H
-#define GAVEL_CALLBACK_H
+#ifndef __GAVEL_CALLBACK_H
+#define __GAVEL_CALLBACK_H
 
 #include <functional>
 #include <iostream>
@@ -21,4 +21,4 @@ private:
   std::vector<std::function<void()>> callbacks;
 };
 
-#endif
+#endif // __GAVEL_CALLBACK_H

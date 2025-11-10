@@ -1,6 +1,6 @@
-#ifndef GAVELPICOSTANDARD_H
-#define GAVELPICOSTANDARD_H
+#ifndef __GAVELPICOSTANDARD_H
+#define __GAVELPICOSTANDARD_H
 
 #include "startup.h"
 
-#endif // GAVELPICOSTANDARD_H
+#endif // __GAVELPICOSTANDARD_H

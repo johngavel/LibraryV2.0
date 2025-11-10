@@ -1,6 +1,6 @@
-#ifndef GAVELBLINKPICO_H
-#define GAVELBLINKPICO_H
+#ifndef __GAVEL_BLINK_PICO_H
+#define __GAVEL_BLINK_PICO_H
 
 #include "onboardled.h"
 
-#endif // GAVELBLINKPICO_H
+#endif // __GAVEL_BLINK_PICO_H

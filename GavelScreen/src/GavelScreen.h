@@ -3,4 +3,4 @@
 
 #include "screen.h"
 
-#endif // __GAVEL_SCAN_H
+#endif // __GAVEL_SCREEN_H

@@ -1,5 +1,5 @@
-#ifndef __GAVEL_LOCK
-#define __GAVEL_LOCK
+#ifndef __GAVEL_LOCK_H
+#define __GAVEL_LOCK_H
 
 #include <FreeRTOS.h>
 #include <pico/sem.h>
@@ -31,4 +31,4 @@ private:
   semaphore_t semLock;
 };
 
-#endif
+#endif //__GAVEL_LOCK_H
