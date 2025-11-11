@@ -58,4 +58,20 @@ public:
 private:
 };
 
+class ClassicSortList : public ClassicStack {
+public:
+  ClassicSortList(unsigned long __capacity, unsigned long __sizeOfElement, void* __memory = nullptr);
+  ~ClassicSortList();
+  ClassicSortList(const ClassicSortList&) = delete;
+  ClassicSortList& operator=(const ClassicSortList&) = delete;
+  bool setSortFunction(int (*cmp)(const void*, const void*));
+  bool sort();
+  bool sort(int (*cmp)(const void*, const void*)); // one-off comparator
+  bool swap(unsigned long i, unsigned long j);
+
+private:
+  unsigned char* tempSwapSpace;
+  int (*cmpFn)(const void*, const void*) = nullptr;
+};
+
 #endif // __GAVEL_DATA_STRUCTURE_H

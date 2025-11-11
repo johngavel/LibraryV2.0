@@ -11,7 +11,6 @@ public:
   bool executeTask() override;
 
 private:
-  static Blink* blink;
   bool state = true;
 };
 

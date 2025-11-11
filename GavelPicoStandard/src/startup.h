@@ -2,6 +2,7 @@
 #define __GAVEL_STARTUP_H
 
 #include <GavelBlinkPico.h>
+#include <GavelGPIO.h>
 #include <GavelPico.h>
 #include <GavelSerialPort.h>
 #include <GavelTask.h>
@@ -20,5 +21,6 @@ extern TaskManager taskManager;
 extern SerialPort serialPort;
 extern Blink blink;
 extern Watchdog watchdog;
+extern GPIOManager gpioManager;
 
 #endif // __GAVEL_STARTUP_H

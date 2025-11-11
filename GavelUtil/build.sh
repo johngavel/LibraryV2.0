@@ -44,6 +44,7 @@ case "$BUILD" in
     ;;
   --debug)
     #debug_test <current directory> <test name>
+    debug_test . classicsortlisttest
     ;;
   *)
     log_failed "Invalid Command Argument: $BUILD"

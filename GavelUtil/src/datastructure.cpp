@@ -188,3 +188,72 @@ void ClassicStack::clear() {
   listError = false;
   if (memory != nullptr) memset(memory, 0, capacity * sizeOfElement);
 }
+
+ClassicSortList::ClassicSortList(unsigned long __capacity, unsigned long __sizeOfElement, void* __memory)
+    : ClassicStack(__capacity, __sizeOfElement, __memory) {
+  tempSwapSpace = (unsigned char*) malloc(__sizeOfElement);
+}
+
+ClassicSortList::~ClassicSortList() {
+  if (tempSwapSpace != nullptr) {
+    free(tempSwapSpace);
+    tempSwapSpace = nullptr;
+  }
+}
+
+bool ClassicSortList::setSortFunction(int (*cmp)(const void*, const void*)) {
+  if (cmp == nullptr) {
+    listError = true;
+    return false;
+  }
+  cmpFn = cmp;
+  return true;
+}
+
+bool ClassicSortList::sort() {
+  if (cmpFn == nullptr) {
+    listError = true; // comparator not set
+    return false;
+  }
+  return sort(cmpFn);
+}
+
+bool ClassicSortList::sort(int (*cmp)(const void*, const void*)) {
+  if (memError || sizeOfElement == 0 || cmp == nullptr) {
+    listError = true;
+    return false;
+  }
+
+  if (count() <= 1) return true;
+
+  void* base = (void*) memory;
+  if (base == nullptr) {
+    listError = true;
+    return false;
+  }
+
+  qsort(base, count(), sizeOfElement, cmp);
+  return true;
+}
+
+// Swap two elements via temporary buffer.
+bool ClassicSortList::swap(unsigned long i, unsigned long j) {
+  if (i >= count() || j >= count() || this->memError || count() == 0) {
+    this->listError = true;
+    return false;
+  }
+  if (i == j) return true;
+  unsigned char* a = &memory[i * sizeOfElement];
+  unsigned char* b = &memory[j * sizeOfElement];
+
+  if (tempSwapSpace == nullptr) {
+    listError = true;
+    return false;
+  }
+
+  memcpy(tempSwapSpace, a, sizeOfElement);
+  memcpy(a, b, sizeOfElement);
+  memcpy(b, tempSwapSpace, sizeOfElement);
+
+  return true;
+}
