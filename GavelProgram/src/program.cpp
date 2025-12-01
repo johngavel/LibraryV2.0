@@ -52,6 +52,10 @@ void banner(OutputInterface* terminal) {
   terminal->println(INFO, sb.c_str());
   sb.clear();
   terminal->println();
+  sb + "Terminal: " + terminal->getTerminalName().c_str();
+  terminal->println(INFO, sb.c_str());
+  sb.clear();
+  terminal->println();
   terminal->print(INFO, "Microcontroller: ");
   terminal->println(INFO, stringHardware(ProgramInfo::hw_type));
   terminal->print(INFO, "Core is running at ");

@@ -26,6 +26,7 @@ void SerialPort::configureSerial1(int __txPin, int __rxPin) {
   terminalSerial1 = new Terminal(&Serial1);
   terminalSerial1->setup();
   terminalSerial1->setColor(true);
+  terminalSerial1->setTerminalName("TTY Serial Port 1");
 }
 
 void SerialPort::configureUSBSerial() {
@@ -33,6 +34,7 @@ void SerialPort::configureUSBSerial() {
   terminalUSB = new Terminal(&Serial);
   terminalUSB->setup();
   terminalUSB->setColor(true);
+  terminalUSB->setTerminalName("USB Serial Port");
 }
 
 OutputInterface* SerialPort::getMainSerialPort() {

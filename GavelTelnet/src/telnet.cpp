@@ -42,6 +42,7 @@ bool TelnetModule::executeTask() {
         terminal_->setColor(true);
         if (bannerFunction) terminal_->setBannerFunction(bannerFunction);
         terminal_->setPromptString(promptString);
+        terminal_->setTerminalName("Telnet");
       } else {
         terminal_->setStream(client);
       }
