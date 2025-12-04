@@ -2,6 +2,7 @@
 #define __GAVELINTERFACES_H
 
 #include "callback.h"
+#include "digitalfile.h"
 #include "imemory.h"
 #include "networkinterface.h"
 

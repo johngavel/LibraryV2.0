@@ -19,6 +19,12 @@ int safeCompare(const char* string1, const char* string2) {
   return (strcmp(string1, string2));
 }
 
+int safeCompare(const char* string1, const char* string2, int length) {
+  if (!isValidCString(string1)) return INT_MAX;
+  if (!isValidCString(string2)) return INT_MIN;
+  return (strncmp(string1, string2, length));
+}
+
 char* safeAppend(char* dest, const char* src, int destSize) {
   if (!dest || !src || destSize == 0) return dest;
 

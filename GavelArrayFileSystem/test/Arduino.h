@@ -1,0 +1,4 @@
+#ifndef __GAVEL_AFS_TEST_ARDUINO_H
+#define __GAVEL_AFS_TEST_ARDUINO_H
+
+#endif // __GAVEL_AFS_TEST_ARDUINO_H
