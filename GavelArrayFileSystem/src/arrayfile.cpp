@@ -8,7 +8,7 @@ ArrayFile::ArrayFile() {
   _isOpen = false;
 }
 
-void ArrayFile::set(char* name, char* data, int size) {
+void ArrayFile::set(const char* name, char* data, int size) {
   strncpy(_name, name, sizeof(_name) - 1);
   _data = data;
   _size = size;

@@ -1,5 +1,7 @@
 #include "startup.h"
 
+#include "filesystem.h"
+
 #include <GavelProgram.h>
 #include <GavelUtil.h>
 #include <GavelWatchdog.h>
@@ -12,6 +14,7 @@ TaskManager taskManager;
 SerialPort serialPort;
 Blink blink;
 Watchdog watchdog;
+FileSystem fileSystem;
 
 void setup0Start(TerminalCommand* __termCmd) {
   startupMutex.take();
@@ -24,11 +27,13 @@ void setup0Start(TerminalCommand* __termCmd) {
   taskManager.add(&serialPort);
   taskManager.add(&blink);
   taskManager.add(&watchdog);
+  taskManager.add(&fileSystem);
 
   addStandardTerminalCommands(__termCmd);
-  if (__termCmd) __termCmd->addCmd("reboot", "", "Software Reboot the Pico", [&](TerminalLibrary::OutputInterface* terminal) { pico.rebootPico(terminal); });
-  if (__termCmd)
+  if (__termCmd) {
+    __termCmd->addCmd("reboot", "", "Software Reboot the Pico", [&](TerminalLibrary::OutputInterface* terminal) { pico.rebootPico(terminal); });
     __termCmd->addCmd("upload", "", "Software Reboot the Pico into USB mode", [&](TerminalLibrary::OutputInterface* terminal) { pico.uploadPico(terminal); });
+  }
 }
 
 void setup0SerialPort(int __txPin, int __rxPin) {

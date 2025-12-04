@@ -92,7 +92,6 @@ char* tab(int tabLength, char* buffer, int size) {
       // If you want to be extra safe, you could also break if buffer is full.
     }
   }
-
   return buffer;
 }
 
