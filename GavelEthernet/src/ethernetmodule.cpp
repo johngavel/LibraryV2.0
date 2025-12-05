@@ -2,9 +2,7 @@
 
 #include <GavelSPIWire.h>
 
-static char taskname[] = "EthernetModule";
-
-EthernetModule::EthernetModule() : Task(taskname) {}
+EthernetModule::EthernetModule() : Task("EthernetModule") {}
 
 bool EthernetModule::resetW5500() {
   pinMode(15, OUTPUT);

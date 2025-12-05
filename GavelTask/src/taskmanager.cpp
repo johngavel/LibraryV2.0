@@ -6,9 +6,7 @@
 #include <GavelProgram.h>
 #include <GavelUtil.h>
 
-static char taskname[] = "TaskManager";
-
-TaskManager::TaskManager() : Task(taskname), queue(20, sizeof(Task*)) {
+TaskManager::TaskManager() : Task("TaskManager"), queue(20, sizeof(Task*)) {
   id = TASK_MANAGER_ID;
 };
 

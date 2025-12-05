@@ -14,15 +14,15 @@
 #include <stdio.h>
 
 // ---------- Fake clock (32-bit microsecond counter) ----------
-static uint32_t FAKE_TIME_US = 0; // 32-bit so it naturally wraps at 2^32
+static unsigned long FAKE_TIME_US = 0; // 32-bit so it naturally wraps at 2^32
 
-static inline void set_us(uint32_t t) {
+static inline void set_us(unsigned long t) {
   FAKE_TIME_US = t;
 }
-static inline void advance_us(uint32_t d) {
+static inline void advance_us(unsigned long d) {
   FAKE_TIME_US += d;
 }
-static inline uint32_t now_us32() {
+static inline unsigned long now_us32() {
   return FAKE_TIME_US;
 }
 
@@ -141,18 +141,18 @@ static void test_reset_behavior() {
 static void test_wraparound_32bit_unsigned() {
   printf("[test_wraparound_32bit_unsigned]\n");
   // Simulate refresh near max 32-bit, then time moves forward causing wrap.
-  const uint32_t R = 0xFFFFFFFFu - 500; // refresh very close to wrap
+  const unsigned long R = 0xFFFFFFFFu - 500; // refresh very close to wrap
   Timer t;
   t.setRefreshMicro(1000); // 1000 us interval
   t.reset(R);
 
   // timeStamp = R + 1500 (wraps to 1000 beyond max)
-  uint32_t ts = R + 1000; // wraps naturally in 32-bit
+  unsigned long ts = R + 1000; // wraps naturally in 32-bit
   // Under unsigned arithmetic, ts - R == 1500
   CHECK_EQ_INT("one expiration across wrap", t.expiredMicro(ts), 1001);
 
   // refresh advanced by 1000 from R, which also wraps
-  uint32_t expected_refresh = R + 1000u; // wraps
+  unsigned long expected_refresh = R + 1000u; // wraps
   CHECK_EQ_UL("refresh advanced correctly across wrap", t.getLastExpired(), (unsigned long) expected_refresh);
 }
 

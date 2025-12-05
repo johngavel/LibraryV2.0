@@ -7,15 +7,15 @@
 // ===== Optional shims for non-Arduino desktop builds =====
 #ifndef USE_REAL_ARDUINO
 // Minimal Arduino types so digitalfile.h compiles
-typedef unsigned char uint8_t;
+typedef unsigned char unsigned char;
 class Stream {
 public:
   virtual int available() = 0;
   virtual int read() = 0;
   virtual int peek() = 0;
   virtual void flush() = 0;
-  virtual size_t write(const uint8_t* buffer, size_t size) = 0;
-  virtual size_t write(uint8_t) = 0;
+  virtual size_t write(const unsigned char* buffer, size_t size) = 0;
+  virtual size_t write(unsigned char) = 0;
   virtual ~Stream() {}
 };
 #endif
@@ -101,8 +101,8 @@ static void test_ArrayFile_write_is_noop() {
   f.open();
 
   // Writes are defined to be no-op (return 0) in RAM-only implementation
-  assert(f.write((uint8_t) 'Q') == 0);
-  uint8_t blob[3] = {1, 2, 3};
+  assert(f.write((unsigned char) 'Q') == 0);
+  unsigned char blob[3] = {1, 2, 3};
   assert(f.write(blob, 3) == 0);
 
   // Data remains unchanged; next read yields original content

@@ -5,9 +5,7 @@
 #define BUFFER_SIZE 1024
 #define HEADER_LENGTH 4096
 
-static char taskname[] = "Telnet";
-
-TelnetModule::TelnetModule() : Task(taskname) {
+TelnetModule::TelnetModule() : Task("Telnet") {
   setRefreshMilli(10);
   client = nullptr;
   terminal_ = nullptr;

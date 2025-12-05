@@ -2,9 +2,7 @@
 
 #include <GavelUtil.h>
 
-static char taskname[] = "SerialPort";
-
-SerialPort::SerialPort() : Task(taskname){};
+SerialPort::SerialPort() : Task("SerialPort"){};
 
 void SerialPort::addCmd(TerminalCommand* __termCmd) {}
 

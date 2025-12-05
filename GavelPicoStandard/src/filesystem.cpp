@@ -2,9 +2,7 @@
 
 #include <GavelUtil.h>
 
-static char taskname[] = "FileSystem";
-
-FileSystem::FileSystem() : Task(taskname){};
+FileSystem::FileSystem() : Task("FileSystem"){};
 
 bool FileSystem::setupTask(OutputInterface* __terminal) {
   return true;

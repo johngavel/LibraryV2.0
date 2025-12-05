@@ -2,9 +2,7 @@
 
 #include <Arduino.h>
 
-static char taskname[] = "Blink";
-
-Blink::Blink() : Task(taskname){};
+Blink::Blink() : Task("Blink"){};
 
 bool Blink::setupTask(OutputInterface* __terminal) {
   setRefreshMilli(500);

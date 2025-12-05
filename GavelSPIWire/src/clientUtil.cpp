@@ -13,7 +13,7 @@ char clientRead(Client* client) {
 unsigned int clientRead(Client* client, char* buffer, unsigned int length) {
   unsigned int receivedBytes = 0;
   spiWire.wireTake();
-  receivedBytes = client->read((uint8_t*) buffer, BUFFER_SIZE);
+  receivedBytes = client->read((unsigned char*) buffer, BUFFER_SIZE);
   spiWire.wireGive();
   return receivedBytes;
 }
@@ -29,7 +29,7 @@ static unsigned int __clientWrite(Client* client, char* buffer, unsigned int len
   unsigned int __length = (length > BUFFER_SIZE) ? BUFFER_SIZE : length;
   unsigned int totalBytes = 0;
   spiWire.wireTake();
-  totalBytes = client->write((const uint8_t*) buffer, __length);
+  totalBytes = client->write((const unsigned char*) buffer, __length);
   spiWire.wireGive();
   return totalBytes;
 }

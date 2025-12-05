@@ -6,7 +6,7 @@
 
 class Watchdog : public Task {
 public:
-  Watchdog(uint32_t timeout = 8300, uint32_t petCycle = 1000);
+  Watchdog(unsigned long timeout = 8300, unsigned long petCycle = 1000);
   void addCmd(TerminalCommand* __termCmd) override {};
   bool setupTask(OutputInterface* __terminal) override;
   bool executeTask() override;
@@ -14,8 +14,8 @@ public:
   void monitor(unsigned long core, bool monitor);
 
 private:
-  uint32_t watchdogTimeout;
-  uint32_t watchdogPetCycle;
+  unsigned long watchdogTimeout;
+  unsigned long watchdogPetCycle;
   bool monitorCore[CPU_CORES];
   OutputInterface* terminal;
 };

@@ -28,8 +28,8 @@ public:
   virtual int read() = 0;
   virtual int peek() = 0;
   virtual void flush() = 0;
-  virtual size_t write(const uint8_t* buffer, size_t size) = 0;
-  virtual size_t write(uint8_t) = 0;
+  virtual size_t write(const unsigned char* buffer, size_t size) = 0;
+  virtual size_t write(unsigned char) = 0;
 
 private:
 };

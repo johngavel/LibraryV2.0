@@ -21,8 +21,8 @@ public:
   int read() override;
   int peek() override;
   void flush() override;
-  size_t write(const uint8_t* buffer, size_t size) override;
-  size_t write(uint8_t) override;
+  size_t write(const unsigned char* buffer, size_t size) override;
+  size_t write(unsigned char) override;
 
 private:
   char _name[200];

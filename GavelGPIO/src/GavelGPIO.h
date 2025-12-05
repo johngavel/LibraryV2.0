@@ -1,6 +1,8 @@
-#ifndef __GAVEL_GPIO_MANAGER_H
-#define __GAVEL_GPIO_MANAGER_H
+#ifndef __GAVEL_GPIO_H
+#define __GAVEL_GPIO_H
 
-#include "gpiomanager.h"
+#include "gpio_manager.h"
+#include "gpio_pin.h"
+#include "gpio_types.h"
 
-#endif // __GAVEL_GPIO_MANAGER_H
+#endif // __GAVEL_GPIO_H

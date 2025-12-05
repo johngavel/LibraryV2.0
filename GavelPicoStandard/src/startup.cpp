@@ -1,10 +1,10 @@
 #include "startup.h"
 
 #include "filesystem.h"
+#include "picobackend.h"
 
 #include <GavelProgram.h>
 #include <GavelUtil.h>
-#include <GavelWatchdog.h>
 
 static Mutex startupMutex;
 static Mutex startupMutex1;
@@ -15,6 +15,8 @@ SerialPort serialPort;
 Blink blink;
 Watchdog watchdog;
 FileSystem fileSystem;
+GPIOManager gpioManager;
+RP2040Backend picoDevice;
 
 void setup0Start(TerminalCommand* __termCmd) {
   startupMutex.take();
@@ -28,6 +30,8 @@ void setup0Start(TerminalCommand* __termCmd) {
   taskManager.add(&blink);
   taskManager.add(&watchdog);
   taskManager.add(&fileSystem);
+
+  gpioManager.addDevice(0, &picoDevice);
 
   addStandardTerminalCommands(__termCmd);
   if (__termCmd) {

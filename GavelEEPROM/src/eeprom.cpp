@@ -15,8 +15,7 @@ typedef union {
   unsigned char memoryBuffer[sizeof(DataStruct)];
 } DataHeader;
 
-static char taskname[] = "EEPromMemory";
-EEpromMemory::EEpromMemory() : Task(taskname) {}
+EEpromMemory::EEpromMemory() : Task("EEPromMemory") {}
 
 void EEpromMemory::configure(unsigned long size) {
   memorySize = size;
@@ -48,7 +47,7 @@ bool EEpromMemory::setupTask(OutputInterface* __terminal) {
   }
   i2cWire.wireTake();
   //  i2c_eeprom = new I2C_eeprom(0x50, I2C_DEVICESIZE_24LC16, WIRE);
-  i2c_eeprom = new I2C_eeprom(0x50, memorySize, &Wire);
+  i2c_eeprom = new I2C_eeprom(0x50, memorySize, i2cWire.getWire());
   i2c_eeprom->begin();
   runTimer(i2c_eeprom->isConnected());
   i2cWire.wireGive();

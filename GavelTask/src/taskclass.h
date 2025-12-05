@@ -10,7 +10,7 @@
 
 class Task : public Timer, public Identifiable {
 public:
-  Task(char* __name) { strncpy(name, __name, TASK_NAME_LENGTH); };
+  Task(const char* __name) { strncpy(name, __name, TASK_NAME_LENGTH); };
   bool setup(OutputInterface* __terminal);
   bool loop();
   virtual void addCmd(TerminalCommand* __termCmd) = 0;

@@ -4,8 +4,7 @@
 
 #define MAX_SCAN_DEVICES 6
 
-static char taskname[] = "I2CScanner";
-Scan::Scan() : Task(taskname) {
+Scan::Scan() : Task("I2CScanner") {
   runTask(false);
 };
 

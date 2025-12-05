@@ -1,22 +1,20 @@
 #ifndef __GAVEL_AVG_H
 #define __GAVEL_AVG_H
 
-#include <stdint.h>
-
 class Average {
 public:
-  explicit Average(uint32_t windowSize = 1000) : avg(0) { setWindowSize(windowSize); }
+  explicit Average(unsigned long windowSize = 1000) : avg(0) { setWindowSize(windowSize); }
 
   // Fast sample update: fixed-point multiply and accumulate
-  inline void sample(uint32_t value) {
+  inline void sample(unsigned long value) {
     // avg = alpha * value + (1 - alpha) * avg
     // Using Q15 fixed-point: alphaQ15 in [0, 32768]
     avg = ((alphaQ15 * (int32_t) value) + ((32768 - alphaQ15) * avg)) >> 15;
   }
 
-  inline uint32_t getAverage() const { return (uint32_t) avg; }
+  inline unsigned long getAverage() const { return (unsigned long) avg; }
 
-  inline void setWindowSize(uint32_t windowSize) {
+  inline void setWindowSize(unsigned long windowSize) {
     if (windowSize == 0) windowSize = 1;
     // alpha = 2 / (windowSize + 1)
     float alpha = 2.0f / ((float) windowSize + 1.0f);

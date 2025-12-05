@@ -6,8 +6,7 @@
 #include <GavelI2CWire.h>
 #include <GavelProgram.h>
 
-static char taskname[] = "Screen";
-Screen::Screen() : Task(taskname), display(Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET)), refreshScreen(nullptr) {}
+Screen::Screen() : Task("Screen"), display(Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, i2cWire.getWire(), OLED_RESET)), refreshScreen(nullptr) {}
 
 void Screen::addCmd(TerminalCommand* __termCmd) {
   if (__termCmd)

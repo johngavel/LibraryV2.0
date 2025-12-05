@@ -1,6 +1,7 @@
 #ifndef __GAVELINTERFACES_H
 #define __GAVELINTERFACES_H
 
+#include "IGPIOBackend.h"
 #include "callback.h"
 #include "digitalfile.h"
 #include "imemory.h"

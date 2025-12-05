@@ -43,11 +43,11 @@ void ArrayFile::flush() {
 }
 
 // File API methods
-size_t ArrayFile::write(uint8_t b) {
+size_t ArrayFile::write(unsigned char b) {
   return 0;
 }
 
-size_t ArrayFile::write(const uint8_t* buf, size_t size) {
+size_t ArrayFile::write(const unsigned char* buf, size_t size) {
   return 0;
 }
 

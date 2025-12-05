@@ -1,8 +1,6 @@
 #include "idle.h"
 
-static char taskname[] = "IDLE";
-
-IdleTask::IdleTask() : Task(taskname) {
+IdleTask::IdleTask() : Task("IDLE") {
   id = IDLE_ID;
 };
 
