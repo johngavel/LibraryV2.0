@@ -18,10 +18,14 @@ public:
   unsigned int value() const;
   void setDuty(unsigned int pct);
   void setFreq(unsigned long hz);
+  void setPol(LedPolarity __pol) { ledPol_ = __pol; };
 
-  GpioType type() const { return cfg_.type; }
-  int index() const { return cfg_.logicalIndex; }
-  const char* note() const { return cfg_.note; }
+  GpioType type() const { return cfg_.type; };
+  int index() const { return cfg_.logicalIndex; };
+  int physical() const { return phys_; };
+  IGPIOBackend* device() const { return device_; };
+  const char* note() const { return cfg_.note; };
+  GpioConfig* getConfig() { return &cfg_; };
 
 private:
   int phys_;

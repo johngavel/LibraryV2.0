@@ -8,6 +8,7 @@ class FileSystem : public Task {
 public:
   FileSystem();
   void addCmd(TerminalCommand* __termCmd) override;
+  void reservePins(BackendPinSetup* pinsetup) override {};
   bool setupTask(OutputInterface* __terminal) override;
   bool executeTask() override;
   DigitalFileSystem* getFileSystem() { return &afs; };

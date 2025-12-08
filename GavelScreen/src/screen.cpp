@@ -13,6 +13,10 @@ void Screen::addCmd(TerminalCommand* __termCmd) {
     __termCmd->addCmd("bitmap", "[n]", "Displays an image on the screen", [this](TerminalLibrary::OutputInterface* terminal) { bitmap(terminal); });
 }
 
+void Screen::reservePins(BackendPinSetup* pinsetup) {
+  i2cWire.reservePins(pinsetup);
+}
+
 bool Screen::setupTask(OutputInterface* __terminal) {
   i2cWire.wireTake();
 

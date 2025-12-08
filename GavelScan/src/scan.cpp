@@ -12,6 +12,10 @@ void Scan::addCmd(TerminalCommand* __termCmd) {
   if (__termCmd) __termCmd->addCmd("scan", "", "I2c Scanner", [this](TerminalLibrary::OutputInterface* terminal) { scani2c(terminal); });
 }
 
+void Scan::reservePins(BackendPinSetup* pinsetup) {
+  i2cWire.reservePins(pinsetup);
+}
+
 void Scan::scani2c(OutputInterface* terminal) {
   byte error, address;
   int nDevices;

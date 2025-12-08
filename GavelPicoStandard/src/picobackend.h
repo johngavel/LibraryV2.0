@@ -7,7 +7,8 @@
 class RP2040Backend : public IGPIOBackend {
 public:
   RP2040Backend();
-  PinList* getAvailablePins() override;
+  void setAvailablePins(BackendPinSetup* pinsetup) override;
+  void setReservePins(BackendPinSetup* pinsetup) override;
   bool setupInput(int pin) override;
   bool setupOutput(int pin) override;
   bool setupAdc(int pin, unsigned char bits) override;

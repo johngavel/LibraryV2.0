@@ -15,6 +15,7 @@ public:
   Task* getTask(unsigned long i);
   unsigned long getTaskCount();
   void addCmd(TerminalCommand* __termCmd) override;
+  void reservePins(BackendPinSetup* pinsetup) override;
   bool setupTask(OutputInterface* __terminal) override;
   bool loop();
   bool executeTask() override;

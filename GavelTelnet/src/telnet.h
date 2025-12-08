@@ -15,6 +15,7 @@ public:
     bannerFunction = function;
   };
   void addCmd(TerminalCommand* __termCmd) override;
+  void reservePins(BackendPinSetup* pinsetup) override {};
   bool setupTask(OutputInterface* __terminal) override;
   bool executeTask() override;
   VirtualServer* getServer() { return server; };

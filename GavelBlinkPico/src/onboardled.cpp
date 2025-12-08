@@ -4,6 +4,10 @@
 
 Blink::Blink() : Task("Blink"){};
 
+void Blink::reservePins(BackendPinSetup* pinsetup) {
+  pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, LED_BUILTIN, "Internal LED");
+}
+
 bool Blink::setupTask(OutputInterface* __terminal) {
   setRefreshMilli(500);
   pinMode(LED_BUILTIN, OUTPUT);

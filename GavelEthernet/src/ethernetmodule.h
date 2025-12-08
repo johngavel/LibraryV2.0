@@ -15,6 +15,7 @@ class EthernetModule : public Task, public VirtualNetwork, public VirtualServerF
 public:
   EthernetModule();
   void addCmd(TerminalCommand* __termCmd) override;
+  void reservePins(BackendPinSetup* pinsetup) override;
   bool setupTask(OutputInterface* __terminal) override;
   bool executeTask() override;
 

@@ -9,23 +9,31 @@
 #include <GavelUtil.h>
 
 #define MAX_GPIO_DEVICES 10
+#define MAX_PINS 64
 
-class GPIOManager : public Task {
+class GPIOManager : public Task, public BackendPinSetup {
 public:
   GPIOManager();
   void addCmd(TerminalCommand* __termCmd) override;
+  void reservePins(BackendPinSetup* pinsetup) override {};
   bool setupTask(OutputInterface* __terminal) override;
   bool executeTask() override;
 
   GPIOPin* addPin(unsigned int deviceIdx, GpioConfig cfg, int pin, LedPolarity pol = LedPolarity::Source);
 
-  IGPIOBackend* addDevice(unsigned int deviceIdx, IGPIOBackend* device);
+  bool addReservePin(unsigned int deviceIdx, int pin, const char* note) override;
+  bool addAvailablePin(unsigned int deviceIdx, int pin) override;
 
+  IGPIOBackend* addDevice(IGPIOBackend* device);
+
+  GPIOPin* find(int deviceIdx, int pin);
   GPIOPin* find(GpioType type, int logicalIndex);
+
+  void gpioTable(OutputInterface* terminal);
 
 private:
   IGPIOBackend* devices_[MAX_GPIO_DEVICES];
-  ClassicSortList pins_ = ClassicSortList(64, sizeof(GPIOPin));
+  ClassicSortList pins_ = ClassicSortList(MAX_PINS, sizeof(GPIOPin));
 };
 
 #endif // __GAVEL_GPIO_MANAGER_H

@@ -11,6 +11,13 @@ bool SerialPort::setupTask(OutputInterface* __terminal) {
   return true;
 }
 
+void SerialPort::reservePins(BackendPinSetup* pinsetup) {
+  if (terminalSerial1 != nullptr) {
+    pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, txPin, "TTY Serial1 TX");
+    pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, rxPin, "TTY Serial1 RX");
+  }
+}
+
 bool SerialPort::executeTask() {
   if (terminalSerial1 != nullptr) terminalSerial1->loop();
   if (terminalUSB != nullptr) terminalUSB->loop();
@@ -18,6 +25,8 @@ bool SerialPort::executeTask() {
 }
 
 void SerialPort::configureSerial1(int __txPin, int __rxPin) {
+  txPin = __txPin;
+  rxPin = __rxPin;
   Serial1.setRX(__rxPin);
   Serial1.setTX(__txPin);
   Serial1.begin(115200);

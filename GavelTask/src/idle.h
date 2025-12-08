@@ -10,6 +10,7 @@ class IdleTask : public Task {
 public:
   IdleTask();
   void addCmd(TerminalCommand* __termCmd) override {};
+  void reservePins(BackendPinSetup* pinsetup) override {};
   bool setupTask(OutputInterface* __terminal) override {
     setRefreshMilli(MAX_IDLE_TIME);
     return true;

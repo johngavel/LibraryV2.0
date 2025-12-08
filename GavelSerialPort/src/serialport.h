@@ -9,6 +9,7 @@ class SerialPort : public Task {
 public:
   SerialPort();
   void addCmd(TerminalCommand* __termCmd) override;
+  void reservePins(BackendPinSetup* pinsetup) override;
   bool setupTask(OutputInterface* __terminal) override;
   bool executeTask() override;
 
@@ -21,6 +22,7 @@ public:
 private:
   Terminal* terminalSerial1 = nullptr;
   Terminal* terminalUSB = nullptr;
+  int txPin, rxPin;
 };
 
 #endif // __GAVEL_SERIAL_H

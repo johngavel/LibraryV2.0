@@ -8,6 +8,7 @@ class Watchdog : public Task {
 public:
   Watchdog(unsigned long timeout = 8300, unsigned long petCycle = 1000);
   void addCmd(TerminalCommand* __termCmd) override {};
+  void reservePins(BackendPinSetup* pinsetup) override {};
   bool setupTask(OutputInterface* __terminal) override;
   bool executeTask() override;
 

@@ -10,6 +10,10 @@ TaskManager::TaskManager() : Task("TaskManager"), queue(20, sizeof(Task*)) {
   id = TASK_MANAGER_ID;
 };
 
+void TaskManager::reservePins(BackendPinSetup* pinsetup) {
+  for (unsigned long i = 0; i < queue.count(); i++) { getTask(i)->reservePins(pinsetup); }
+}
+
 bool TaskManager::setupTask(OutputInterface* terminal) {
   bool returnValue = true;
   bool setupValue = false;
@@ -56,6 +60,7 @@ bool TaskManager::setupTask(OutputInterface* terminal) {
   }
   return returnValue;
 }
+
 bool TaskManager::loop() {
   lock.take();
   execution.start();

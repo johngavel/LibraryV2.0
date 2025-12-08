@@ -22,6 +22,7 @@ bool GPIOPin::setup() {
     device_->setupOutput(phys_);
     device_->toneStop(phys_);
     return true;
+  default: return true;
   }
   return false;
 }
@@ -53,6 +54,7 @@ void GPIOPin::tick() {
   case GpioType::Led:
   case GpioType::Output:
   case GpioType::Adc: break;
+  default: break;
   }
 }
 

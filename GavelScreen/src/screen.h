@@ -46,6 +46,7 @@ class Screen : public Task, public ScreenInterface {
 public:
   Screen();
   void addCmd(TerminalCommand* __termCmd) override;
+  void reservePins(BackendPinSetup* pinsetup) override;
   bool setupTask(OutputInterface* __terminal) override;
   bool executeTask() override;
 

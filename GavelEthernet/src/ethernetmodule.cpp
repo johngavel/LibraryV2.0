@@ -58,6 +58,7 @@ void EthernetModule::configure(byte* __macAddress, bool __isDHCP) {
   unsigned char blankAddress[4] = {0, 0, 0, 0};
   configure(__macAddress, __isDHCP, blankAddress, blankAddress, blankAddress, blankAddress);
 }
+
 void EthernetModule::configure(byte* __macAddress, bool __isDHCP, byte* __ipAddress, byte* __dnsAddress, byte* __subnetMask, byte* __gatewayAddress) {
   configure();
   memcpy(memory.memory.data.macAddress, __macAddress, sizeof(memory.memory.data.macAddress));
@@ -76,6 +77,11 @@ void EthernetModule::addCmd(TerminalCommand* __termCmd) {
   if (__termCmd)
     __termCmd->addCmd("ifconfig", "-ip|-sm|-gw|-dns <address> | -dhcp|-nodhcp", "IP Interface Configuration",
                       [this](TerminalLibrary::OutputInterface* terminal) { ifConfig(terminal); });
+}
+
+void EthernetModule::reservePins(BackendPinSetup* pinsetup) {
+  spiWire.reservePins(pinsetup);
+  pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, 15, "W5500 Reset Pin");
 }
 
 bool EthernetModule::setupTask(OutputInterface* __terminal) {

@@ -15,106 +15,113 @@ static char devicename[] = "Gavel Mini Pico";
 #error "This architecture does not support this Hardware!"
 #endif
 
-RP2040Backend::RP2040Backend() : IGPIOBackend(devicename) {}
+RP2040Backend::RP2040Backend() : IGPIOBackend(devicename, GPIO_DEVICE_CPU_BOARD) {}
 
-static PinList availablePins;
-PinList* RP2040Backend::getAvailablePins() {
-  availablePins.numberOfPins = 0;
+void RP2040Backend::setAvailablePins(BackendPinSetup* pinsetup) {
 #if defined ARDUINO_RASPBERRY_PI_PICO
-  availablePins.pin[availablePins.numberOfPins++] = 0;
-  availablePins.pin[availablePins.numberOfPins++] = 1;
-  availablePins.pin[availablePins.numberOfPins++] = 2;
-  availablePins.pin[availablePins.numberOfPins++] = 3;
-  availablePins.pin[availablePins.numberOfPins++] = 4;
-  availablePins.pin[availablePins.numberOfPins++] = 5;
-  availablePins.pin[availablePins.numberOfPins++] = 6;
-  availablePins.pin[availablePins.numberOfPins++] = 7;
-  availablePins.pin[availablePins.numberOfPins++] = 8;
-  availablePins.pin[availablePins.numberOfPins++] = 9;
-  availablePins.pin[availablePins.numberOfPins++] = 10;
-  availablePins.pin[availablePins.numberOfPins++] = 11;
-  availablePins.pin[availablePins.numberOfPins++] = 12;
-  availablePins.pin[availablePins.numberOfPins++] = 13;
-  availablePins.pin[availablePins.numberOfPins++] = 14;
-  availablePins.pin[availablePins.numberOfPins++] = 15;
-  availablePins.pin[availablePins.numberOfPins++] = 16;
-  availablePins.pin[availablePins.numberOfPins++] = 17;
-  availablePins.pin[availablePins.numberOfPins++] = 18;
-  availablePins.pin[availablePins.numberOfPins++] = 19;
-  availablePins.pin[availablePins.numberOfPins++] = 20;
-  availablePins.pin[availablePins.numberOfPins++] = 21;
-  availablePins.pin[availablePins.numberOfPins++] = 22;
-  availablePins.pin[availablePins.numberOfPins++] = 25;
-  availablePins.pin[availablePins.numberOfPins++] = 26;
-  availablePins.pin[availablePins.numberOfPins++] = 27;
-  availablePins.pin[availablePins.numberOfPins++] = 28;
+  pinsetup->addAvailablePin(getDeviceIndex(), 0);
+  pinsetup->addAvailablePin(getDeviceIndex(), 1);
+  pinsetup->addAvailablePin(getDeviceIndex(), 2);
+  pinsetup->addAvailablePin(getDeviceIndex(), 3);
+  pinsetup->addAvailablePin(getDeviceIndex(), 4);
+  pinsetup->addAvailablePin(getDeviceIndex(), 5);
+  pinsetup->addAvailablePin(getDeviceIndex(), 6);
+  pinsetup->addAvailablePin(getDeviceIndex(), 7);
+  pinsetup->addAvailablePin(getDeviceIndex(), 8);
+  pinsetup->addAvailablePin(getDeviceIndex(), 9);
+  pinsetup->addAvailablePin(getDeviceIndex(), 10);
+  pinsetup->addAvailablePin(getDeviceIndex(), 11);
+  pinsetup->addAvailablePin(getDeviceIndex(), 12);
+  pinsetup->addAvailablePin(getDeviceIndex(), 13);
+  pinsetup->addAvailablePin(getDeviceIndex(), 14);
+  pinsetup->addAvailablePin(getDeviceIndex(), 15);
+  pinsetup->addAvailablePin(getDeviceIndex(), 16);
+  pinsetup->addAvailablePin(getDeviceIndex(), 17);
+  pinsetup->addAvailablePin(getDeviceIndex(), 18);
+  pinsetup->addAvailablePin(getDeviceIndex(), 19);
+  pinsetup->addAvailablePin(getDeviceIndex(), 20);
+  pinsetup->addAvailablePin(getDeviceIndex(), 21);
+  pinsetup->addAvailablePin(getDeviceIndex(), 22);
+  pinsetup->addAvailablePin(getDeviceIndex(), 25);
+  pinsetup->addAvailablePin(getDeviceIndex(), 26);
+  pinsetup->addAvailablePin(getDeviceIndex(), 27);
+  pinsetup->addAvailablePin(getDeviceIndex(), 28);
+  pinsetup->addAvailablePin(getDeviceIndex(), LED_BUILTIN);
 #elif defined ARDUINO_RASPBERRY_PI_PICO_W
-  availablePins.pin[availablePins.numberOfPins++] = 0;
-  availablePins.pin[availablePins.numberOfPins++] = 1;
-  availablePins.pin[availablePins.numberOfPins++] = 2;
-  availablePins.pin[availablePins.numberOfPins++] = 3;
-  availablePins.pin[availablePins.numberOfPins++] = 4;
-  availablePins.pin[availablePins.numberOfPins++] = 5;
-  availablePins.pin[availablePins.numberOfPins++] = 6;
-  availablePins.pin[availablePins.numberOfPins++] = 7;
-  availablePins.pin[availablePins.numberOfPins++] = 8;
-  availablePins.pin[availablePins.numberOfPins++] = 9;
-  availablePins.pin[availablePins.numberOfPins++] = 10;
-  availablePins.pin[availablePins.numberOfPins++] = 11;
-  availablePins.pin[availablePins.numberOfPins++] = 12;
-  availablePins.pin[availablePins.numberOfPins++] = 13;
-  availablePins.pin[availablePins.numberOfPins++] = 14;
-  availablePins.pin[availablePins.numberOfPins++] = 15;
-  availablePins.pin[availablePins.numberOfPins++] = 16;
-  availablePins.pin[availablePins.numberOfPins++] = 17;
-  availablePins.pin[availablePins.numberOfPins++] = 18;
-  availablePins.pin[availablePins.numberOfPins++] = 19;
-  availablePins.pin[availablePins.numberOfPins++] = 20;
-  availablePins.pin[availablePins.numberOfPins++] = 21;
-  availablePins.pin[availablePins.numberOfPins++] = 22;
-  availablePins.pin[availablePins.numberOfPins++] = 25;
-  availablePins.pin[availablePins.numberOfPins++] = 26;
-  availablePins.pin[availablePins.numberOfPins++] = 27;
-  availablePins.pin[availablePins.numberOfPins++] = 28;
+  pinsetup->addAvailablePin(getDeviceIndex(), 0);
+  pinsetup->addAvailablePin(getDeviceIndex(), 1);
+  pinsetup->addAvailablePin(getDeviceIndex(), 2);
+  pinsetup->addAvailablePin(getDeviceIndex(), 3);
+  pinsetup->addAvailablePin(getDeviceIndex(), 4);
+  pinsetup->addAvailablePin(getDeviceIndex(), 5);
+  pinsetup->addAvailablePin(getDeviceIndex(), 6);
+  pinsetup->addAvailablePin(getDeviceIndex(), 7);
+  pinsetup->addAvailablePin(getDeviceIndex(), 8);
+  pinsetup->addAvailablePin(getDeviceIndex(), 9);
+  pinsetup->addAvailablePin(getDeviceIndex(), 10);
+  pinsetup->addAvailablePin(getDeviceIndex(), 11);
+  pinsetup->addAvailablePin(getDeviceIndex(), 12);
+  pinsetup->addAvailablePin(getDeviceIndex(), 13);
+  pinsetup->addAvailablePin(getDeviceIndex(), 14);
+  pinsetup->addAvailablePin(getDeviceIndex(), 15);
+  pinsetup->addAvailablePin(getDeviceIndex(), 16);
+  pinsetup->addAvailablePin(getDeviceIndex(), 17);
+  pinsetup->addAvailablePin(getDeviceIndex(), 18);
+  pinsetup->addAvailablePin(getDeviceIndex(), 19);
+  pinsetup->addAvailablePin(getDeviceIndex(), 20);
+  pinsetup->addAvailablePin(getDeviceIndex(), 21);
+  pinsetup->addAvailablePin(getDeviceIndex(), 22);
+  pinsetup->addAvailablePin(getDeviceIndex(), 25);
+  pinsetup->addAvailablePin(getDeviceIndex(), 26);
+  pinsetup->addAvailablePin(getDeviceIndex(), 27);
+  pinsetup->addAvailablePin(getDeviceIndex(), 28);
+  pinsetup->addAvailablePin(getDeviceIndex(), LED_BUILTIN);
 #elif defined ARDUINO_WAVESHARE_RP2040_ZERO
-  availablePins.pin[availablePins.numberOfPins++] = 0;
-  availablePins.pin[availablePins.numberOfPins++] = 1;
-  availablePins.pin[availablePins.numberOfPins++] = 2;
-  availablePins.pin[availablePins.numberOfPins++] = 3;
-  availablePins.pin[availablePins.numberOfPins++] = 4;
-  availablePins.pin[availablePins.numberOfPins++] = 5;
-  availablePins.pin[availablePins.numberOfPins++] = 6;
-  availablePins.pin[availablePins.numberOfPins++] = 7;
-  availablePins.pin[availablePins.numberOfPins++] = 8;
-  availablePins.pin[availablePins.numberOfPins++] = 9;
-  availablePins.pin[availablePins.numberOfPins++] = 10;
-  availablePins.pin[availablePins.numberOfPins++] = 11;
-  availablePins.pin[availablePins.numberOfPins++] = 12;
-  availablePins.pin[availablePins.numberOfPins++] = 13;
-  availablePins.pin[availablePins.numberOfPins++] = 14;
-  availablePins.pin[availablePins.numberOfPins++] = 15;
-  availablePins.pin[availablePins.numberOfPins++] = 16;
-  availablePins.pin[availablePins.numberOfPins++] = 26;
-  availablePins.pin[availablePins.numberOfPins++] = 27;
-  availablePins.pin[availablePins.numberOfPins++] = 28;
-  availablePins.pin[availablePins.numberOfPins++] = 29;
+  pinsetup->addAvailablePin(getDeviceIndex(), 0);
+  pinsetup->addAvailablePin(getDeviceIndex(), 1);
+  pinsetup->addAvailablePin(getDeviceIndex(), 2);
+  pinsetup->addAvailablePin(getDeviceIndex(), 3);
+  pinsetup->addAvailablePin(getDeviceIndex(), 4);
+  pinsetup->addAvailablePin(getDeviceIndex(), 5);
+  pinsetup->addAvailablePin(getDeviceIndex(), 6);
+  pinsetup->addAvailablePin(getDeviceIndex(), 7);
+  pinsetup->addAvailablePin(getDeviceIndex(), 8);
+  pinsetup->addAvailablePin(getDeviceIndex(), 9);
+  pinsetup->addAvailablePin(getDeviceIndex(), 10);
+  pinsetup->addAvailablePin(getDeviceIndex(), 11);
+  pinsetup->addAvailablePin(getDeviceIndex(), 12);
+  pinsetup->addAvailablePin(getDeviceIndex(), 13);
+  pinsetup->addAvailablePin(getDeviceIndex(), 14);
+  pinsetup->addAvailablePin(getDeviceIndex(), 15);
+  pinsetup->addAvailablePin(getDeviceIndex(), 16);
+  pinsetup->addAvailablePin(getDeviceIndex(), 26);
+  pinsetup->addAvailablePin(getDeviceIndex(), 27);
+  pinsetup->addAvailablePin(getDeviceIndex(), 28);
+  pinsetup->addAvailablePin(getDeviceIndex(), 29);
+  pinsetup->addAvailablePin(getDeviceIndex(), LED_BUILTIN);
 #elif defined ARDUINO_GENERIC_RP2040
-  availablePins.pin[availablePins.numberOfPins++] = 0;
-  availablePins.pin[availablePins.numberOfPins++] = 1;
-  availablePins.pin[availablePins.numberOfPins++] = 4;
-  availablePins.pin[availablePins.numberOfPins++] = 5;
-  availablePins.pin[availablePins.numberOfPins++] = 14;
-  availablePins.pin[availablePins.numberOfPins++] = 15;
-  availablePins.pin[availablePins.numberOfPins++] = 16;
-  availablePins.pin[availablePins.numberOfPins++] = 17;
-  availablePins.pin[availablePins.numberOfPins++] = 18;
-  availablePins.pin[availablePins.numberOfPins++] = 19;
-  availablePins.pin[availablePins.numberOfPins++] = 25;
+  pinsetup->addAvailablePin(getDeviceIndex(), 0);
+  pinsetup->addAvailablePin(getDeviceIndex(), 1);
+  pinsetup->addAvailablePin(getDeviceIndex(), 4);
+  pinsetup->addAvailablePin(getDeviceIndex(), 5);
+  pinsetup->addAvailablePin(getDeviceIndex(), 14);
+  pinsetup->addAvailablePin(getDeviceIndex(), 15);
+  pinsetup->addAvailablePin(getDeviceIndex(), 16);
+  pinsetup->addAvailablePin(getDeviceIndex(), 17);
+  pinsetup->addAvailablePin(getDeviceIndex(), 18);
+  pinsetup->addAvailablePin(getDeviceIndex(), 19);
+  pinsetup->addAvailablePin(getDeviceIndex(), LED_BUILTIN);
+  pinsetup->addAvailablePin(getDeviceIndex(), 26);
+  pinsetup->addAvailablePin(getDeviceIndex(), 27);
+  pinsetup->addAvailablePin(getDeviceIndex(), 28);
 #else
 #error "This architecture does not support this Hardware!"
 #endif
-  return &availablePins;
+  return;
 };
+
+void RP2040Backend::setReservePins(BackendPinSetup* pinsetup) {
+}
 
 bool RP2040Backend::setupInput(int pin) {
   pinMode(pin, INPUT);

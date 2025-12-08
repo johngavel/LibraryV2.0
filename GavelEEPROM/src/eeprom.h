@@ -15,6 +15,7 @@ public:
   EEpromMemory();
   void configure(unsigned long size);
   void addCmd(TerminalCommand* __termCmd) override;
+  void reservePins(BackendPinSetup* pinsetup) override;
   bool setupTask(OutputInterface* __terminal) override;
   bool executeTask() override;
   void forceWrite();

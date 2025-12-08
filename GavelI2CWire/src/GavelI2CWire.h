@@ -1,6 +1,7 @@
 #ifndef __GAVEL_I2C_WIRE_H
 #define __GAVEL_I2C_WIRE_H
 
+#include <GavelInterfaces.h>
 #include <GavelUtil.h>
 #include <Wire.h>
 
@@ -17,6 +18,11 @@ public:
     wire->begin();
     wireGive();
   }
+  void reservePins(BackendPinSetup* pinsetup) {
+    pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, pinSDA, "I2c SDA");
+    pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, pinSCL, "I2c SCL");
+  }
+
   TwoWire* getWire() { return wire; };
   void wireTake() { lock.take(); };
   void wireGive() { lock.give(); };

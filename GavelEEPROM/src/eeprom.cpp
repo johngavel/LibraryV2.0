@@ -27,6 +27,10 @@ void EEpromMemory::addCmd(TerminalCommand* __termCmd) {
   if (__termCmd) __termCmd->addCmd("raw", "", "Raw Contents of Flash Memory", [this](TerminalLibrary::OutputInterface* terminal) { raw(terminal); });
 }
 
+void EEpromMemory::reservePins(BackendPinSetup* pinsetup) {
+  i2cWire.reservePins(pinsetup);
+}
+
 bool EEpromMemory::setupTask(OutputInterface* __terminal) {
   StringBuilder sb;
   unsigned int fullDataSize = memorySize / 8;

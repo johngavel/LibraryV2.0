@@ -4,6 +4,7 @@
 #include "clientUtil.h"
 
 #include <GavelUtil.h>
+#include <GavelInterfaces.h>
 #include <SPI.h>
 
 class SPIWire {
@@ -22,6 +23,13 @@ public:
     wireTake();
     SPI.begin();
     wireGive();
+  }
+
+  void reservePins(BackendPinSetup* pinsetup) {
+    pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, pinSCK, "SPI0 SCK");
+    pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, pinTX, "SPI0 TX");
+    pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, pinRX, "SPI0 RX");
+    pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, pinCS, "SPI0 CS");
   }
 
   void wireTake() { lock.take(); };

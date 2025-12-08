@@ -16,22 +16,22 @@ Blink blink;
 Watchdog watchdog;
 FileSystem fileSystem;
 GPIOManager gpioManager;
-RP2040Backend picoDevice;
 
 void setup0Start(TerminalCommand* __termCmd) {
   startupMutex.take();
+  gpioManager.addDevice(new RP2040Backend());
+
   serialPort.configureUSBSerial();
   serialPort.getUSBSerialTerminal()->setBannerFunction(banner);
   StringBuilder sb = ProgramInfo::ShortName;
   sb + ":\\>";
   serialPort.getUSBSerialTerminal()->setPromptString(sb.c_str());
 
+  taskManager.add(&gpioManager);
   taskManager.add(&serialPort);
   taskManager.add(&blink);
   taskManager.add(&watchdog);
   taskManager.add(&fileSystem);
-
-  gpioManager.addDevice(0, &picoDevice);
 
   addStandardTerminalCommands(__termCmd);
   if (__termCmd) {
@@ -56,6 +56,7 @@ void setup0Complete() {
   startupMutex.give();
   startupMutex1.take();
   serialPort.getMainSerialPort()->clearScreen();
+  taskManager.reservePins(&gpioManager);
   taskManager.setup(serialPort.getMainSerialPort());
 
   startupMutex1.give();

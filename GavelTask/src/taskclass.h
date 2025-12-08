@@ -1,6 +1,7 @@
 #ifndef __GAVEL_TASK_H
 #define __GAVEL_TASK_H
 
+#include <GavelInterfaces.h>
 #include <GavelUtil.h>
 #include <Terminal.h>
 
@@ -14,6 +15,7 @@ public:
   bool setup(OutputInterface* __terminal);
   bool loop();
   virtual void addCmd(TerminalCommand* __termCmd) = 0;
+  virtual void reservePins(BackendPinSetup* pinsetup) = 0;
   virtual bool setupTask(OutputInterface* __terminal) = 0;
   virtual bool executeTask() = 0;
   unsigned long getRefreshRate() { return getRefreshMicro(); };
