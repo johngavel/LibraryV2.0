@@ -14,7 +14,7 @@ void Screen::addCmd(TerminalCommand* __termCmd) {
 }
 
 void Screen::reservePins(BackendPinSetup* pinsetup) {
-  i2cWire.reservePins(pinsetup);
+  if (pinsetup != nullptr) { i2cWire.reservePins(pinsetup); }
 }
 
 bool Screen::setupTask(OutputInterface* __terminal) {

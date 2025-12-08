@@ -121,7 +121,7 @@ void GPIOManager::gpioTable(OutputInterface* terminal) {
   table.addColumn(Normal, "#", 4);
   table.addColumn(Green, "Type", 12);
   table.addColumn(Blue, "Pin", 5);
-  table.addColumn(Normal, "Location", 12);
+  table.addColumn(Normal, "Location", 14);
   table.addColumn(Magenta, "Index", 7);
   table.addColumn(Yellow, "Note", 30);
   table.printHeader();

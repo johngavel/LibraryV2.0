@@ -11,7 +11,9 @@ TaskManager::TaskManager() : Task("TaskManager"), queue(20, sizeof(Task*)) {
 };
 
 void TaskManager::reservePins(BackendPinSetup* pinsetup) {
-  for (unsigned long i = 0; i < queue.count(); i++) { getTask(i)->reservePins(pinsetup); }
+  if (pinsetup != nullptr) {
+    for (unsigned long i = 0; i < queue.count(); i++) { getTask(i)->reservePins(pinsetup); }
+  }
 }
 
 bool TaskManager::setupTask(OutputInterface* terminal) {

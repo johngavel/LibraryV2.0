@@ -4,13 +4,13 @@
 #include <Arduino.h>
 
 #if defined ARDUINO_RASPBERRY_PI_PICO
-static char devicename[] = "Raspberry Pi Pico";
+static char devicename[] = "Pi Pico";
 #elif defined ARDUINO_RASPBERRY_PI_PICO_W
-static char devicename[] = "Raspberry Pi Pico W";
+static char devicename[] = "Pi Pico W";
 #elif defined ARDUINO_WAVESHARE_RP2040_ZERO
 static char devicename[] = "RP2040 Zero";
 #elif defined ARDUINO_GENERIC_RP2040
-static char devicename[] = "Gavel Mini Pico";
+static char devicename[] = "Gavel Mini";
 #else
 #error "This architecture does not support this Hardware!"
 #endif
@@ -120,8 +120,7 @@ void RP2040Backend::setAvailablePins(BackendPinSetup* pinsetup) {
   return;
 };
 
-void RP2040Backend::setReservePins(BackendPinSetup* pinsetup) {
-}
+void RP2040Backend::setReservePins(BackendPinSetup* pinsetup) {}
 
 bool RP2040Backend::setupInput(int pin) {
   pinMode(pin, INPUT);

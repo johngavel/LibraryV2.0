@@ -19,8 +19,10 @@ public:
     wireGive();
   }
   void reservePins(BackendPinSetup* pinsetup) {
-    pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, pinSDA, "I2c SDA");
-    pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, pinSCL, "I2c SCL");
+    if (pinsetup != nullptr) {
+      pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, pinSDA, "I2c SDA");
+      pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, pinSCL, "I2c SCL");
+    }
   }
 
   TwoWire* getWire() { return wire; };

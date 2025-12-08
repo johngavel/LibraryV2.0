@@ -80,8 +80,10 @@ void EthernetModule::addCmd(TerminalCommand* __termCmd) {
 }
 
 void EthernetModule::reservePins(BackendPinSetup* pinsetup) {
-  spiWire.reservePins(pinsetup);
-  pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, 15, "W5500 Reset Pin");
+  if (pinsetup != nullptr) {
+    spiWire.reservePins(pinsetup);
+    pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, 15, "W5500 Reset Pin");
+  }
 }
 
 bool EthernetModule::setupTask(OutputInterface* __terminal) {

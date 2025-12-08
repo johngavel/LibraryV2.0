@@ -28,7 +28,7 @@ void EEpromMemory::addCmd(TerminalCommand* __termCmd) {
 }
 
 void EEpromMemory::reservePins(BackendPinSetup* pinsetup) {
-  i2cWire.reservePins(pinsetup);
+  if (pinsetup != nullptr) { i2cWire.reservePins(pinsetup); }
 }
 
 bool EEpromMemory::setupTask(OutputInterface* __terminal) {

@@ -5,7 +5,7 @@
 Blink::Blink() : Task("Blink"){};
 
 void Blink::reservePins(BackendPinSetup* pinsetup) {
-  pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, LED_BUILTIN, "Internal LED");
+  if (pinsetup != nullptr) { pinsetup->addReservePin(GPIO_DEVICE_CPU_BOARD, LED_BUILTIN, "Internal LED"); }
 }
 
 bool Blink::setupTask(OutputInterface* __terminal) {

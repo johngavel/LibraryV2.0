@@ -13,7 +13,7 @@ void Scan::addCmd(TerminalCommand* __termCmd) {
 }
 
 void Scan::reservePins(BackendPinSetup* pinsetup) {
-  i2cWire.reservePins(pinsetup);
+  if (pinsetup != nullptr) { i2cWire.reservePins(pinsetup); }
 }
 
 void Scan::scani2c(OutputInterface* terminal) {
