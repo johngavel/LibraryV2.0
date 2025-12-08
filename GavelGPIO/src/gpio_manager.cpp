@@ -81,7 +81,8 @@ void GPIOManager::addCmd(TerminalCommand* __termCmd) {
   __termCmd->addCmd("pulse", "[n]", "Command a Output n to pulse", [&](TerminalLibrary::OutputInterface* terminal) { pulseCmd(terminal); });
   __termCmd->addCmd("stat", "[n]", "Status of Input n", [&](TerminalLibrary::OutputInterface* terminal) { statusCmd(terminal); });
   __termCmd->addCmd("tone", "[n] [Hz]", "Sets a Square Wave in Hz on Tone Pin n ", [&](TerminalLibrary::OutputInterface* terminal) { toneCmd(terminal); });
-  __termCmd->addCmd("pwm", "[n] [f] [%]", "Sets the frequency and % Duty Cycyle PWM Pin n", [&](TerminalLibrary::OutputInterface* terminal) { pwmCmd(terminal); });
+  __termCmd->addCmd("pwm", "[n] [f] [%]", "Sets the frequency and % Duty Cycyle PWM Pin n",
+                    [&](TerminalLibrary::OutputInterface* terminal) { pwmCmd(terminal); });
 }
 
 bool GPIOManager::setupTask(OutputInterface* __terminal) {
