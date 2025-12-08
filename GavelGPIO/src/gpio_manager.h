@@ -20,6 +20,7 @@ public:
   bool executeTask() override;
 
   GPIOPin* addPin(unsigned int deviceIdx, GpioConfig cfg, int pin, LedPolarity pol = LedPolarity::Source);
+  GPIOPin* addPin(unsigned int deviceIdx, int pin, int logicalIndex, GpioType type, const char* note, LedPolarity pol = LedPolarity::Source);
 
   bool addReservePin(unsigned int deviceIdx, int pin, const char* note) override;
   bool addAvailablePin(unsigned int deviceIdx, int pin) override;
@@ -30,6 +31,10 @@ public:
   GPIOPin* find(GpioType type, int logicalIndex);
 
   void gpioTable(OutputInterface* terminal);
+  void statusCmd(OutputInterface* terminal);
+  void pulseCmd(OutputInterface* terminal);
+  void toneCmd(OutputInterface* terminal);
+  void pwmCmd(OutputInterface* terminal);
 
 private:
   IGPIOBackend* devices_[MAX_GPIO_DEVICES];

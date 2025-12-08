@@ -10,13 +10,17 @@ GPIOManager::GPIOManager() : Task("GPIOManager") {
 }
 
 GPIOPin* GPIOManager::addPin(unsigned int deviceIdx, GpioConfig cfg, int pin, LedPolarity pol) {
+  return (addPin(deviceIdx, pin, cfg.logicalIndex, cfg.type, cfg.note, pol));
+}
+
+GPIOPin* GPIOManager::addPin(unsigned int deviceIdx, int pin, int logicalIndex, GpioType type, const char* note, LedPolarity pol) {
   if (deviceIdx >= MAX_GPIO_DEVICES) return nullptr;
   if (!devices_[deviceIdx]) return nullptr;
   GPIOPin* _pin = find(deviceIdx, pin);
   if ((_pin != nullptr) && (_pin->getConfig()->type == Available)) {
-    _pin->getConfig()->type = cfg.type;
-    _pin->getConfig()->logicalIndex = cfg.logicalIndex;
-    strncpy(_pin->getConfig()->note, cfg.note, sizeof(_pin->getConfig()->note));
+    _pin->getConfig()->type = type;
+    _pin->getConfig()->logicalIndex = logicalIndex;
+    strncpy(_pin->getConfig()->note, note, sizeof(_pin->getConfig()->note));
     _pin->setPol(pol);
   }
   return (_pin);
@@ -74,6 +78,10 @@ GPIOPin* GPIOManager::find(GpioType type, int logicalIndex) {
 
 void GPIOManager::addCmd(TerminalCommand* __termCmd) {
   __termCmd->addCmd("gpio", "", "Prints the configured GPIO Table", [&](TerminalLibrary::OutputInterface* terminal) { gpioTable(terminal); });
+  __termCmd->addCmd("pulse", "[n]", "Command a Output n to pulse", [&](TerminalLibrary::OutputInterface* terminal) { pulseCmd(terminal); });
+  __termCmd->addCmd("stat", "[n]", "Status of Input n", [&](TerminalLibrary::OutputInterface* terminal) { statusCmd(terminal); });
+  __termCmd->addCmd("tone", "[n] [Hz]", "Sets a Square Wave in Hz on Tone Pin n ", [&](TerminalLibrary::OutputInterface* terminal) { toneCmd(terminal); });
+  __termCmd->addCmd("pwm", "[n] [f] [%]", "Sets the frequency and % Duty Cycyle PWM Pin n", [&](TerminalLibrary::OutputInterface* terminal) { pwmCmd(terminal); });
 }
 
 bool GPIOManager::setupTask(OutputInterface* __terminal) {
@@ -139,5 +147,94 @@ void GPIOManager::gpioTable(OutputInterface* terminal) {
   table.printDone("GPIO Table");
 
   terminal->println();
+  terminal->prompt();
+}
+
+void GPIOManager::pulseCmd(OutputInterface* terminal) {
+  unsigned long index;
+  GPIOPin* gpio;
+  char* value;
+  value = terminal->readParameter();
+  if (value != NULL) {
+    index = (unsigned long) atoi(value);
+    gpio = find(Pulse, index);
+    if (gpio != nullptr) {
+      gpio->set(true);
+    } else {
+      terminal->println(ERROR, "Cannot find Pulse Pin.");
+    }
+  } else {
+    terminal->invalidParameter();
+  }
+  terminal->prompt();
+}
+
+void GPIOManager::statusCmd(OutputInterface* terminal) {
+  unsigned long index;
+  GPIOPin* gpio;
+  char* value;
+  value = terminal->readParameter();
+  if (value != NULL) {
+    index = (unsigned long) atoi(value);
+    gpio = find(Input, index);
+    if (gpio != nullptr) {
+      terminal->println(INFO, (gpio->get()) ? "ON" : "OFF");
+    } else {
+      terminal->println(ERROR, "Cannot find Input Pin.");
+    }
+  } else {
+    terminal->invalidParameter();
+  }
+  terminal->prompt();
+}
+
+void GPIOManager::toneCmd(OutputInterface* terminal) {
+  unsigned long freq;
+  unsigned long index;
+  GPIOPin* gpio;
+  char* value;
+  char* value2;
+  value = terminal->readParameter();
+  value2 = terminal->readParameter();
+  if ((value != NULL) && (value2 != NULL)) {
+    index = (unsigned long) atoi(value);
+    freq = (unsigned long) atoi(value2);
+    gpio = find(Tone, index);
+    if (gpio != nullptr) {
+      gpio->setFreq(freq);
+    } else {
+      terminal->println(ERROR, "Cannot find Tone Pin Index.");
+    }
+  } else {
+    terminal->invalidParameter();
+  }
+  terminal->prompt();
+}
+
+void GPIOManager::pwmCmd(OutputInterface* terminal) {
+  unsigned long frequency;
+  unsigned long dutyCycle;
+  unsigned long index;
+  GPIOPin* gpio;
+  char* value;
+  char* value2;
+  char* value3;
+  value = terminal->readParameter();
+  value2 = terminal->readParameter();
+  value3 = terminal->readParameter();
+  if ((value != NULL) && (value2 != NULL) && (value3 != NULL)) {
+    index = (unsigned long) atoi(value);
+    frequency = (unsigned long) atoi(value2);
+    dutyCycle = (unsigned long) atoi(value3);
+    gpio = find(Pwm, index);
+    if (gpio != nullptr) {
+      gpio->setFreq(frequency);
+      gpio->setDuty(dutyCycle);
+    } else {
+      terminal->println(ERROR, "Cannot find PWM Pin Index.");
+    }
+  } else {
+    terminal->invalidParameter();
+  }
   terminal->prompt();
 }
