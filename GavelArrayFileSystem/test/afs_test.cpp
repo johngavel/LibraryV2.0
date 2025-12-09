@@ -7,7 +7,6 @@
 // ===== Optional shims for non-Arduino desktop builds =====
 #ifndef USE_REAL_ARDUINO
 // Minimal Arduino types so digitalfile.h compiles
-typedef unsigned char unsigned char;
 class Stream {
 public:
   virtual int available() = 0;

@@ -12,6 +12,7 @@ public:
   bool push(void* element);
   bool pop(void* element = nullptr);
   bool get(unsigned long index, void* element);
+  void* get(unsigned long index);
   unsigned long count();
   unsigned long highWaterMark();
   void clear();
@@ -30,6 +31,7 @@ public:
   bool push(void* element);
   bool pop(void* element = nullptr);
   bool get(unsigned long index, void* element);
+  void* get(unsigned long index);
   unsigned long count();
   unsigned long highWaterMark();
   void clear();
@@ -48,6 +50,8 @@ public:
   bool empty();
   bool push(void* element);
   bool pop(void* element = nullptr);
+  bool get(unsigned long index, void* element);
+  void* get(unsigned long index);
   unsigned long count();
   unsigned long highWaterMark() { return 0; };
   bool error() { return (memError & queueError); };

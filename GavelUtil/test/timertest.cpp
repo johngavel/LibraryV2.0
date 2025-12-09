@@ -141,7 +141,7 @@ static void test_reset_behavior() {
 static void test_wraparound_32bit_unsigned() {
   printf("[test_wraparound_32bit_unsigned]\n");
   // Simulate refresh near max 32-bit, then time moves forward causing wrap.
-  const unsigned long R = 0xFFFFFFFFu - 500; // refresh very close to wrap
+  const unsigned int R = 0xFFFFFFFFu - 500; // refresh very close to wrap
   Timer t;
   t.setRefreshMicro(1000); // 1000 us interval
   t.reset(R);

@@ -1,4 +1,3 @@
-
 #ifndef __GAVEL_GPIO_TYPES_H
 #define __GAVEL_GPIO_TYPES_H
 

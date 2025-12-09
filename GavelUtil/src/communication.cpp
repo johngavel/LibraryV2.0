@@ -23,6 +23,14 @@ bool MutexQueue::get(unsigned long index, void* element) {
   return returnBool;
 }
 
+void* MutexQueue::get(unsigned long index) {
+  void* ptr = nullptr;
+  mutex.take();
+  ptr = queue.get(index);
+  mutex.give();
+  return ptr;
+}
+
 unsigned long MutexQueue::count() {
   mutex.take();
   unsigned long returnCount = queue.count();
@@ -83,6 +91,14 @@ bool SemQueue::get(unsigned long index, void* element) {
   bool returnBool = queue.get(index, element);
   semaphore.give();
   return returnBool;
+}
+
+void* SemQueue::get(unsigned long index) {
+  void* ptr = nullptr;
+  semaphore.take();
+  ptr = queue.get(index);
+  semaphore.give();
+  return ptr;
 }
 
 unsigned long SemQueue::count() {

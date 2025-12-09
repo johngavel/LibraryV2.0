@@ -1,4 +1,3 @@
-
 #ifndef __GAVEL_GPIO_BACKEND_H
 #define __GAVEL_GPIO_BACKEND_H
 

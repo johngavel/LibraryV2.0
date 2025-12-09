@@ -3,4 +3,4 @@
 
 #include "Tca9555Backend.h"
 
-#endif // __GAVEL_GPIO_H
+#endif // __GAVEL_TCA9555_H
