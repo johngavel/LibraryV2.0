@@ -1,14 +1,18 @@
 
 #include "gpio_pin.h"
+
+#include <GavelDebug.h>
 // Provide millis() from your platform headers
 
 extern unsigned long millis();
 
-GPIOPin::GPIOPin(int physicalPin, IGPIOBackend* device, GpioConfig cfg, LedPolarity ledPol) : phys_(physicalPin), device_(device), cfg_(cfg), ledPol_(ledPol) {}
+GPIOPin::GPIOPin(int physicalPin, IGPIOBackend* device, GpioConfig cfg, Polarity ledPol) : phys_(physicalPin), device_(device), cfg_(cfg), pol_(ledPol) {}
 
 bool GPIOPin::setup() {
+  timer_.setRefreshMilli(50);
+  timer_.runTimer(false);
   switch (cfg_.type) {
-  case GpioType::Input:
+  case GpioType::Input: return device_->setupInput(phys_);
   case GpioType::Button: return device_->setupInput(phys_);
   case GpioType::Output:
   case GpioType::Led:
@@ -28,23 +32,29 @@ bool GPIOPin::setup() {
 }
 
 void GPIOPin::tick() {
+  bool raw = false;
+  bool active = false;
+  bool pressEdge = false;
+  bool releaseEdge = false;
   switch (cfg_.type) {
   case GpioType::Input: cur_ = device_->readDigital(phys_); break;
-  case GpioType::Button: {
-    bool raw = device_->readDigital(phys_);
-    static constexpr unsigned long debounceMs = 100;
-    static unsigned long t0 = 0;
-    if (!raw) {
-      t0 = millis();
-      latchedButton_ = false;
-    } else if (!latchedButton_ && (millis() - t0) >= debounceMs) {
-      latchedButton_ = true;
+  case GpioType::Button:
+    raw = device_->readDigital(phys_);
+    active = (pol_ == Source) ? raw : !raw;
+    pressEdge = (!prevActive_ && active);
+    releaseEdge = (prevActive_ && !active);
+    prevActive_ = active;
+
+    if (pressEdge) { timer_.runTimer(true); }
+    if (releaseEdge) {
+      if (timer_.expired()) { latchedButton_ = true; }
+      timer_.runTimer(false);
     }
-    cur_ = raw;
+    cur_ = active;
     break;
-  }
   case GpioType::Pulse:
-    if (cur_ && millis() >= pulseEndMs_) {
+    if (timer_.expired()) {
+      timer_.runTimer(false);
       cur_ = false;
       device_->writeDigital(phys_, false);
     }
@@ -54,12 +64,20 @@ void GPIOPin::tick() {
   case GpioType::Led:
   case GpioType::Output:
   case GpioType::Adc: break;
+  case GpioType::Available:
+  case GpioType::Reserved: break;
   default: break;
   }
 }
 
 bool GPIOPin::get() {
   return (cfg_.type == GpioType::Adc) ? (value() > 0) : cur_;
+}
+
+bool GPIOPin::buttonPressed() {
+  bool wasPressed = latchedButton_;
+  latchedButton_ = false; // Clear the latch after reporting
+  return wasPressed;
 }
 
 void GPIOPin::set(bool v) {
@@ -70,11 +88,11 @@ void GPIOPin::set(bool v) {
     break;
   case GpioType::Led:
     cur_ = v;
-    device_->writeDigital(phys_, (ledPol_ == LedPolarity::Source) ? v : !v);
+    device_->writeDigital(phys_, (pol_ == Polarity::Source) ? v : !v);
     break;
   case GpioType::Pulse:
+    timer_.runTimer(true);
     cur_ = true;
-    pulseEndMs_ = millis() + 100;
     device_->writeDigital(phys_, true);
     break;
   case GpioType::Tone:

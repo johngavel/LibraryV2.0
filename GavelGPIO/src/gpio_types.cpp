@@ -16,7 +16,7 @@ const char* gpioTypeToString(GpioType type) {
   }
 }
 
-const char* gpioLedPolarityToString(LedPolarity pol) {
+const char* gpioLedPolarityToString(Polarity pol) {
   switch (pol) {
   case Sink: return "Sink";
   case Source: return "Source";

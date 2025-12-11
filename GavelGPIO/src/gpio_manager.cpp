@@ -1,6 +1,7 @@
 
 #include "gpio_manager.h"
 
+#include <GavelDebug.h>
 #include <GavelProgram.h>
 #include <GavelUtil.h>
 #include <asciitable/asciitable.h>
@@ -9,13 +10,15 @@ GPIOManager::GPIOManager() : Task("GPIOManager") {
   for (int i = 0; i < MAX_GPIO_DEVICES; i++) devices_[i] = nullptr;
 }
 
-GPIOPin* GPIOManager::addPin(unsigned int deviceIdx, GpioConfig cfg, int pin, LedPolarity pol) {
+GPIOPin* GPIOManager::addPin(unsigned int deviceIdx, GpioConfig cfg, int pin, Polarity pol) {
   return (addPin(deviceIdx, pin, cfg.logicalIndex, cfg.type, cfg.note, pol));
 }
 
-GPIOPin* GPIOManager::addPin(unsigned int deviceIdx, int pin, int logicalIndex, GpioType type, const char* note, LedPolarity pol) {
+GPIOPin* GPIOManager::addPin(unsigned int deviceIdx, int pin, int logicalIndex, GpioType type, const char* note, Polarity pol) {
   if (deviceIdx >= MAX_GPIO_DEVICES) return nullptr;
   if (!devices_[deviceIdx]) return nullptr;
+  if (find(type, logicalIndex)) return nullptr;
+
   GPIOPin* _pin = find(deviceIdx, pin);
   if ((_pin != nullptr) && (_pin->getConfig()->type == Available)) {
     _pin->getConfig()->type = type;
@@ -46,7 +49,7 @@ bool GPIOManager::addAvailablePin(unsigned int deviceIdx, int pin) {
   cfg.type = Available;
   cfg.logicalIndex = pins_.count();
   strncpy(cfg.note, gpioTypeToString(cfg.type), sizeof(cfg.note));
-  GPIOPin* _pin = new GPIOPin(pin, devices_[deviceIdx], cfg, LedPolarity::Source);
+  GPIOPin* _pin = new GPIOPin(pin, devices_[deviceIdx], cfg, Polarity::Source);
   return (pins_.push(_pin));
 }
 
@@ -77,7 +80,9 @@ GPIOPin* GPIOManager::find(GpioType type, int logicalIndex) {
 }
 
 void GPIOManager::addCmd(TerminalCommand* __termCmd) {
-  __termCmd->addCmd("gpio", "", "Prints the configured GPIO Table", [&](TerminalLibrary::OutputInterface* terminal) { gpioTable(terminal); });
+  __termCmd->addCmd("gpio", "-a|--all|-v|--verbose", "Prints the configured GPIO Table",
+                    [&](TerminalLibrary::OutputInterface* terminal) { gpioTable(terminal); });
+  __termCmd->addCmd("gpiov", "", "Prints the status of active GPIO", [&](TerminalLibrary::OutputInterface* terminal) { gpioTableStatus(terminal); });
   __termCmd->addCmd("pulse", "[n]", "Command a Output n to pulse", [&](TerminalLibrary::OutputInterface* terminal) { pulseCmd(terminal); });
   __termCmd->addCmd("stat", "[n]", "Status of Input n", [&](TerminalLibrary::OutputInterface* terminal) { statusCmd(terminal); });
   __termCmd->addCmd("tone", "[n] [Hz]", "Sets a Square Wave in Hz on Tone Pin n ", [&](TerminalLibrary::OutputInterface* terminal) { toneCmd(terminal); });
@@ -86,10 +91,19 @@ void GPIOManager::addCmd(TerminalCommand* __termCmd) {
 }
 
 bool GPIOManager::setupTask(OutputInterface* __terminal) {
+  setRefreshMilli(5);
   return true;
 }
 
 bool GPIOManager::executeTask() {
+  if (!initializePins) {
+    for (unsigned long i = 0; i < pins_.count(); i++) {
+      GPIOPin* _pin = (GPIOPin*) pins_.get(i);
+      _pin->setup();
+    }
+    DEBUG("Initialize Pins");
+    initializePins = true;
+  }
   for (unsigned long i = 0; i < pins_.count(); i++) {
     GPIOPin* _pin = (GPIOPin*) pins_.get(i);
     _pin->tick();
@@ -143,6 +157,36 @@ void GPIOManager::gpioTable(OutputInterface* terminal) {
       char index[20], physical[20], logical[20];
       table.printData(numToA(i, index, 20), gpioTypeToString(entry->type()), numToA(entry->physical(), physical, 20), entry->device()->getDeviceName(),
                       numToA(entry->index(), logical, 20), entry->note());
+    }
+  }
+  table.printDone("GPIO Table");
+
+  terminal->println();
+  terminal->prompt();
+}
+
+void GPIOManager::gpioTableStatus(OutputInterface* terminal) {
+  // SORT LIST
+
+  terminal->println(INFO, "GPIO Status");
+
+  AsciiTable table(terminal);
+  table.addColumn(Green, "Type", 12);
+  table.addColumn(Magenta, "Index", 7);
+  table.addColumn(Normal, "Value", 7);
+  table.addColumn(Normal, "Value", 7);
+  table.addColumn(Blue, "Freq", 8);
+  table.addColumn(Cyan, "Source", 8);
+  table.addColumn(Yellow, "Note", 30);
+  table.printHeader();
+  for (unsigned long i = 0; i < pins_.count(); i++) {
+    GPIOPin* entry = (GPIOPin*) pins_.get(i);
+    bool printPin = true;
+    if ((entry->type() != Available) && (entry->type() != Reserved)) printPin = true;
+    if (printPin) {
+      char logical[20], value[20], value2[20], freq[20];
+      table.printData(gpioTypeToString(entry->type()), numToA(entry->index(), logical, 20), numToA(entry->get(), value, 20), numToA(entry->value(), value2, 20),
+                      numToA(entry->getFreq(), freq, 20), (entry->getPol() == Source) ? "Source" : "Sink", entry->note());
     }
   }
   table.printDone("GPIO Table");

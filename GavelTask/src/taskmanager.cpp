@@ -76,6 +76,7 @@ bool TaskManager::executeTask() {
   unsigned long timeToIdle = 100;
   bool returnValue = true;
   bool loopValue = false;
+  setCore(rp2040.cpuid());
   int running_core = rp2040.cpuid();
   for (unsigned long i = 0; i < queue.count(); i++) {
     Task* t = getTask(i);
@@ -87,8 +88,6 @@ bool TaskManager::executeTask() {
       }
     }
   }
-  StringBuilder sb = "Time to Idle> Core(";
-  sb + running_core + ") : " + timeToIdle;
   idleTask[running_core].setDelay(timeToIdle);
   idleTask[running_core].loop();
   return returnValue;
@@ -163,8 +162,10 @@ void TaskManager::system(OutputInterface* terminal) {
         double timeTakenPerSec = timePerSec * time;
         percentString = timeTakenPerSec / 1000000.0 * 100;
         percentString + "%";
-        coreString = task->getCore();
-        coreUtil[task->getCore()] += timeTakenPerSec;
+        if (task->getID() != TASK_MANAGER_ID) {
+          coreString = task->getCore();
+          coreUtil[task->getCore()] += timeTakenPerSec;
+        }
       }
       table.printData(id.c_str(), coreString.c_str(), name.c_str(), timeString.c_str(), highString.c_str(), lowString.c_str(), rateString.c_str(),
                       percentString.c_str());

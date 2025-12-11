@@ -18,8 +18,8 @@ public:
   bool setupTask(OutputInterface* __terminal) override;
   bool executeTask() override;
 
-  GPIOPin* addPin(unsigned int deviceIdx, GpioConfig cfg, int pin, LedPolarity pol = LedPolarity::Source);
-  GPIOPin* addPin(unsigned int deviceIdx, int pin, int logicalIndex, GpioType type, const char* note, LedPolarity pol = LedPolarity::Source);
+  GPIOPin* addPin(unsigned int deviceIdx, GpioConfig cfg, int pin, Polarity pol = Polarity::Source);
+  GPIOPin* addPin(unsigned int deviceIdx, int pin, int logicalIndex, GpioType type, const char* note, Polarity pol = Polarity::Source);
 
   bool addReservePin(unsigned int deviceIdx, int pin, const char* note) override;
   bool addAvailablePin(unsigned int deviceIdx, int pin) override;
@@ -30,6 +30,7 @@ public:
   GPIOPin* find(GpioType type, int logicalIndex);
 
   void gpioTable(OutputInterface* terminal);
+  void gpioTableStatus(OutputInterface* terminal);
   void statusCmd(OutputInterface* terminal);
   void pulseCmd(OutputInterface* terminal);
   void toneCmd(OutputInterface* terminal);
@@ -38,6 +39,7 @@ public:
 private:
   IGPIOBackend* devices_[MAX_GPIO_DEVICES];
   ClassicSortList pins_ = ClassicSortList(MAX_PINS, sizeof(GPIOPin));
+  bool initializePins = false;
 };
 
 #endif // __GAVEL_GPIO_MANAGER_H

@@ -2,6 +2,7 @@
 #include "picobackend.h"
 
 #include <Arduino.h>
+#include <GavelDebug.h>
 
 #if defined ARDUINO_RASPBERRY_PI_PICO
 static char devicename[] = "Pi Pico";
@@ -98,7 +99,6 @@ void RP2040Backend::setAvailablePins(BackendPinSetup* pinsetup) {
   pinsetup->addAvailablePin(getDeviceIndex(), 27);
   pinsetup->addAvailablePin(getDeviceIndex(), 28);
   pinsetup->addAvailablePin(getDeviceIndex(), 29);
-  pinsetup->addAvailablePin(getDeviceIndex(), LED_BUILTIN);
 #elif defined ARDUINO_GENERIC_RP2040
   pinsetup->addAvailablePin(getDeviceIndex(), 0);
   pinsetup->addAvailablePin(getDeviceIndex(), 1);
@@ -137,7 +137,8 @@ bool RP2040Backend::setupAdc(int pin, unsigned char bits) {
 }
 
 bool RP2040Backend::readDigital(int pin) const {
-  return digitalRead(pin);
+  bool read = digitalRead(pin);
+  return read;
 }
 void RP2040Backend::writeDigital(int pin, bool level) {
   digitalWrite(pin, level);

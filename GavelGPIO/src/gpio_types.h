@@ -1,9 +1,11 @@
 #ifndef __GAVEL_GPIO_TYPES_H
 #define __GAVEL_GPIO_TYPES_H
 
+#define MAX_ANALOG_VALUE 4096
+
 enum GpioType { Input, Output, Led, Button, Pulse, Pwm, Tone, Adc, Reserved, Available };
 
-enum LedPolarity { Sink, Source };
+enum Polarity { Sink, Source };
 
 struct GpioConfig {
   GpioType type;
@@ -17,6 +19,6 @@ struct PwmSettings {
 };
 
 const char* gpioTypeToString(GpioType type);
-const char* gpioLedPolarityToString(LedPolarity pol);
+const char* gpioLedPolarityToString(Polarity pol);
 
 #endif // __GAVEL_GPIO_TYPES_H
