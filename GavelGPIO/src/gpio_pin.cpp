@@ -9,6 +9,7 @@ extern unsigned long millis();
 GPIOPin::GPIOPin(int physicalPin, IGPIOBackend* device, GpioConfig cfg, Polarity ledPol) : phys_(physicalPin), device_(device), cfg_(cfg), pol_(ledPol) {}
 
 bool GPIOPin::setup() {
+  bool value = false;
   timer_.setRefreshMilli(50);
   timer_.runTimer(false);
   switch (cfg_.type) {
@@ -16,7 +17,10 @@ bool GPIOPin::setup() {
   case GpioType::Button: return device_->setupInput(phys_);
   case GpioType::Output:
   case GpioType::Led:
-  case GpioType::Pulse: return device_->setupOutput(phys_);
+  case GpioType::Pulse:
+    value = device_->setupOutput(phys_);
+    device_->writeDigital(phys_, (pol_ == Polarity::Source) ? false : true);
+    return value;
   case GpioType::Adc: return device_->setupAdc(phys_, 12);
   case GpioType::Pwm:
     device_->setupOutput(phys_);
@@ -37,7 +41,10 @@ void GPIOPin::tick() {
   bool pressEdge = false;
   bool releaseEdge = false;
   switch (cfg_.type) {
-  case GpioType::Input: cur_ = device_->readDigital(phys_); break;
+  case GpioType::Input:
+    cur_ = device_->readDigital(phys_);
+    if (pol_ == Sink) cur_ = !cur_;
+    break;
   case GpioType::Button:
     raw = device_->readDigital(phys_);
     active = (pol_ == Source) ? raw : !raw;
@@ -56,7 +63,7 @@ void GPIOPin::tick() {
     if (timer_.expired()) {
       timer_.runTimer(false);
       cur_ = false;
-      device_->writeDigital(phys_, false);
+      device_->writeDigital(phys_, (pol_ == Polarity::Source) ? false : true);
     }
     break;
   case GpioType::Pwm:
@@ -84,7 +91,7 @@ void GPIOPin::set(bool v) {
   switch (cfg_.type) {
   case GpioType::Output:
     cur_ = v;
-    device_->writeDigital(phys_, v);
+    device_->writeDigital(phys_, (pol_ == Polarity::Source) ? v : !v);
     break;
   case GpioType::Led:
     cur_ = v;
@@ -93,7 +100,7 @@ void GPIOPin::set(bool v) {
   case GpioType::Pulse:
     timer_.runTimer(true);
     cur_ = true;
-    device_->writeDigital(phys_, true);
+    device_->writeDigital(phys_, (pol_ == Polarity::Source) ? true : false);
     break;
   case GpioType::Tone:
     if (v)

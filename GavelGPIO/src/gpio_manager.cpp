@@ -182,7 +182,7 @@ void GPIOManager::gpioTableStatus(OutputInterface* terminal) {
   for (unsigned long i = 0; i < pins_.count(); i++) {
     GPIOPin* entry = (GPIOPin*) pins_.get(i);
     bool printPin = true;
-    if ((entry->type() != Available) && (entry->type() != Reserved)) printPin = true;
+    if ((entry->type() == Available) || (entry->type() == Reserved)) printPin = false;
     if (printPin) {
       char logical[20], value[20], value2[20], freq[20];
       table.printData(gpioTypeToString(entry->type()), numToA(entry->index(), logical, 20), numToA(entry->get(), value, 20), numToA(entry->value(), value2, 20),
