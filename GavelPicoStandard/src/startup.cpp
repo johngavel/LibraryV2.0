@@ -35,8 +35,10 @@ void setup0Start(TerminalCommand* __termCmd) {
 
   addStandardTerminalCommands(__termCmd);
   if (__termCmd) {
-    __termCmd->addCmd("reboot", "", "Software Reboot the Pico", [&](TerminalLibrary::OutputInterface* terminal) { pico.rebootPico(terminal); });
-    __termCmd->addCmd("upload", "", "Software Reboot the Pico into USB mode", [&](TerminalLibrary::OutputInterface* terminal) { pico.uploadPico(terminal); });
+    __termCmd->addCmd("reboot", "", "Software Reboot the Pico",
+                      [&](TerminalLibrary::OutputInterface* terminal) { pico.rebootPico(terminal); });
+    __termCmd->addCmd("upload", "", "Software Reboot the Pico into USB mode",
+                      [&](TerminalLibrary::OutputInterface* terminal) { pico.uploadPico(terminal); });
   }
 }
 

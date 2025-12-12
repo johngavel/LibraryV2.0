@@ -6,7 +6,7 @@
 class ArrayFile : public DigitalFile {
 public:
   ArrayFile();
-  void set(const char* name, char* data, int size);
+  void set(const char* name, const char* data, int size);
 
   // Digital File virtuals
   const char* name() const override;
@@ -26,7 +26,7 @@ public:
 
 private:
   char _name[200];
-  char* _data;
+  const char* _data;
   int _size;
   int _cursor = 0;
   bool _isOpen = false;
@@ -36,7 +36,7 @@ private:
 class ArrayDirectory : public DigitalDirectory {
 public:
   ArrayDirectory(const char* name);
-  bool addFile(const char* name, char* data, int size);
+  bool addFile(const char* name, const char* data, int size);
   bool addDirectory(const char* name);
   DigitalBase* getFile(const char* name);
   // DigitalDirectory virtuals

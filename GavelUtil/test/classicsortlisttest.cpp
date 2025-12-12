@@ -10,50 +10,51 @@
 #include <vector>
 
 // ---------- Small assertion helpers to keep outputs readable ---------------
-#define ASSERT_TRUE_MSG(cond, msg)                                                                                                                             \
-  do {                                                                                                                                                         \
-    if (!(cond)) {                                                                                                                                             \
-      printf("ASSERT_TRUE failed: %s (line %d): %s\n", __FILE__, __LINE__, msg);                                                                               \
-      assert(cond);                                                                                                                                            \
-    }                                                                                                                                                          \
+#define ASSERT_TRUE_MSG(cond, msg)                                                                                     \
+  do {                                                                                                                 \
+    if (!(cond)) {                                                                                                     \
+      printf("ASSERT_TRUE failed: %s (line %d): %s\n", __FILE__, __LINE__, msg);                                       \
+      assert(cond);                                                                                                    \
+    }                                                                                                                  \
   } while (0)
 
 #define ASSERT_FALSE_MSG(cond, msg) ASSERT_TRUE_MSG(!(cond), msg)
 
-#define ASSERT_EQ_UL(a, b)                                                                                                                                     \
-  do {                                                                                                                                                         \
-    unsigned long _va = (unsigned long) (a);                                                                                                                   \
-    unsigned long _vb = (unsigned long) (b);                                                                                                                   \
-    if (!(_va == _vb)) {                                                                                                                                       \
-      printf("ASSERT_EQ_UL failed: %s (line %d): %lu != %lu\n", __FILE__, __LINE__, _va, _vb);                                                                 \
-      assert(_va == _vb);                                                                                                                                      \
-    }                                                                                                                                                          \
+#define ASSERT_EQ_UL(a, b)                                                                                             \
+  do {                                                                                                                 \
+    unsigned long _va = (unsigned long) (a);                                                                           \
+    unsigned long _vb = (unsigned long) (b);                                                                           \
+    if (!(_va == _vb)) {                                                                                               \
+      printf("ASSERT_EQ_UL failed: %s (line %d): %lu != %lu\n", __FILE__, __LINE__, _va, _vb);                         \
+      assert(_va == _vb);                                                                                              \
+    }                                                                                                                  \
   } while (0)
 
-#define ASSERT_EQ_INT(a, b)                                                                                                                                    \
-  do {                                                                                                                                                         \
-    int _va = (int) (a);                                                                                                                                       \
-    int _vb = (int) (b);                                                                                                                                       \
-    if (!(_va == _vb)) {                                                                                                                                       \
-      printf("ASSERT_EQ_INT failed: %s (line %d): %d != %d\n", __FILE__, __LINE__, _va, _vb);                                                                  \
-      assert(_va == _vb);                                                                                                                                      \
-    }                                                                                                                                                          \
+#define ASSERT_EQ_INT(a, b)                                                                                            \
+  do {                                                                                                                 \
+    int _va = (int) (a);                                                                                               \
+    int _vb = (int) (b);                                                                                               \
+    if (!(_va == _vb)) {                                                                                               \
+      printf("ASSERT_EQ_INT failed: %s (line %d): %d != %d\n", __FILE__, __LINE__, _va, _vb);                          \
+      assert(_va == _vb);                                                                                              \
+    }                                                                                                                  \
   } while (0)
 
-#define ASSERT_EQ_VEC_INT(vec, ...)                                                                                                                            \
-  do {                                                                                                                                                         \
-    int expected[] = {__VA_ARGS__};                                                                                                                            \
-    size_t n = sizeof(expected) / sizeof(expected[0]);                                                                                                         \
-    if (vec.size() != n) {                                                                                                                                     \
-      printf("ASSERT_EQ_VEC_INT size failed: %s (line %d): got %zu, expected %zu\n", __FILE__, __LINE__, vec.size(), n);                                       \
-      assert(vec.size() == n);                                                                                                                                 \
-    }                                                                                                                                                          \
-    for (size_t i = 0; i < n; ++i) {                                                                                                                           \
-      if (vec[i] != expected[i]) {                                                                                                                             \
-        printf("ASSERT_EQ_VEC_INT mismatch at %zu: got %d, expected %d\n", i, vec[i], expected[i]);                                                            \
-        assert(vec[i] == expected[i]);                                                                                                                         \
-      }                                                                                                                                                        \
-    }                                                                                                                                                          \
+#define ASSERT_EQ_VEC_INT(vec, ...)                                                                                    \
+  do {                                                                                                                 \
+    int expected[] = {__VA_ARGS__};                                                                                    \
+    size_t n = sizeof(expected) / sizeof(expected[0]);                                                                 \
+    if (vec.size() != n) {                                                                                             \
+      printf("ASSERT_EQ_VEC_INT size failed: %s (line %d): got %zu, expected %zu\n", __FILE__, __LINE__, vec.size(),   \
+             n);                                                                                                       \
+      assert(vec.size() == n);                                                                                         \
+    }                                                                                                                  \
+    for (size_t i = 0; i < n; ++i) {                                                                                   \
+      if (vec[i] != expected[i]) {                                                                                     \
+        printf("ASSERT_EQ_VEC_INT mismatch at %zu: got %d, expected %d\n", i, vec[i], expected[i]);                    \
+        assert(vec[i] == expected[i]);                                                                                 \
+      }                                                                                                                \
+    }                                                                                                                  \
   } while (0)
 
 // ---------- Comparators -----------------------------------------------------

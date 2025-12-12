@@ -38,7 +38,9 @@ unsigned int clientWrite(Client* client, char* buffer, unsigned int length) {
   unsigned int totalBytes = 0;
   unsigned long remainder = length % BUFFER_SIZE;
   unsigned long loops = length / BUFFER_SIZE;
-  for (unsigned long i = 0; i < loops; i++) { totalBytes += __clientWrite(client, &buffer[i * BUFFER_SIZE], BUFFER_SIZE); }
+  for (unsigned long i = 0; i < loops; i++) {
+    totalBytes += __clientWrite(client, &buffer[i * BUFFER_SIZE], BUFFER_SIZE);
+  }
   totalBytes += __clientWrite(client, &buffer[loops * BUFFER_SIZE], remainder);
   return totalBytes;
 }

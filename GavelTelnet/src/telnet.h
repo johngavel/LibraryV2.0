@@ -18,11 +18,12 @@ public:
   void reservePins(BackendPinSetup* pinsetup) override {};
   bool setupTask(OutputInterface* __terminal) override;
   bool executeTask() override;
+
   VirtualServer* getServer() { return server; };
-  Terminal* terminal_;
-  Client* client;
 
 private:
+  Terminal* terminal_;
+  Client* client;
   bool clientConnected;
   VirtualServer* server;
   void closeTelnet(OutputInterface* terminal);

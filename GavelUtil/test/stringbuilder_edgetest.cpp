@@ -8,7 +8,9 @@
 
 // Helper for readable output
 static void expect_eq(const char* actual, const char* expected, const char* msg) {
-  if (strcmp(actual, expected) != 0) { printf("❌ %s\n   expected: \"%s\"\n   actual:   \"%s\"\n", msg, expected, actual); }
+  if (strcmp(actual, expected) != 0) {
+    printf("❌ %s\n   expected: \"%s\"\n   actual:   \"%s\"\n", msg, expected, actual);
+  }
   assert(strcmp(actual, expected) == 0);
 }
 

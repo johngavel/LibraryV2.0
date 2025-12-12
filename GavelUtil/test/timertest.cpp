@@ -43,38 +43,38 @@ static inline unsigned long fake_micros() {
 static int g_passed = 0;
 static int g_failed = 0;
 
-#define CHECK_TRUE(MSG, COND)                                                                                                                                  \
-  do {                                                                                                                                                         \
-    if (COND) {                                                                                                                                                \
-      ++g_passed;                                                                                                                                              \
-    } else {                                                                                                                                                   \
-      ++g_failed;                                                                                                                                              \
-      printf("FAIL: %s (line %d)\n", MSG, __LINE__);                                                                                                           \
-    }                                                                                                                                                          \
+#define CHECK_TRUE(MSG, COND)                                                                                          \
+  do {                                                                                                                 \
+    if (COND) {                                                                                                        \
+      ++g_passed;                                                                                                      \
+    } else {                                                                                                           \
+      ++g_failed;                                                                                                      \
+      printf("FAIL: %s (line %d)\n", MSG, __LINE__);                                                                   \
+    }                                                                                                                  \
   } while (0)
 
-#define CHECK_EQ_UL(MSG, GOT, EXP)                                                                                                                             \
-  do {                                                                                                                                                         \
-    unsigned long _got = (unsigned long) (GOT);                                                                                                                \
-    unsigned long _exp = (unsigned long) (EXP);                                                                                                                \
-    if (_got == _exp) {                                                                                                                                        \
-      ++g_passed;                                                                                                                                              \
-    } else {                                                                                                                                                   \
-      ++g_failed;                                                                                                                                              \
-      printf("FAIL: %s (line %d): got=%lu exp=%lu\n", MSG, __LINE__, _got, _exp);                                                                              \
-    }                                                                                                                                                          \
+#define CHECK_EQ_UL(MSG, GOT, EXP)                                                                                     \
+  do {                                                                                                                 \
+    unsigned long _got = (unsigned long) (GOT);                                                                        \
+    unsigned long _exp = (unsigned long) (EXP);                                                                        \
+    if (_got == _exp) {                                                                                                \
+      ++g_passed;                                                                                                      \
+    } else {                                                                                                           \
+      ++g_failed;                                                                                                      \
+      printf("FAIL: %s (line %d): got=%lu exp=%lu\n", MSG, __LINE__, _got, _exp);                                      \
+    }                                                                                                                  \
   } while (0)
 
-#define CHECK_EQ_INT(MSG, GOT, EXP)                                                                                                                            \
-  do {                                                                                                                                                         \
-    int _got = (int) (GOT);                                                                                                                                    \
-    int _exp = (int) (EXP);                                                                                                                                    \
-    if (_got == _exp) {                                                                                                                                        \
-      ++g_passed;                                                                                                                                              \
-    } else {                                                                                                                                                   \
-      ++g_failed;                                                                                                                                              \
-      printf("FAIL: %s (line %d): got=%d exp=%d\n", MSG, __LINE__, _got, _exp);                                                                                \
-    }                                                                                                                                                          \
+#define CHECK_EQ_INT(MSG, GOT, EXP)                                                                                    \
+  do {                                                                                                                 \
+    int _got = (int) (GOT);                                                                                            \
+    int _exp = (int) (EXP);                                                                                            \
+    if (_got == _exp) {                                                                                                \
+      ++g_passed;                                                                                                      \
+    } else {                                                                                                           \
+      ++g_failed;                                                                                                      \
+      printf("FAIL: %s (line %d): got=%d exp=%d\n", MSG, __LINE__, _got, _exp);                                        \
+    }                                                                                                                  \
   } while (0)
 
 // ---------- Tests ----------

@@ -19,7 +19,8 @@ public:
   bool executeTask() override;
 
   GPIOPin* addPin(unsigned int deviceIdx, GpioConfig cfg, int pin, Polarity pol = Polarity::Source);
-  GPIOPin* addPin(unsigned int deviceIdx, int pin, int logicalIndex, GpioType type, const char* note, Polarity pol = Polarity::Source);
+  GPIOPin* addPin(unsigned int deviceIdx, int pin, int logicalIndex, GpioType type, const char* note,
+                  Polarity pol = Polarity::Source);
 
   bool addReservePin(unsigned int deviceIdx, int pin, const char* note) override;
   bool addAvailablePin(unsigned int deviceIdx, int pin) override;

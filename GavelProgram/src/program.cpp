@@ -42,7 +42,8 @@ void banner(OutputInterface* terminal) {
   terminal->println();
   StringBuilder sb;
   char buffer[10];
-  sb + ProgramInfo::AppName + " Version: " + ProgramInfo::MajorVersion + "." + ProgramInfo::MinorVersion + "." + ProgramInfo::BuildVersion;
+  sb + ProgramInfo::AppName + " Version: " + ProgramInfo::MajorVersion + "." + ProgramInfo::MinorVersion + "." +
+      ProgramInfo::BuildVersion;
 
   terminal->println(INFO, sb.c_str());
   sb.clear();

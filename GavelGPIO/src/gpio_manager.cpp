@@ -14,7 +14,8 @@ GPIOPin* GPIOManager::addPin(unsigned int deviceIdx, GpioConfig cfg, int pin, Po
   return (addPin(deviceIdx, pin, cfg.logicalIndex, cfg.type, cfg.note, pol));
 }
 
-GPIOPin* GPIOManager::addPin(unsigned int deviceIdx, int pin, int logicalIndex, GpioType type, const char* note, Polarity pol) {
+GPIOPin* GPIOManager::addPin(unsigned int deviceIdx, int pin, int logicalIndex, GpioType type, const char* note,
+                             Polarity pol) {
   if (deviceIdx >= MAX_GPIO_DEVICES) return nullptr;
   if (!devices_[deviceIdx]) return nullptr;
   if (find(type, logicalIndex)) return nullptr;
@@ -82,10 +83,14 @@ GPIOPin* GPIOManager::find(GpioType type, int logicalIndex) {
 void GPIOManager::addCmd(TerminalCommand* __termCmd) {
   __termCmd->addCmd("gpio", "-a|--all|-v|--verbose", "Prints the configured GPIO Table",
                     [&](TerminalLibrary::OutputInterface* terminal) { gpioTable(terminal); });
-  __termCmd->addCmd("gpiov", "", "Prints the status of active GPIO", [&](TerminalLibrary::OutputInterface* terminal) { gpioTableStatus(terminal); });
-  __termCmd->addCmd("pulse", "[n]", "Command a Output n to pulse", [&](TerminalLibrary::OutputInterface* terminal) { pulseCmd(terminal); });
-  __termCmd->addCmd("stat", "[n]", "Status of Input n", [&](TerminalLibrary::OutputInterface* terminal) { statusCmd(terminal); });
-  __termCmd->addCmd("tone", "[n] [Hz]", "Sets a Square Wave in Hz on Tone Pin n ", [&](TerminalLibrary::OutputInterface* terminal) { toneCmd(terminal); });
+  __termCmd->addCmd("gpiov", "", "Prints the status of active GPIO",
+                    [&](TerminalLibrary::OutputInterface* terminal) { gpioTableStatus(terminal); });
+  __termCmd->addCmd("pulse", "[n]", "Command a Output n to pulse",
+                    [&](TerminalLibrary::OutputInterface* terminal) { pulseCmd(terminal); });
+  __termCmd->addCmd("stat", "[n]", "Status of Input n",
+                    [&](TerminalLibrary::OutputInterface* terminal) { statusCmd(terminal); });
+  __termCmd->addCmd("tone", "[n] [Hz]", "Sets a Square Wave in Hz on Tone Pin n ",
+                    [&](TerminalLibrary::OutputInterface* terminal) { toneCmd(terminal); });
   __termCmd->addCmd("pwm", "[n] [f] [%]", "Sets the frequency and % Duty Cycyle PWM Pin n",
                     [&](TerminalLibrary::OutputInterface* terminal) { pwmCmd(terminal); });
 }
@@ -155,8 +160,8 @@ void GPIOManager::gpioTable(OutputInterface* terminal) {
     if ((entry->type() == Reserved) && (verbose == false)) printPin = false;
     if (printPin) {
       char index[20], physical[20], logical[20];
-      table.printData(numToA(i, index, 20), gpioTypeToString(entry->type()), numToA(entry->physical(), physical, 20), entry->device()->getDeviceName(),
-                      numToA(entry->index(), logical, 20), entry->note());
+      table.printData(numToA(i, index, 20), gpioTypeToString(entry->type()), numToA(entry->physical(), physical, 20),
+                      entry->device()->getDeviceName(), numToA(entry->index(), logical, 20), entry->note());
     }
   }
   table.printDone("GPIO Table");
@@ -185,8 +190,10 @@ void GPIOManager::gpioTableStatus(OutputInterface* terminal) {
     if ((entry->type() == Available) || (entry->type() == Reserved)) printPin = false;
     if (printPin) {
       char logical[20], value[20], value2[20], freq[20];
-      table.printData(gpioTypeToString(entry->type()), numToA(entry->index(), logical, 20), numToA(entry->get(), value, 20), numToA(entry->value(), value2, 20),
-                      numToA(entry->getFreq(), freq, 20), (entry->getPol() == Source) ? "Source" : "Sink", entry->note());
+      table.printData(gpioTypeToString(entry->type()), numToA(entry->index(), logical, 20),
+                      numToA(entry->get(), value, 20), numToA(entry->value(), value2, 20),
+                      numToA(entry->getFreq(), freq, 20), (entry->getPol() == Source) ? "Source" : "Sink",
+                      entry->note());
     }
   }
   table.printDone("GPIO Table");

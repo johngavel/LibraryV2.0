@@ -9,7 +9,9 @@ Scan::Scan() : Task("I2CScanner") {
 };
 
 void Scan::addCmd(TerminalCommand* __termCmd) {
-  if (__termCmd) __termCmd->addCmd("scan", "", "I2c Scanner", [this](TerminalLibrary::OutputInterface* terminal) { scani2c(terminal); });
+  if (__termCmd)
+    __termCmd->addCmd("scan", "", "I2c Scanner",
+                      [this](TerminalLibrary::OutputInterface* terminal) { scani2c(terminal); });
 }
 
 void Scan::reservePins(BackendPinSetup* pinsetup) {

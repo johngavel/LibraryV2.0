@@ -193,7 +193,8 @@ int testNumToA() {
 
       unsigned int umax = UINT_MAX;
       ret = numToA(umax, buf, sizeof(buf));
-      // Represented via "%lu" after promotion; value is platform-dependent width but the decimal text must match the numeric value.
+      // Represented via "%lu" after promotion; value is platform-dependent width but the decimal text must match the
+      // numeric value.
       std::printf("  (info) UINT_MAX is %u on this platform\n", umax);
       // We can cross-check by printing with snprintf too:
       char check[64];

@@ -6,7 +6,8 @@
 
 class MutexQueue : public ClassicList {
 public:
-  MutexQueue(unsigned long __capacity, unsigned long __sizeOfElement, void* __memory = nullptr) : queue(__capacity, __sizeOfElement, __memory){};
+  MutexQueue(unsigned long __capacity, unsigned long __sizeOfElement, void* __memory = nullptr)
+      : queue(__capacity, __sizeOfElement, __memory){};
   bool full();
   bool empty();
   bool push(void* element);
@@ -25,7 +26,8 @@ private:
 
 class SemQueue : public ClassicList {
 public:
-  SemQueue(unsigned long __capacity, unsigned long __sizeOfElement, void* __memory = nullptr) : queue(__capacity, __sizeOfElement, __memory){};
+  SemQueue(unsigned long __capacity, unsigned long __sizeOfElement, void* __memory = nullptr)
+      : queue(__capacity, __sizeOfElement, __memory){};
   bool full();
   bool empty();
   bool push(void* element);

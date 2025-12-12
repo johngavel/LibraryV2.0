@@ -23,9 +23,9 @@ bool TaskManager::setupTask(OutputInterface* terminal) {
   StringBuilder sb;
   if (terminal) {
     terminal->clearScreen();
-    terminal->println(
-        PROMPT,
-        (sb + ProgramInfo::AppName + " Version: " + ProgramInfo::MajorVersion + "." + ProgramInfo::MinorVersion + "." + ProgramInfo::BuildVersion).c_str());
+    terminal->println(PROMPT, (sb + ProgramInfo::AppName + " Version: " + ProgramInfo::MajorVersion + "." +
+                               ProgramInfo::MinorVersion + "." + ProgramInfo::BuildVersion)
+                                  .c_str());
     sb.clear();
     terminal->println(PROMPT, "************************************************************");
   }
@@ -95,7 +95,8 @@ bool TaskManager::executeTask() {
 
 void TaskManager::addCmd(TerminalCommand* __termCmd) {
   if (__termCmd)
-    __termCmd->addCmd("system", "", "Prints a list of Tasks running in the system", [this](TerminalLibrary::OutputInterface* terminal) { system(terminal); });
+    __termCmd->addCmd("system", "", "Prints a list of Tasks running in the system",
+                      [this](TerminalLibrary::OutputInterface* terminal) { system(terminal); });
 }
 
 void TaskManager::add(Task* task) {
@@ -167,8 +168,8 @@ void TaskManager::system(OutputInterface* terminal) {
           coreUtil[task->getCore()] += timeTakenPerSec;
         }
       }
-      table.printData(id.c_str(), coreString.c_str(), name.c_str(), timeString.c_str(), highString.c_str(), lowString.c_str(), rateString.c_str(),
-                      percentString.c_str());
+      table.printData(id.c_str(), coreString.c_str(), name.c_str(), timeString.c_str(), highString.c_str(),
+                      lowString.c_str(), rateString.c_str(), percentString.c_str());
     }
   }
 

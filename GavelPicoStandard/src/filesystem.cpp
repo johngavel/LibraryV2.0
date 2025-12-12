@@ -16,7 +16,8 @@ void FileSystem::addCmd(TerminalCommand* __termCmd) {
   if (__termCmd) {
     __termCmd->addCmd("dir", "<path><filename>", "Directory of list of the entire device",
                       [this](TerminalLibrary::OutputInterface* terminal) { directory(terminal); });
-    __termCmd->addCmd("cat", "<path><filename>", "Displays the file", [this](TerminalLibrary::OutputInterface* terminal) { catFile(terminal); });
+    __termCmd->addCmd("cat", "<path><filename>", "Displays the file",
+                      [this](TerminalLibrary::OutputInterface* terminal) { catFile(terminal); });
   }
 }
 

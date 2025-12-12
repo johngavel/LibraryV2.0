@@ -7,7 +7,7 @@ ArrayDirectory::ArrayDirectory(const char* name) {
   strncpy(_name, name, sizeof(_name) - 1);
 };
 
-bool ArrayDirectory::addFile(const char* name, char* data, int size) {
+bool ArrayDirectory::addFile(const char* name, const char* data, int size) {
   if (!name || !*name || (!data && size > 0)) return false;
   if (_fileCount >= MAX_FILES) return false;
   if (getFile(name) != nullptr) return false;

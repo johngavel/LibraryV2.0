@@ -18,7 +18,9 @@ public:
 
 class IGPIOBackend {
 public:
-  IGPIOBackend(char* name, int deviceIdx__) : _deviceIdx(deviceIdx__) { strncpy(_name, name, TASK_DEVICE_NAME_LENGTH); };
+  IGPIOBackend(char* name, int deviceIdx__) : _deviceIdx(deviceIdx__) {
+    strncpy(_name, name, TASK_DEVICE_NAME_LENGTH);
+  };
   virtual ~IGPIOBackend() = default;
   char* getDeviceName() { return _name; };
   int getDeviceIndex() { return _deviceIdx; };

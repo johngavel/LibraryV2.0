@@ -23,8 +23,8 @@ typedef enum { JAXSON, DRAGON, LIGHT, VUMETER, GAVEL, BITMAP_LENGTH } BITMAP;
 
 class ScreenInterface {
 public:
-  virtual void setScreen(String line1 = "", String line2 = "", String line3 = "", String line4 = "", String line5 = "", String line6 = "", String line7 = "",
-                         String line8 = "") = 0;
+  virtual void setScreen(String line1 = "", String line2 = "", String line3 = "", String line4 = "", String line5 = "",
+                         String line6 = "", String line7 = "", String line8 = "") = 0;
   virtual void setScreen(BITMAP bitmap, String caption) = 0;
   virtual void setScreen(unsigned char* bitmap, String caption, unsigned long width, unsigned long height) = 0;
   virtual Adafruit_SSD1306* getDisplay() = 0;
@@ -55,8 +55,8 @@ public:
     refreshScreen->refresh = __refresh;
     refreshScreen->setScreen(this);
   };
-  void setScreen(String line1 = "", String line2 = "", String line3 = "", String line4 = "", String line5 = "", String line6 = "", String line7 = "",
-                 String line8 = "") override;
+  void setScreen(String line1 = "", String line2 = "", String line3 = "", String line4 = "", String line5 = "",
+                 String line6 = "", String line7 = "", String line8 = "") override;
   void setScreen(BITMAP bitmap, String caption) override;
   void setScreen(unsigned char* bitmap, String caption, unsigned long width, unsigned long height) override;
   Adafruit_SSD1306* getDisplay() override { return &display; };

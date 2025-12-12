@@ -6,7 +6,8 @@
 
 extern unsigned long millis();
 
-GPIOPin::GPIOPin(int physicalPin, IGPIOBackend* device, GpioConfig cfg, Polarity ledPol) : phys_(physicalPin), device_(device), cfg_(cfg), pol_(ledPol) {}
+GPIOPin::GPIOPin(int physicalPin, IGPIOBackend* device, GpioConfig cfg, Polarity ledPol)
+    : phys_(physicalPin), device_(device), cfg_(cfg), pol_(ledPol) {}
 
 bool GPIOPin::setup() {
   bool value = false;

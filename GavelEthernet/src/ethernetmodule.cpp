@@ -27,8 +27,8 @@ bool EthernetModule::setupW5500() {
   } else {
     if (memory.getInternal()) {
       spiWire.wireTake();
-      Ethernet.begin(memory.memory.data.macAddress, memory.memory.data.ipAddress, memory.memory.data.dnsAddress, memory.memory.data.gatewayAddress,
-                     memory.memory.data.subnetMask);
+      Ethernet.begin(memory.memory.data.macAddress, memory.memory.data.ipAddress, memory.memory.data.dnsAddress,
+                     memory.memory.data.gatewayAddress, memory.memory.data.subnetMask);
       spiWire.wireGive();
     }
   }
@@ -59,7 +59,8 @@ void EthernetModule::configure(byte* __macAddress, bool __isDHCP) {
   configure(__macAddress, __isDHCP, blankAddress, blankAddress, blankAddress, blankAddress);
 }
 
-void EthernetModule::configure(byte* __macAddress, bool __isDHCP, byte* __ipAddress, byte* __dnsAddress, byte* __subnetMask, byte* __gatewayAddress) {
+void EthernetModule::configure(byte* __macAddress, bool __isDHCP, byte* __ipAddress, byte* __dnsAddress,
+                               byte* __subnetMask, byte* __gatewayAddress) {
   configure();
   memcpy(memory.memory.data.macAddress, __macAddress, sizeof(memory.memory.data.macAddress));
   memory.memory.data.isDHCP = __isDHCP;

@@ -5,12 +5,14 @@
 
 static char taskName[] = "Watchdog";
 
-Watchdog::Watchdog(unsigned long timeout, unsigned long petCycle) : Task(taskName), watchdogTimeout(timeout), watchdogPetCycle(petCycle) {
+Watchdog::Watchdog(unsigned long timeout, unsigned long petCycle)
+    : Task(taskName), watchdogTimeout(timeout), watchdogPetCycle(petCycle) {
   monitorCore[0] = true;
   monitorCore[1] = true;
 };
 
-static char resetReasonText[][24] = {"Unknown", "Power On / Brownout", "Run pin", "Software", "Watchdog Timer", "Debug reset"};
+static char resetReasonText[][24] = {"Unknown",  "Power On / Brownout", "Run pin",
+                                     "Software", "Watchdog Timer",      "Debug reset"};
 static void printResetReason(OutputInterface* __terminal) {
   unsigned char reason = rp2040.getResetReason();
   __terminal->println(PASSED, "Reset Reason: ", resetReasonText[reason]);

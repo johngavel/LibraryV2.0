@@ -22,9 +22,15 @@ void EEpromMemory::configure(unsigned long size) {
 }
 
 void EEpromMemory::addCmd(TerminalCommand* __termCmd) {
-  if (__termCmd) __termCmd->addCmd("wipe", "", "Wipe and Initialize EEPROM Memory", [this](TerminalLibrary::OutputInterface* terminal) { wipe(terminal); });
-  if (__termCmd) __termCmd->addCmd("mem", "", "Contents of Flash Memory", [this](TerminalLibrary::OutputInterface* terminal) { mem(terminal); });
-  if (__termCmd) __termCmd->addCmd("raw", "", "Raw Contents of Flash Memory", [this](TerminalLibrary::OutputInterface* terminal) { raw(terminal); });
+  if (__termCmd)
+    __termCmd->addCmd("wipe", "", "Wipe and Initialize EEPROM Memory",
+                      [this](TerminalLibrary::OutputInterface* terminal) { wipe(terminal); });
+  if (__termCmd)
+    __termCmd->addCmd("mem", "", "Contents of Flash Memory",
+                      [this](TerminalLibrary::OutputInterface* terminal) { mem(terminal); });
+  if (__termCmd)
+    __termCmd->addCmd("raw", "", "Raw Contents of Flash Memory",
+                      [this](TerminalLibrary::OutputInterface* terminal) { raw(terminal); });
 }
 
 void EEpromMemory::reservePins(BackendPinSetup* pinsetup) {
@@ -107,7 +113,8 @@ void EEpromMemory::readEEPROM() {
     for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
       DataHeader dataHeader;
       IMemory* data = getData(dataIndex);
-      for (unsigned long i = 0; i < sizeof(DataHeader); i++) dataHeader.memoryBuffer[i] = readEEPROMbyte(eepromIndex + i);
+      for (unsigned long i = 0; i < sizeof(DataHeader); i++)
+        dataHeader.memoryBuffer[i] = readEEPROMbyte(eepromIndex + i);
       eepromIndex += sizeof(DataHeader);
       if ((dataHeader.dataStruct.id == data->getId()) && (dataHeader.dataStruct.size == data->size())) {
         for (unsigned long i = 0; i < data->size(); i++) (*data)[i] = readEEPROMbyte(eepromIndex + i);
@@ -136,7 +143,8 @@ void EEpromMemory::writeEEPROM() {
       IMemory* data = getData(dataIndex);
       dataHeader.dataStruct.id = data->getId();
       dataHeader.dataStruct.size = data->size();
-      for (unsigned long i = 0; i < sizeof(DataHeader); i++) writeEEPROMbyte(eepromIndex + i, dataHeader.memoryBuffer[i]);
+      for (unsigned long i = 0; i < sizeof(DataHeader); i++)
+        writeEEPROMbyte(eepromIndex + i, dataHeader.memoryBuffer[i]);
       eepromIndex += sizeof(DataHeader);
       for (unsigned long i = 0; i < data->size(); i++) writeEEPROMbyte(eepromIndex + i, (*data)[i]);
       data->setInternal(false);
@@ -196,7 +204,8 @@ static void hexLine(char* string, unsigned long stringSize, unsigned char* value
 }
 
 // CHANGED: add 'count' so we can print less than BYTES_PER_LINE for the tail
-static void printHexLine(OutputInterface* terminal, unsigned char* buffer, unsigned long lineNumber, unsigned long count) {
+static void printHexLine(OutputInterface* terminal, unsigned char* buffer, unsigned long lineNumber,
+                         unsigned long count) {
   char string[80];
   StringBuilder sb;
 
@@ -226,7 +235,9 @@ void EEpromMemory::raw(OutputInterface* terminal) {
   i2cWire.wireGive();
 
   // Unchanged full lines, but pass the explicit count
-  for (unsigned long i = 0; i < lines; i++) { printHexLine(terminal, &buffer[i * BYTES_PER_LINE], i * BYTES_PER_LINE, BYTES_PER_LINE); }
+  for (unsigned long i = 0; i < lines; i++) {
+    printHexLine(terminal, &buffer[i * BYTES_PER_LINE], i * BYTES_PER_LINE, BYTES_PER_LINE);
+  }
 
   // CHANGED: fix tail pointer and count
   if (remainder > 0) { printHexLine(terminal, &buffer[lines * BYTES_PER_LINE], lines * BYTES_PER_LINE, remainder); }

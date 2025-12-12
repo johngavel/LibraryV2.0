@@ -16,7 +16,9 @@ TelnetModule::TelnetModule() : Task("Telnet") {
 }
 
 void TelnetModule::addCmd(TerminalCommand* __termCmd) {
-  if (__termCmd) __termCmd->addCmd("exit", "", "Closes the Telnet Session.", [this](TerminalLibrary::OutputInterface* terminal) { closeTelnet(terminal); });
+  if (__termCmd)
+    __termCmd->addCmd("exit", "", "Closes the Telnet Session.",
+                      [this](TerminalLibrary::OutputInterface* terminal) { closeTelnet(terminal); });
 }
 
 bool TelnetModule::setupTask(OutputInterface* __terminal) {
@@ -57,8 +59,8 @@ bool TelnetModule::executeTask() {
     }
   } else {
     if (client->connected()) {
-      terminal_->loop();
       spiWire.wireTake();
+      terminal_->loop();
       client->flush();
       spiWire.wireGive();
     } else {

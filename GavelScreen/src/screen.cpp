@@ -6,11 +6,15 @@
 #include <GavelI2CWire.h>
 #include <GavelProgram.h>
 
-Screen::Screen() : Task("Screen"), display(Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, i2cWire.getWire(), OLED_RESET)), refreshScreen(nullptr) {}
+Screen::Screen()
+    : Task("Screen"),
+      display(Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, i2cWire.getWire(), OLED_RESET)),
+      refreshScreen(nullptr) {}
 
 void Screen::addCmd(TerminalCommand* __termCmd) {
   if (__termCmd)
-    __termCmd->addCmd("bitmap", "[n]", "Displays an image on the screen", [this](TerminalLibrary::OutputInterface* terminal) { bitmap(terminal); });
+    __termCmd->addCmd("bitmap", "[n]", "Displays an image on the screen",
+                      [this](TerminalLibrary::OutputInterface* terminal) { bitmap(terminal); });
 }
 
 void Screen::reservePins(BackendPinSetup* pinsetup) {
@@ -41,7 +45,8 @@ bool Screen::setupTask(OutputInterface* __terminal) {
   // Clear the buffer
   display.clearDisplay();
   i2cWire.wireGive();
-  setScreen(JAXSON, String(ProgramInfo::AppName) + " v" + String(ProgramInfo::MajorVersion) + String(".") + String(ProgramInfo::MinorVersion));
+  setScreen(JAXSON, String(ProgramInfo::AppName) + " v" + String(ProgramInfo::MajorVersion) + String(".") +
+                        String(ProgramInfo::MinorVersion));
   return true;
 }
 
@@ -120,7 +125,8 @@ void Screen::setScreen(BITMAP bitmap, String caption) {
   screenAccess.give();
 }
 
-void Screen::setScreen(String line1, String line2, String line3, String line4, String line5, String line6, String line7, String line8) {
+void Screen::setScreen(String line1, String line2, String line3, String line4, String line5, String line6, String line7,
+                       String line8) {
   screenAccess.take();
   beginScreen();
   printLnScreen(line1);
