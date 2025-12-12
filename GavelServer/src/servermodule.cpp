@@ -58,7 +58,6 @@ bool ServerModule::serveFile(Client* client, const String& path) {
   return true;
 }
 
-
 // Simple API: GET /api/time -> JSON
 bool ServerModule::serveApi(Client* client, const String& path) {
   // Only one endpoint for demo
@@ -80,7 +79,6 @@ bool ServerModule::serveApi(Client* client, const String& path) {
   client->print("{\"error\":\"unknown endpoint\"}");
   return false;
 }
-
 
 bool ServerModule::executeTask() {
   const unsigned long timeoutTime = 1000;
