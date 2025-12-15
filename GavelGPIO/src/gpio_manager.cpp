@@ -1,7 +1,6 @@
 
 #include "gpio_manager.h"
 
-#include <GavelDebug.h>
 #include <GavelProgram.h>
 #include <GavelUtil.h>
 #include <asciitable/asciitable.h>
@@ -106,7 +105,6 @@ bool GPIOManager::executeTask() {
       GPIOPin* _pin = (GPIOPin*) pins_.get(i);
       _pin->setup();
     }
-    DEBUG("Initialize Pins");
     initializePins = true;
   }
   for (unsigned long i = 0; i < pins_.count(); i++) {

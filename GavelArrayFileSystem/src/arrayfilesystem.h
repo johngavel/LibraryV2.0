@@ -6,14 +6,14 @@
 class ArrayFile : public DigitalFile {
 public:
   ArrayFile();
-  void set(const char* name, const char* data, int size);
+  void set(const char* name, const char* data, int __size);
 
   // Digital File virtuals
   const char* name() const override;
   int size() override;
-  void open() override;
+  bool open(FileMode mode = READ_MODE) override;
   void close() override;
-  int read(unsigned char* buf, int size) override;
+  int read(unsigned char* buf, int __size) override;
   operator bool() const override;
 
   // Stream virtuals
@@ -21,7 +21,7 @@ public:
   int read() override;
   int peek() override;
   void flush() override;
-  size_t write(const unsigned char* buffer, size_t size) override;
+  size_t write(const unsigned char* buffer, size_t __size) override;
   size_t write(unsigned char) override;
 
 private:
@@ -36,7 +36,8 @@ private:
 class ArrayDirectory : public DigitalDirectory {
 public:
   ArrayDirectory(const char* name);
-  bool addFile(const char* name, const char* data, int size);
+  bool addFile(const char* name, const char* data, int __size);
+  bool addFile(DigitalFile* file);
   bool addDirectory(const char* name);
   DigitalBase* getFile(const char* name);
   // DigitalDirectory virtuals
@@ -44,7 +45,7 @@ public:
   void rewindDirectory() override;
   // DigitalBase virtuals
   const char* name() const override;
-  void open() override;
+  bool open(FileMode mode = READ_MODE) override;
   void close() override;
 
 private:
@@ -57,7 +58,7 @@ private:
 class ArrayFileSystem : public DigitalFileSystem {
 public:
   ArrayFileSystem();
-  DigitalBase* open(const char* path) override;
+  DigitalBase* open(const char* path, FileMode mode = READ_MODE) override;
   bool format() override;
   bool verifyFile(const char* path) override;
   DigitalFile* readFile(const char* path) override;

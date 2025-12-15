@@ -6,6 +6,7 @@
 #include <GavelBlinkPico.h>
 #include <GavelGPIO.h>
 #include <GavelPico.h>
+#include <GavelProgram.h>
 #include <GavelSerialPort.h>
 #include <GavelTask.h>
 #include <GavelWatchdog.h>
@@ -18,6 +19,7 @@ void setup1Complete();
 void loop_0();
 void loop_1();
 
+extern ProgramInfo programInfo;
 extern PicoCommand pico;
 extern TaskManager taskManager;
 extern SerialPort serialPort;

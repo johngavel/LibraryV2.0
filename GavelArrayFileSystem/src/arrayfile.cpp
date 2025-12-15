@@ -8,19 +8,20 @@ ArrayFile::ArrayFile() {
   _isOpen = false;
 }
 
-void ArrayFile::set(const char* name, const char* data, int size) {
+void ArrayFile::set(const char* name, const char* data, int __size) {
   strncpy(_name, name, sizeof(_name) - 1);
   _data = data;
-  _size = size;
+  _size = __size;
   _cursor = 0;
   _isOpen = false;
 };
 
-void ArrayFile::open() {
-  if ((_size > 0) && (_data != nullptr)) {
+bool ArrayFile::open(FileMode mode) {
+  if ((_size > 0) && (_data != nullptr) && (mode == READ_MODE)) {
     _isOpen = true;
     _cursor = 0;
   }
+  return _isOpen;
 }
 
 // Stream overrides
@@ -47,7 +48,7 @@ size_t ArrayFile::write(unsigned char b) {
   return 0;
 }
 
-size_t ArrayFile::write(const unsigned char* buf, size_t size) {
+size_t ArrayFile::write(const unsigned char* buf, size_t __size) {
   return 0;
 }
 
@@ -60,12 +61,12 @@ void ArrayFile::close() {
   _cursor = 0;
 }
 
-int ArrayFile::read(unsigned char* buf, int size) {
+int ArrayFile::read(unsigned char* buf, int __size) {
   int readBytes = 0;
   int availableBytes = 0;
   if (!_isOpen || _cursor >= _size) return -1;
   availableBytes = available();
-  readBytes = (availableBytes > size) ? size : availableBytes;
+  readBytes = (availableBytes > __size) ? __size : availableBytes;
   memcpy(buf, &_data[_cursor], readBytes);
   _cursor += readBytes;
   return readBytes;

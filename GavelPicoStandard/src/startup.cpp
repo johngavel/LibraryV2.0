@@ -9,6 +9,7 @@
 static Mutex startupMutex;
 static Mutex startupMutex1;
 
+ProgramInfo programInfo;
 PicoCommand pico;
 TaskManager taskManager;
 SerialPort serialPort;

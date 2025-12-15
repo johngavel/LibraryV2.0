@@ -6,12 +6,9 @@ ArrayFileSystem::ArrayFileSystem() {
   root = new ArrayDirectory("/");
 };
 
-DigitalBase* ArrayFileSystem::open(const char* path) {
+DigitalBase* ArrayFileSystem::open(const char* path, FileMode mode) {
   DigitalBase* file = getFile(path);
-  if (file && !file->isDirectory()) {
-    ArrayFile* aFile = static_cast<ArrayFile*>(file);
-    aFile->open();
-  }
+  if (file && !file->isDirectory()) { file->open(mode); }
   return file;
 }
 

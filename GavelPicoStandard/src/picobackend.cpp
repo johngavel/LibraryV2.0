@@ -2,7 +2,6 @@
 #include "picobackend.h"
 
 #include <Arduino.h>
-#include <GavelDebug.h>
 
 #if defined ARDUINO_RASPBERRY_PI_PICO
 static char devicename[] = "Pi Pico";

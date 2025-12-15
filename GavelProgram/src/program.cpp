@@ -25,6 +25,38 @@ const char* ProgramInfo::compileDate = __DATE__;
 const char* ProgramInfo::compileTime = __TIME__;
 const unsigned long ProgramInfo::BuildVersion = GAVEL_VERSION;
 
+/**
+ * Static API handler implemented using TinyJsonBuilder.
+ * Matches: ApiCallbackFn signature declared in apicallback.h
+ */
+
+// ---- Static API handler (builds JSON with TinyJsonBuilder) ----
+bool ProgramInfo::createData() {
+  // Compose "major.minor.build"
+  String version = String(MajorVersion) + "." + String(MinorVersion) + "." + String(BuildVersion);
+
+  TinyJsonBuilder jb;
+  jb.beginObject();
+  jb.add("product", String(AppName));
+  jb.add("shortName", String(ShortName));
+  jb.add("author", String(AuthorName));
+
+  jb.add("program", (int) ProgramNumber); // numeric
+  jb.add("version", version);
+
+  jb.add("build_date", String(compileDate));
+  jb.add("build_time", String(compileTime));
+  jb.add("device", String(stringHardware(hw_type)));
+
+  jb.endObject();
+
+  return loadBuffer(jb.str().c_str(), jb.str().length()); // finalize JSON
+}
+
+bool ProgramInfo::parseData() {
+  return false;
+}
+
 const char* stringHardware(HW_TYPES hw_type) {
   const char* hwString;
   switch (hw_type) {

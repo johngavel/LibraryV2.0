@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="refresh" content="10; url=http://192.168.1.114">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Optional: include CSRF token meta if your backend requires it -->
+  <!-- <meta name="csrf-token" content="YOUR_TOKEN_HERE"> -->
+
+  <!-- External stylesheet -->
+  <link rel="stylesheet" href="/style/style.css">
+  <!-- External script, loads after HTML is parsed -->
+  <script src="/js/buildinfo.js" defer></script>
+  <script src="/js/header.js" defer></script>
+  <script src="/js/footer.js" defer></script>
+</head>
+<body>
+  <!-- Header injected by header.js -->
+  <header id="site-header"></header>
+  <main>
+    <hr style="width:50%">
+    <div class="warning-container">
+      <h2>404</h2>
+      <p class="top-content">Error - Page Not Found</p>
+      <hr style="width:50%">
+      <div class="bottom-content">
+        <span>
+          <br>Please check the URL.<br>
+          <br>Otherwise, <a href="/">click here</a> to be redirected to the homepage.<br>
+        </span>
+      </div>
+    </div>
+    <br><br>
+    <hr style="width:50%">
+  </main>
+  <!-- Footer injected by footer.js -->
+  <footer id="site-footer"></footer>
+</body>
+</html>

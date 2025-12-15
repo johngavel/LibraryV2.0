@@ -1,7 +1,6 @@
 
 #include "gpio_pin.h"
 
-#include <GavelDebug.h>
 // Provide millis() from your platform headers
 
 extern unsigned long millis();

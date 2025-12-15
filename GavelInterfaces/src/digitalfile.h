@@ -3,11 +3,13 @@
 
 #include <Arduino.h>
 
+enum FileMode { READ_MODE, WRITE_MODE };
+
 class DigitalBase {
 public:
   virtual bool isDirectory() const = 0;
   virtual const char* name() const = 0;
-  virtual void open() = 0;
+  virtual bool open(FileMode mode = READ_MODE) = 0;
   virtual void close() = 0;
   virtual ~DigitalBase(){};
 };
@@ -15,11 +17,11 @@ public:
 class DigitalFile : public Stream, public DigitalBase {
 public:
   virtual int size() = 0;
-  virtual int read(unsigned char* buf, int size) = 0;
+  virtual int read(unsigned char* buf, int __size) = 0;
   virtual operator bool() const = 0;
   // DigitalBase virtuals
   virtual const char* name() const = 0;
-  virtual void open() = 0;
+  virtual bool open(FileMode mode = READ_MODE) = 0;
   virtual void close() = 0;
   bool isDirectory() const override { return false; };
 
@@ -28,7 +30,7 @@ public:
   virtual int read() = 0;
   virtual int peek() = 0;
   virtual void flush() = 0;
-  virtual size_t write(const unsigned char* buffer, size_t size) = 0;
+  virtual size_t write(const unsigned char* buffer, size_t __size) = 0;
   virtual size_t write(unsigned char) = 0;
 
 private:
@@ -40,7 +42,7 @@ public:
   virtual void rewindDirectory() = 0;
   // DigitalBase virtuals
   virtual const char* name() const = 0;
-  virtual void open() = 0;
+  virtual bool open(FileMode mode = READ_MODE) = 0;
   virtual void close() = 0;
   bool isDirectory() const override { return true; };
 
@@ -49,7 +51,7 @@ private:
 
 class DigitalFileSystem {
 public:
-  virtual DigitalBase* open(const char* path) = 0;
+  virtual DigitalBase* open(const char* path, FileMode mode = READ_MODE) = 0;
   virtual bool format() = 0;
   virtual bool verifyFile(const char* path) = 0;
   virtual DigitalFile* readFile(const char* path) = 0;

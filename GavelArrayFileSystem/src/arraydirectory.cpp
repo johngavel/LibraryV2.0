@@ -7,16 +7,27 @@ ArrayDirectory::ArrayDirectory(const char* name) {
   strncpy(_name, name, sizeof(_name) - 1);
 };
 
-bool ArrayDirectory::addFile(const char* name, const char* data, int size) {
-  if (!name || !*name || (!data && size > 0)) return false;
+bool ArrayDirectory::addFile(const char* name, const char* data, int __size) {
+  if (!name || !*name || (!data && __size > 0)) return false;
   if (_fileCount >= MAX_FILES) return false;
   if (getFile(name) != nullptr) return false;
   ArrayFile* newFile = new ArrayFile();
-  _files[_fileCount] = newFile;
-  newFile->set(name, data, size);
-  _fileCount++;
+  newFile->set(name, data, __size);
+  if (!addFile(newFile)) {
+    delete newFile;
+    return false;
+  };
   return true;
 };
+
+bool ArrayDirectory::addFile(DigitalFile* file) {
+  if (!file) return false;
+  if (_fileCount >= MAX_FILES) return false;
+  if (getFile(file->name())) return false;
+  _files[_fileCount] = file;
+  _fileCount++;
+  return true;
+}
 
 bool ArrayDirectory::addDirectory(const char* name) {
   if (!name || !*name) return false;
@@ -47,5 +58,7 @@ const char* ArrayDirectory::name() const {
   return _name;
 };
 
-void ArrayDirectory::open() {};
+bool ArrayDirectory::open(FileMode mode) {
+  return true;
+};
 void ArrayDirectory::close() {};

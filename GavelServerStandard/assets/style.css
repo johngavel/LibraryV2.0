@@ -1,0 +1,147 @@
+:root {
+  --bg: #ffffff;
+  --fg: #000000;
+  --accent: SteelBlue;
+  --muted: #9BA0A3;
+  --border: #D4D4D4;
+  --warn: #ff8c00;
+  --error: #d9534f;
+  --ok: #2ecc71;
+  --console-bg: #000000;
+  --console-fg: #ffffff;
+  --console-font: "Courier New", Courier, monospace;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--console-font);
+  display: flex;
+  flex-direction: column;
+  align-items: top;
+  justify-content: flex-start;
+  min-height: 100vh;
+  text-align: center;
+  line-height: 1.1;
+}
+
+h1, h2 {
+  margin: 4px 0;
+  line-height: 1.1;
+}
+
+.container {
+  width: 100%;
+  max-width: 800px;
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+table {
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 6px 12px;
+  line-height: 1.0;
+}
+
+#terminal {
+  width: 95%;
+  max-width: 900px;
+  height: 50vh;
+  min-height: 280px;
+  overflow-y: auto;
+  border: 2px solid var(--accent);
+  padding: 10px;
+  background-color: var(--console-bg);
+  color: var(--console-fg);
+  white-space: pre-wrap;
+  text-align: left;
+  font-size: 14px;
+  font-family: var(--console-font);
+  margin: 10px auto;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  width: 95%;
+  max-width: 900px;
+  align-items: center;
+}
+
+#input {
+  flex: 1;
+  background-color: #1e1e1e;
+  color: #ffffff;
+  border: 2px solid var(--accent);
+  font-family: var(--console-font);
+  font-size: 16px;
+  outline: none;
+  padding: 8px;
+}
+
+.button {
+  background-color: red;
+  border: none;
+  color: white;
+  padding: 10px 18px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.button2 {
+  background-color: #000;
+}
+
+.button3 {
+  background-color: grey;
+}
+
+.button4 {
+  background-color: green;
+}
+
+footer {
+  text-align: center;
+  font-size: 14px;
+  padding: 12px;
+  background-color: var(--accent);
+  color: white;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.ok {
+  color: var(--ok);
+  font-weight: bold;
+}
+
+.error {
+  color: var(--error);
+  font-weight: bold;
+}
+
+.warn {
+  color: var(--warn);
+  font-weight: bold;
+}
+
+.warning-container {
+  border: 2px solid var(--error);
+  padding: 16px;
+  background-color: var(--bg);
+  color: var(--error);
+  text-align: center;
+  border-radius: 8px;
+  font-weight: bold;
+}

@@ -13,7 +13,7 @@
 class ServerModule : public Task {
 public:
   ServerModule();
-  void addCmd(TerminalCommand* __termCmd) override {};
+  void addCmd(TerminalCommand* __termCmd) override;
   void reservePins(BackendPinSetup* pinsetup) override {};
   bool setupTask(OutputInterface* __terminal) override;
   bool executeTask() override;
@@ -30,7 +30,7 @@ public:
 
 private:
   bool serveFile(Client* client, const String& path);
-  bool serveApi(Client* client, const String& path);
+
   VirtualServer* server = nullptr;
   DigitalFileSystem* dfs = nullptr;
   String errorPage = "";

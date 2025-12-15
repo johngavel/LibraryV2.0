@@ -7,8 +7,9 @@
 typedef enum { HW_UNKNOWN, HW_RP2040_ZERO, HW_RASPBERRYPI_PICO, HW_RASPBERRYPI_PICOW, HW_GAVEL_MINI_PICO_ETH } HW_TYPES;
 const char* stringHardware(HW_TYPES hw_type);
 
-class ProgramInfo {
+class ProgramInfo : public DynamicFile {
 public:
+  ProgramInfo() : DynamicFile("build-info.json"){};
   static const char* AppName;
   static const char* ShortName;
   static const HW_TYPES hw_type;
@@ -19,6 +20,10 @@ public:
   static const char* compileDate;
   static const char* compileTime;
   static const char* AuthorName;
+
+private:
+  bool createData() override;
+  bool parseData() override;
 };
 
 class ProgramMemory : public IMemory {

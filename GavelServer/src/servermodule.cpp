@@ -6,14 +6,21 @@
 #define HEADER_LENGTH 4096
 
 // Helper Functions
+static const char* statusText(int code);
 String contentTypeFromPath(const String& path);
-void sendHttpHeader(Client* client, int code, const String& status, const String& contentType, size_t contentLength = 0,
+void sendHttpHeader(Client* client, int code, const String& contentType, size_t contentLength = 0,
                     bool connectionClose = true);
 String normalizePath(const String& rawPath);
 
 // Server Mdoule Methods
 ServerModule::ServerModule() : Task("HTTPServer") {
   setRefreshMilli(10);
+}
+
+void ServerModule::addCmd(TerminalCommand* __termCmd) {
+  if (__termCmd) {
+    // No Commands at this time.
+  }
 }
 
 bool ServerModule::setupTask(OutputInterface* __terminal) {
@@ -28,21 +35,22 @@ bool ServerModule::serveFile(Client* client, const String& path) {
   String fileLocation = normalizePath(path);
   fileLocation = String(SERVER_DIRECTORY) + fileLocation;
   DEBUG(fileLocation.c_str());
-  if (path == "/www/404") {
-    sendHttpHeader(client, 404, "Not Found", "text/plain");
-    client->print("404 Not Found");
-    return false;
-  }
+
   if (!dfs->verifyFile(fileLocation.c_str())) {
-    sendHttpHeader(client, 404, "Not Found", "text/plain");
-    client->print("404 Not Found");
     DEBUG("File Not Found.");
-    return false;
+    fileLocation = String(SERVER_DIRECTORY) + "/" + errorPage;
+    bool defaultError = errorPage.isEmpty() || !dfs->verifyFile(fileLocation.c_str());
+    DEBUG(fileLocation.c_str());
+    if (defaultError) {
+      sendHttpHeader(client, 404, "text/plain");
+      client->print("404 Not Found");
+      return false;
+    }
   }
   DigitalFile* file = dfs->readFile(fileLocation.c_str());
 
   String ct = contentTypeFromPath(fileLocation);
-  sendHttpHeader(client, 200, "OK", ct);
+  sendHttpHeader(client, 200, ct);
 
   memset(fileBuffer, 0, BUFFER_SIZE);
   unsigned long remainder = file->size() % BUFFER_SIZE;
@@ -55,29 +63,8 @@ bool ServerModule::serveFile(Client* client, const String& path) {
   }
   bytes = file->readBytes(fileBuffer, remainder);
   bytes = clientWrite(client, fileBuffer, bytes);
+  file->close();
   return true;
-}
-
-// Simple API: GET /api/time -> JSON
-bool ServerModule::serveApi(Client* client, const String& path) {
-  // Only one endpoint for demo
-  if (path.startsWith("/api/time")) {
-    // Example JSON payload
-    String json = "{";
-    json += "\"epoch_ms\":" + String(millis()) + ",";
-    json += "\"uptime_sec\":" + String(millis() / 1000) + ",";
-    json += "\"message\":\"Hello from Pico W\"";
-    json += "}";
-
-    sendHttpHeader(client, 200, "OK", "application/json", json.length());
-    client->print(json);
-    return true;
-  }
-
-  // Unknown API endpoint
-  sendHttpHeader(client, 404, "Not Found", "application/json");
-  client->print("{\"error\":\"unknown endpoint\"}");
-  return false;
 }
 
 bool ServerModule::executeTask() {
@@ -98,12 +85,27 @@ bool ServerModule::executeTask() {
     requestLine.trim();
     DEBUG(requestLine.c_str());
 
-    // Minimal header consume: read until blank line
+    // --- New: capture headers we care about (Content-Length/Type) ---
+    unsigned int contentLength = 0;
+    String contentType = "";
     while (client->connected()) {
       String headerLine = client->readStringUntil('\r');
       client->read(); // consume '\n'
       if (headerLine.length() == 0 || headerLine == "\n" || headerLine == "\r") {
         break; // end of headers
+      }
+      headerLine.trim();
+      int colon = headerLine.indexOf(':');
+      if (colon > 0) {
+        String key = headerLine.substring(0, colon);
+        String val = headerLine.substring(colon + 1);
+        key.trim();
+        val.trim();
+        key.toLowerCase();
+        if (key == "content-length")
+          contentLength = (unsigned int) val.toInt();
+        else if (key == "content-type")
+          contentType = val;
       }
     }
 
@@ -116,15 +118,26 @@ bool ServerModule::executeTask() {
       path = requestLine.substring(firstSpace + 1, secondSpace);
     }
 
-    if (method == "GET") {
-      if (path.startsWith(API_DIRECTORY)) {
-        serveApi(client, path);
-      } else {
-        serveFile(client, path);
+    // --- Optional: read request body (POST/PUT/PATCH) ---
+    String body = "";
+    if ((method == "POST" || method == "PUT" || method == "PATCH") && contentLength > 0) {
+      // Read exactly contentLength bytes
+      while (client->connected() && body.length() < (unsigned int) contentLength) {
+        // Read in small chunks to avoid blocking too long
+        char buf[128];
+        int n = client->readBytes(buf, (int) min((size_t) sizeof(buf), contentLength - body.length()));
+        if (n > 0)
+          body.concat(String(buf).substring(0, n));
+        else
+          break;
       }
+    }
+
+    if (method == "GET" || method == "POST" || method == "PUT" || method == "PATCH" || method == "DELETE") {
+      serveFile(client, path);
     } else {
-      sendHttpHeader(client, 405, "Method Not Allowed", "text/plain");
-      client->print("Only GET is supported.");
+      sendHttpHeader(client, 405, "text/plain");
+      client->print("Only GET/POST/PUT/PATCH/DELETE are supported.");
     }
 
     if (closeClient) { clientClose(client); }
@@ -133,6 +146,23 @@ bool ServerModule::executeTask() {
 }
 
 // Helper Functions
+
+const char* statusText(int code) {
+  switch (code) {
+  case 200: return "OK";
+  case 201: return "Created";
+  case 204: return "No Content";
+  case 400: return "Bad Request";
+  case 401: return "Unauthorized";
+  case 403: return "Forbidden";
+  case 404: return "Not Found";
+  case 405: return "Method Not Allowed";
+  case 415: return "Unsupported Media Type";
+  case 500: return "Internal Server Error";
+  default: return "OK";
+  }
+}
+
 String contentTypeFromPath(const String& path) {
   if (path.endsWith(".html")) return "text/html";
   if (path.endsWith(".htm")) return "text/html";
@@ -149,9 +179,8 @@ String contentTypeFromPath(const String& path) {
   return "application/octet-stream";
 }
 
-void sendHttpHeader(Client* client, int code, const String& status, const String& contentType, size_t contentLength,
-                    bool connectionClose) {
-  client->printf("HTTP/1.1 %d %s\r\n", code, status.c_str());
+void sendHttpHeader(Client* client, int code, const String& contentType, size_t contentLength, bool connectionClose) {
+  client->printf("HTTP/1.1 %d %s\r\n", code, statusText(code));
   client->printf("Content-Type: %s\r\n", contentType.c_str());
   if (contentLength > 0) { client->printf("Content-Length: %u\r\n", (unsigned) contentLength); }
   if (connectionClose) { client->print("Connection: close\r\n"); }
