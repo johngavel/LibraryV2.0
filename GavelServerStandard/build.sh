@@ -1,5 +1,4 @@
-
-#!/bin/bash 
+#!/bin/bash
 
 # Source helper scripts
 if ! source common.sh 2> /dev/null; then
@@ -41,9 +40,9 @@ done
 # Return extension without leading dot; empty string if no extension
 _ext_nodot() {
   local file="$1"
-  local ext="${file##*.}"     # part after last dot
-  if [[ "$ext" == "$file" ]]; then
-    echo ""                   # no dot present
+  local ext="${file##*.}" # part after last dot
+  if [[ $ext == "$file" ]]; then
+    echo "" # no dot present
   else
     echo "$ext"
   fi
@@ -56,11 +55,11 @@ _ext_nodot() {
 #   With ext:  header_basename = <base><ext> ; ident = <base><ext>
 #   No ext:    header_basename = <base>      ; ident = <base>
 _map_asset() {
-  local file="$1"             # just the basename (not path)
+  local file="$1" # just the basename (not path)
   local base="${file%.*}"
   local ext="$(_ext_nodot "$file")"
 
-  if [[ -n "$ext" ]]; then
+  if [[ -n $ext ]]; then
     echo "${base}${ext}|${base}${ext}"
   else
     echo "${base}|${base}"
@@ -72,7 +71,7 @@ _map_asset() {
 _build_master_header() {
   local out_dir="$1"
   shift
-  local headers=( "$@" )  # array of header basenames (without .h), e.g., stylecss, configjson
+  local headers=("$@") # array of header basenames (without .h), e.g., stylecss, configjson
 
   local master="$out_dir/webpage_all.h"
   {
@@ -95,7 +94,7 @@ generate_from_assets() {
   local assets_dir="$1"
   local out_dir="$2"
 
-  [[ ! -d "$out_dir" ]] && mkdir -p "$out_dir"
+  [[ ! -d $out_dir ]] && mkdir -p "$out_dir"
 
   shopt -s nullglob
 
@@ -103,14 +102,14 @@ generate_from_assets() {
   local gen_basenames=()
 
   for src in "$assets_dir"/*; do
-    [[ -f "$src" ]] || continue
+    [[ -f $src ]] || continue
 
     local file="$(basename "$src")"
     IFS='|' read -r header_base ident <<< "$(_map_asset "$file")"
     local dst="$out_dir/${header_base}.h"
 
     createfileheader.sh "$src" "$dst" "$ident"
-    gen_basenames+=( "$header_base" )
+    gen_basenames+=("$header_base")
   done
 
   shopt -u nullglob
@@ -125,12 +124,12 @@ clean_from_assets() {
   local assets_dir="$1"
   local out_dir="$2"
 
-  [[ ! -d "$out_dir" ]] && return 0
+  [[ ! -d $out_dir ]] && return 0
 
   shopt -s nullglob
 
   for src in "$assets_dir"/*; do
-    [[ -f "$src" ]] || continue
+    [[ -f $src ]] || continue
 
     local file="$(basename "$src")"
     IFS='|' read -r header_base _ident <<< "$(_map_asset "$file")"
@@ -149,7 +148,6 @@ clean_from_assets() {
   # Unconditional removal of the output directory (removes master header too)
   rm -r "$out_dir"
 }
-
 
 # ------------------------------------------------------------------------------
 # Dispatch
@@ -185,7 +183,6 @@ case "$BUILD" in
 
   *)
     log_failed "Invalid Command Argument: $BUILD"
-       exit 1
+    exit 1
     ;;
 esac
-
