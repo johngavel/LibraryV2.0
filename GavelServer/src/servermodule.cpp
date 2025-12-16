@@ -34,13 +34,11 @@ static char fileBuffer[BUFFER_SIZE];
 bool ServerModule::serveFile(Client* client, const String& path) {
   String fileLocation = normalizePath(path);
   fileLocation = String(SERVER_DIRECTORY) + fileLocation;
-  DEBUG(fileLocation.c_str());
 
   if (!dfs->verifyFile(fileLocation.c_str())) {
     DEBUG("File Not Found.");
     fileLocation = String(SERVER_DIRECTORY) + "/" + errorPage;
     bool defaultError = errorPage.isEmpty() || !dfs->verifyFile(fileLocation.c_str());
-    DEBUG(fileLocation.c_str());
     if (defaultError) {
       sendHttpHeader(client, 404, "text/plain");
       client->print("404 Not Found");
@@ -76,7 +74,6 @@ bool ServerModule::executeTask() {
   client = server->accept();
   spiWire.wireGive();
   if (clientConnected(client)) { // If a new client connects,
-    DEBUG("Client Connected");
     spiWire.wireTake();
     client->setTimeout(timeoutTime);
     String requestLine = client->readStringUntil('\r');

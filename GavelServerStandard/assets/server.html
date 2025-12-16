@@ -1,0 +1,162 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Server Status</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Use your existing stylesheet -->
+  <link rel="stylesheet" href="style/style.css" />
+</head>
+<body>
+
+  <!-- Header populated by header.js -->
+  <header id="site-header">
+    <h1>Server</h1>
+  </header>
+
+  <div class="container">
+    <!-- Program / Build Info -->
+    <section aria-labelledby="program_title">
+      <h2 id="program_title">Program / Build Info</h2>
+      <table id="program_table" role="table" aria-label="Program build information">
+        <!-- Rows injected by script -->
+      </table>
+    </section>
+
+    <!-- IP Configuration -->
+    <section aria-labelledby="ip_title">
+      <h2 id="ip_title">IP Configuration</h2>
+      <table id="ip_table" role="table" aria-label="IP configuration data">
+        <!-- Rows injected by script -->
+      </table>
+    </section>
+  </div>
+
+  <table class="center">
+    <tr>
+      <td>
+        <a href="/ipconfig.html">Configure IP Addresses</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="/import">Import Switch Configuration</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="/export">Export Switch Configuration</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="/upgrade">Upgrade the Power Switch</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="/code">Source Code of the Pico Power Switch</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="/terminal">Console Terminal for the Pico Power Switch</a>
+      </td>
+    </tr>
+  </table>
+  <br> 
+  <br>
+  <script src="js/rebootbutton.js"></script>
+  <table class="center">
+    <tr>
+      <td>
+        <a href="/"><button type="button" class="button2 button">Cancel</button></a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <button id="btn-reboot" type="button" class="button">REBOOT</button>
+      </td>
+    </tr>
+  </table>
+  <!-- Footer populated by footer.js -->
+  <footer id="site-footer"></footer>
+
+  <!-- Utilities: minimal HTML escaping -->
+  <script>
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+    function tr(key, valueHtml) {
+      return `<tr><td class="k">${escapeHtml(key)}</td><td class="v">${valueHtml}</td></tr>`;
+    }
+  </script>
+
+  <!-- Your modules (as uploaded) -->
+  <script src="js/buildinfo.js"></script>
+  <script src="js/ipinfo.js"></script>
+
+  <!-- Header/Footer scripts (they already call BuildInfo) -->
+  <script src="js/header.js"></script>
+  <script src="js/footer.js"></script>
+
+  <!-- Page wiring: fetch data and render into tables -->
+  <script>
+    (async function render() {
+      const programTable = document.getElementById('program_table');
+      const ipTable = document.getElementById('ip_table');
+
+      let build = {};
+      let ip = {};
+      try {
+        [build, ip] = await Promise.all([
+          BuildInfo.getBuildInfo(),   // from buildinfo.js
+          IpInfo.getIpInfo()          // from ipinfo.js
+        ]);
+      } catch (e) {
+        // Fallbacks if globals or fetch fail
+        build = build || { product: 'unknown', version: 'unknown', build_date: 'unknown', build_time: 'unknown', author: 'unknown' };
+        ip = ip || { macAddress: 'unknown', ipAddress: 'unknown', subnetMask: 'unknown', gatewayAddress: 'unknown', dnsAddress: 'unknown', isDHCP: 'unknown' };
+      }
+
+      // Normalize optional fields
+      const device   = build.device ?? build.board ?? '';
+      const firmware = build.firmware ?? build.fw ?? '';
+
+      // Build info table
+      programTable.innerHTML = [
+        tr('Product', escapeHtml(build.product ?? 'unknown')),
+        tr('Version', escapeHtml(build.version ?? 'unknown')),
+        tr('Build Date', escapeHtml(build.build_date ?? 'unknown')),
+        tr('Build Time', escapeHtml(build.build_time ?? 'unknown')),
+        tr('Author', escapeHtml(build.author ?? 'unknown')),
+        device   ? tr('Device/Board', escapeHtml(device))   : '',
+        firmware ? tr('Firmware', escapeHtml(firmware)) : ''
+      ].join('');
+
+      // DHCP status badge using your CSS classes
+      const isDhcp = String(ip.isDHCP).toLowerCase();
+      const dhcpBadge =
+        (isDhcp === 'true' || isDhcp === 'yes')   ? '<span class="ok">DHCP: enabled</span>' :
+        (isDhcp === 'false' || isDhcp === 'no')   ? '<span class="warn">DHCP: disabled</span>' :
+                                                     '<span>DHCP: unknown</span>';
+
+      // IP info table
+      ipTable.innerHTML = [
+        tr('MAC Address', escapeHtml(ip.macAddress ?? 'unknown')),
+        tr('IP Address', escapeHtml(ip.ipAddress ?? 'unknown')),
+        tr('Subnet Mask', escapeHtml(ip.subnetMask ?? 'unknown')),
+        tr('Gateway', escapeHtml(ip.gatewayAddress ?? 'unknown')),
+        tr('DNS', escapeHtml(ip.dnsAddress ?? 'unknown')),
+        tr('Mode', dhcpBadge)
+      ].join('');
+    })();
+  </script>
+</body>
+</html>

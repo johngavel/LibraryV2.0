@@ -1,23 +1,10 @@
-#include "arrayfilesystem.h"
+#include "arraydirectory.h"
 
 #include <GavelUtil.h>
 
 ArrayDirectory::ArrayDirectory(const char* name) {
   memset(_name, 0, sizeof(_name));
   strncpy(_name, name, sizeof(_name) - 1);
-};
-
-bool ArrayDirectory::addFile(const char* name, const char* data, int __size) {
-  if (!name || !*name || (!data && __size > 0)) return false;
-  if (_fileCount >= MAX_FILES) return false;
-  if (getFile(name) != nullptr) return false;
-  ArrayFile* newFile = new ArrayFile();
-  newFile->set(name, data, __size);
-  if (!addFile(newFile)) {
-    delete newFile;
-    return false;
-  };
-  return true;
 };
 
 bool ArrayDirectory::addFile(DigitalFile* file) {

@@ -31,7 +31,7 @@ const unsigned long ProgramInfo::BuildVersion = GAVEL_VERSION;
  */
 
 // ---- Static API handler (builds JSON with TinyJsonBuilder) ----
-bool ProgramInfo::createData() {
+bool ProgramInfo::createReadData() {
   // Compose "major.minor.build"
   String version = String(MajorVersion) + "." + String(MinorVersion) + "." + String(BuildVersion);
 
@@ -50,10 +50,10 @@ bool ProgramInfo::createData() {
 
   jb.endObject();
 
-  return loadBuffer(jb.str().c_str(), jb.str().length()); // finalize JSON
+  return loadReadBuffer(jb.str().c_str(), jb.str().length()); // finalize JSON
 }
 
-bool ProgramInfo::parseData() {
+bool ProgramInfo::parseWriteData() {
   return false;
 }
 

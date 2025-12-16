@@ -2,6 +2,9 @@
 
 #include <GavelSPIWire.h>
 
+static void ipAddressToBuffer(IPAddress address, unsigned char* buffer);
+static bool parseIPAddress(const char* ipString, unsigned char* buffer);
+
 EthernetModule::EthernetModule() : Task("EthernetModule") {}
 
 bool EthernetModule::resetW5500() {
@@ -96,6 +99,20 @@ bool EthernetModule::setupTask(OutputInterface* __terminal) {
   if (memory.getInternal()) { status &= setupW5500(); }
   status &= updateMemory();
   runTimer(status);
+
+  char buffer[20];
+  unsigned char ip_buffer[4];
+  bool linked = linkStatus();
+  if (linked) {
+    StringBuilder sb;
+    ipAddressToBuffer(getIPAddress(), ip_buffer);
+    sb + ((memory.memory.data.isDHCP) ? "DHCP" : "Static") +
+        " IP Address: " + getIPString(ip_buffer, buffer, sizeof(buffer));
+    terminal->println(PASSED, sb.c_str());
+  } else {
+    terminal->println(ERROR, "Ethernet: Disconnected");
+  }
+
   return status;
 }
 
@@ -151,14 +168,14 @@ bool EthernetModule::linkStatus() {
   return status;
 }
 
-static void ipAddressToBuffer(IPAddress address, unsigned char* buffer) {
+void ipAddressToBuffer(IPAddress address, unsigned char* buffer) {
   buffer[0] = address[0];
   buffer[1] = address[1];
   buffer[2] = address[2];
   buffer[3] = address[3];
 }
 
-static bool parseIPAddress(const char* ipString, unsigned char* buffer) {
+bool parseIPAddress(const char* ipString, unsigned char* buffer) {
   if (!ipString || !buffer) return 0;
 
   char temp[32];

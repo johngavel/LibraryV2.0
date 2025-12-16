@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __GAVEL_TINY_JSON_PARSER_H
+#define __GAVEL_TINY_JSON_PARSER_H
+
 #include <Arduino.h>
 
 /**
@@ -459,3 +461,5 @@ private:
   bool hadError_ = false;
   String buf_; // temporary buffer for strings/numbers
 };
+
+#endif // __GAVEL_TINY_JSON_PARSER_H

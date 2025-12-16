@@ -4,8 +4,8 @@
 #include "startup.h"
 
 #include <Arduino.h>
-#include <GavelArrayFileSystem.h>
 #include <GavelBlinkPico.h>
+#include <GavelFileSystem.h>
 #include <GavelGPIO.h>
 #include <GavelInterfaces.h>
 #include <GavelPico.h>

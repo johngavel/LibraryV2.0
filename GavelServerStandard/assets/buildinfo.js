@@ -1,4 +1,3 @@
-
 // build-info.js
 // Fetches build info once and caches it. Safe for embedded environments.
 const BuildInfo = (() => {

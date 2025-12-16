@@ -1,6 +1,5 @@
 #include "startup.h"
 
-#include "filesystem.h"
 #include "picobackend.h"
 
 #include <GavelProgram.h>

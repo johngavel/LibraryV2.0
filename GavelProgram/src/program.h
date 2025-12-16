@@ -9,7 +9,7 @@ const char* stringHardware(HW_TYPES hw_type);
 
 class ProgramInfo : public DynamicFile {
 public:
-  ProgramInfo() : DynamicFile("build-info.json"){};
+  ProgramInfo() : DynamicFile("build-info.json", READ_ONLY, _buffer, sizeof(_buffer)){};
   static const char* AppName;
   static const char* ShortName;
   static const HW_TYPES hw_type;
@@ -22,8 +22,9 @@ public:
   static const char* AuthorName;
 
 private:
-  bool createData() override;
-  bool parseData() override;
+  bool createReadData() override;
+  bool parseWriteData() override;
+  char _buffer[250];
 };
 
 class ProgramMemory : public IMemory {

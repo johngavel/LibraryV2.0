@@ -39,10 +39,7 @@ case "$BUILD" in
   --post) ;;
   --build) ;;
   --test)
-    cp "$CURRENT_DIR/../GavelInterfaces/src/digitalfile.h" "$CURRENT_DIR/test"
     run_tests $CURRENT_DIR $DO_SHOW
-    rm "$CURRENT_DIR/test/digitalfile.h"
-
     exit $?
     ;;
   --debug)

@@ -4,6 +4,7 @@
 #include "filesystem.h"
 
 #include <GavelBlinkPico.h>
+#include <GavelFileSystem.h>
 #include <GavelGPIO.h>
 #include <GavelPico.h>
 #include <GavelProgram.h>

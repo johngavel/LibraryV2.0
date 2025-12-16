@@ -1,5 +1,6 @@
+#ifndef __GAVEL_TINY_JSON_BUILDER_H
+#define __GAVEL_TINY_JSON_BUILDER_H
 
-#pragma once
 #include <Arduino.h>
 
 /**
@@ -309,3 +310,5 @@ private:
   uint8_t stackDepth_ = 0;           // current nesting depth
   bool firstItemStack_[MAX_DEPTH]{}; // per-level comma flags
 };
+
+#endif // __GAVEL_TINY_JSON_BUILDER_H
