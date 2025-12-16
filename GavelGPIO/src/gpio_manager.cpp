@@ -82,11 +82,11 @@ GPIOPin* GPIOManager::find(GpioType type, int logicalIndex) {
 void GPIOManager::addCmd(TerminalCommand* __termCmd) {
   __termCmd->addCmd("gpio", "-a|--all|-v|--verbose", "Prints the configured GPIO Table",
                     [&](TerminalLibrary::OutputInterface* terminal) { gpioTable(terminal); });
-  __termCmd->addCmd("gpiov", "", "Prints the status of active GPIO",
+  __termCmd->addCmd("status", "", "Prints the status of active GPIO",
                     [&](TerminalLibrary::OutputInterface* terminal) { gpioTableStatus(terminal); });
   __termCmd->addCmd("pulse", "[n]", "Command a Output n to pulse",
                     [&](TerminalLibrary::OutputInterface* terminal) { pulseCmd(terminal); });
-  __termCmd->addCmd("stat", "[n]", "Status of Input n",
+  __termCmd->addCmd("input", "[n]", "Status of Input n",
                     [&](TerminalLibrary::OutputInterface* terminal) { statusCmd(terminal); });
   __termCmd->addCmd("tone", "[n] [Hz]", "Sets a Square Wave in Hz on Tone Pin n ",
                     [&](TerminalLibrary::OutputInterface* terminal) { toneCmd(terminal); });
