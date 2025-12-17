@@ -2,6 +2,7 @@
 #define __GAVELUTIL_H
 
 // Header for GavelUtil
+#include "charringbuffer.h"
 #include "communication.h"
 #include "datastructure.h"
 #include "idgenerator.h"

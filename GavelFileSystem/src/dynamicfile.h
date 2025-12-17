@@ -42,7 +42,6 @@ private:
   int _cursor = 0;
   int _availableData = 0;
   bool _isOpen = false;
-  FileMode _mode = READ_MODE;
   char* _buffer = nullptr;
   int _sizeBuffer = 0;
 };

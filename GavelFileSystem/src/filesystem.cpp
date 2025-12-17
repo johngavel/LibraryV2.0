@@ -96,7 +96,7 @@ DigitalFile* FileSystem::readFile(const char* path) {
   if (file == nullptr) return nullptr;
   if (file->isDirectory()) return nullptr;
   if (!file) return nullptr;
-  if (file->getPermission() != READ_ONLY) return nullptr;
+  if (file->getPermission() == WRITE_ONLY) return nullptr;
   return static_cast<DigitalFile*>(file);
 };
 
@@ -105,7 +105,7 @@ DigitalFile* FileSystem::writeFile(const char* path) {
   if (file == nullptr) return nullptr;
   if (file->isDirectory()) return nullptr;
   if (!file) return nullptr;
-  if (file->getPermission() != WRITE_ONLY) return nullptr;
+  if (file->getPermission() == READ_ONLY) return nullptr;
   return static_cast<DigitalFile*>(file);
 };
 

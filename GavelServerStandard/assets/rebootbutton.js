@@ -16,14 +16,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     try {
       // Send POST request to /reboot endpoint
-      const resp = await fetch('/api/reboot', {
+      const resp = await fetch('/api/reboot.json', {
         method: 'POST',
-        headers: { 'Accept': 'application/json' }
+        headers: { 'Accepted': 'application/json' }
       });
 
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
-      alert('Reboot command sent. The device will restart shortly.\nIf the page becomes unreachable, wait 30–60 seconds and reload.');
+      let remaining = 10;
+      const ticker = setInterval(() => { remaining--; if (remaining <= 0) clearInterval(ticker); }, 1000);
+      setTimeout(() => { window.location.replace('/index.html'); }, 10000); // redirect after 10s
     } catch (err) {
       alert('Failed to send reboot command. Please try again or check server logs.');
       btn.disabled = false;

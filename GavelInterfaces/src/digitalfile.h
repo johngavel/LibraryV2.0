@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 enum FileMode { READ_MODE, WRITE_MODE };
-enum FilePermission { READ_ONLY, WRITE_ONLY };
+enum FilePermission { READ_ONLY, WRITE_ONLY, READ_WRITE };
 
 class DigitalBase {
 public:
@@ -15,9 +15,11 @@ public:
   virtual ~DigitalBase(){};
   void setPermission(FilePermission permission) { _permission = permission; };
   FilePermission getPermission() { return _permission; };
+  FileMode getMode() { return _mode; };
 
 protected:
   FilePermission _permission = READ_ONLY;
+  FileMode _mode = READ_MODE;
 };
 
 class DigitalFile : public Stream, public DigitalBase {

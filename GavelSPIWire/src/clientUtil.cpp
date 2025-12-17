@@ -18,6 +18,13 @@ unsigned int clientRead(Client* client, char* buffer, unsigned int length) {
   return receivedBytes;
 }
 
+String clientReadStringUntil(Client* client, char ch) {
+  spiWire.wireTake();
+  String str = client->readStringUntil(ch);
+  spiWire.wireGive();
+  return str;
+}
+
 bool clientAvailable(Client* client) {
   spiWire.wireTake();
   bool a = client->available();
@@ -43,6 +50,18 @@ unsigned int clientWrite(Client* client, char* buffer, unsigned int length) {
   }
   totalBytes += __clientWrite(client, &buffer[loops * BUFFER_SIZE], remainder);
   return totalBytes;
+}
+
+unsigned int clientWrite(Client* client, char c) {
+  unsigned int totalBytes = 0;
+  spiWire.wireTake();
+  totalBytes = client->write(c);
+  spiWire.wireGive();
+  return totalBytes;
+}
+
+unsigned int clientPrint(Client* client, String str) {
+  return clientWrite(client, (char*) str.c_str(), str.length());
 }
 
 bool clientConnected(Client* client) {

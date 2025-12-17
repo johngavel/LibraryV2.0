@@ -8,8 +8,11 @@
 
 char clientRead(Client* client);
 unsigned int clientRead(Client* client, char* buffer, unsigned int length);
+String clientReadStringUntil(Client* client, char ch);
 bool clientAvailable(Client* client);
 unsigned int clientWrite(Client* client, char* buffer, unsigned int length);
+unsigned int clientWrite(Client* client, char c);
+unsigned int clientPrint(Client* client, String str);
 bool clientConnected(Client* client);
 void clientClose(Client* client);
 

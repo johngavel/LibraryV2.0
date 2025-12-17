@@ -54,7 +54,7 @@ bool DynamicFile::open(FileMode mode) {
 }
 
 void DynamicFile::close() {
-  if (_mode == WRITE_MODE) parseWriteData();
+  if ((_mode == WRITE_MODE) && (_isOpen == true)) parseWriteData();
   _isOpen = false;
   _cursor = 0;
 }

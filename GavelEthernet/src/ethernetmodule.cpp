@@ -106,9 +106,8 @@ bool EthernetModule::setupTask(OutputInterface* __terminal) {
   if (linked) {
     StringBuilder sb;
     ipAddressToBuffer(getIPAddress(), ip_buffer);
-    sb + ((memory.memory.data.isDHCP) ? "DHCP" : "Static") +
-        " IP Address: " + getIPString(ip_buffer, buffer, sizeof(buffer));
-    terminal->println(PASSED, sb.c_str());
+    sb + ((memory.memory.data.isDHCP) ? "DHCP" : "Static") + " IP Address: ";
+    terminal->println(PASSED, sb.c_str(), getIPString(ip_buffer, buffer, sizeof(buffer)));
   } else {
     terminal->println(ERROR, "Ethernet: Disconnected");
   }

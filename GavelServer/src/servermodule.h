@@ -4,11 +4,15 @@
 #define MAX_PAGES 64
 #define PAGE_NAME_LENGTH 64
 
+#include "clientmanagment.h"
+#include "method.h"
+
 #include <GavelInterfaces.h>
 #include <GavelTask.h>
 
 #define SERVER_DIRECTORY "/www"
 #define API_DIRECTORY "/api"
+#define MAX_CLIENT 10
 
 class ServerModule : public Task {
 public:
@@ -29,11 +33,17 @@ public:
   VirtualServer* getServer() { return server; };
 
 private:
-  bool serveFile(Client* client, const String& path);
+  bool serveFile(ClientFileEntry* cfe, HttpMethod method, const String& path);
+  bool saveFile(ClientFileEntry* cfe, HttpMethod method, const String& body, const String& path);
+  bool processClient(ClientFileEntry* cfe);
+  bool processMethodClient(ClientFileEntry* cfe);
+  bool processStreamClient(ClientFileEntry* cfe);
+  bool transferFileToClient(ClientFileEntry* cfe);
 
   VirtualServer* server = nullptr;
   DigitalFileSystem* dfs = nullptr;
   String errorPage = "";
+  ClientFilePool clientPool;
 };
 
 #endif // __GAVEL_SERVER_MODULE_H

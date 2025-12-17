@@ -3,17 +3,18 @@
 
 #include <GavelDebug.h>
 #include <GavelFileSystem.h>
+#include <GavelPicoStandard.h>
 
 class RebootFile : public DynamicFile {
 public:
-  RebootFile() : DynamicFile("reboot", WRITE_ONLY, _fileBuffer, sizeof(_fileBuffer)){};
+  RebootFile() : DynamicFile("reboot.json", READ_WRITE, _fileBuffer, sizeof(_fileBuffer)){};
   bool createReadData() override {
     DEBUG("Reboot - Create Read Data");
     return true;
   };
 
   virtual bool parseWriteData() override {
-    DEBUG("Reboot - Parse Write Data");
+    pico.rebootPico();
     return true;
   };
 

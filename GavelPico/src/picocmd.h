@@ -7,8 +7,8 @@
 class PicoCommand {
 public:
   Callback rebootCallBacks;
-  void uploadPico(OutputInterface* terminal);
-  void rebootPico(OutputInterface* terminal);
+  void uploadPico(OutputInterface* terminal = nullptr);
+  void rebootPico(OutputInterface* terminal = nullptr);
 
 private:
 };
