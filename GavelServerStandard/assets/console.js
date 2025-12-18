@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     (typeof window.CONSOLE_API_BASE === 'string' && window.CONSOLE_API_BASE) ||
     window.location.origin;
   const ENDPOINTS = {
-    events: `${apiBase.replace(/\/+$/, '')}/api/sse_events`,
-    command: `${apiBase.replace(/\/+$/, '')}/api/sse_command`
+    events: `${apiBase.replace(/\/+$/, '')}/api/sse_events.stream`,
+    command: `${apiBase.replace(/\/+$/, '')}/api/sse_command.json`
   };
   const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
   const terminal = document.getElementById('terminal');

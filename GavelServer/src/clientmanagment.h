@@ -1,7 +1,8 @@
 #ifndef __GAVEL_CLIENT_MANAGE_H
 #define __GAVEL_CLIENT_MANAGE_H
 
-#pragma once
+#include "httpconnection.h"
+
 #include <Client.h> // Arduino networking base class
 #include <GavelInterfaces.h>
 #include <GavelSPIWire.h>
@@ -9,27 +10,21 @@
 #define CLIENT_FILE_POOL_CAPACITY 10
 
 struct ClientFileEntry {
-  Client* client = nullptr;
-  DigitalFile* file = nullptr;
-  bool stream = false;
-  bool keepAlive = false;
+  HttpConnection connection;
   bool used = false;
 
   // A "valid" entry is one that is in use and has a client pointer.
-  bool isValid() const { return used && client != nullptr; }
+  bool isValid() const { return used && connection.isValid(); }
 };
 
 class ClientFilePool {
 public:
   // --- Add: places (Client*, File*) in the first free slot. Returns true if added.
-  bool add(Client* c, DigitalFile* f = nullptr, bool s = false, bool k = false) {
+  bool add(Client* c, DigitalFileSystem* dfs, String errorPage) {
     if (!c) return false; // must have a client
     for (size_t i = 0; i < CLIENT_FILE_POOL_CAPACITY; ++i) {
       if (!slots[i].used) {
-        slots[i].client = c;
-        slots[i].file = f; // may be nullptr
-        slots[i].stream = s;
-        slots[i].keepAlive = k;
+        slots[i].connection.newConnection(c, dfs, errorPage);
         slots[i].used = true;
         return true;
       }
@@ -41,7 +36,7 @@ public:
   bool remove(Client* c) {
     if (!c) return false;
     for (size_t i = 0; i < CLIENT_FILE_POOL_CAPACITY; ++i) {
-      if (slots[i].used && slots[i].client == c) {
+      if (slots[i].used && slots[i].connection.getClient() == c) {
         clearSlot(i);
         return true;
       }
@@ -61,7 +56,9 @@ public:
   void sweepDisconnected() {
     for (size_t i = 0; i < CLIENT_FILE_POOL_CAPACITY; ++i) {
       if (slots[i].used) {
-        if (slots[i].client == nullptr || !slots[i].client->connected()) { clearSlot(i); }
+        if (slots[i].connection.getClient() == nullptr || !slots[i].connection.getClient()->connected()) {
+          clearSlot(i);
+        }
       }
     }
   }
@@ -86,16 +83,15 @@ private:
     ClientFileEntry& e = slots[idx];
 
     // Optional: gently stop the client if still connected.
-    if (e.client) { clientClose(e.client); }
+    if (e.connection.getClient()) { clientClose(e.connection.getClient()); }
 
     // Optional: close the file if open (only if you own it).
-    if (e.file) {
+    if (e.connection.file) {
       // Some cores allow `if (*e.file)` to test openness; `close()` is safe to call once.
-      e.file->close();
+      e.connection.file->close();
     }
 
-    e.client = nullptr;
-    e.file = nullptr;
+    e.connection.initialize();
     e.used = false;
   }
 };

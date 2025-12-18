@@ -1,4 +1,3 @@
-
 #ifndef __GAVEL_RING_BUFFER_H
 #define __GAVEL_RING_BUFFER_H
 
