@@ -6,12 +6,12 @@
 
 class StreamFile : public DigitalFile {
 public:
-  StreamFile(const char* name) {
+  StreamFile(const char* name) : ringBuffer(_ringBuffer, sizeof(_ringBuffer)) {
     strncpy(_name, name, sizeof(_name) - 1);
     _name[sizeof(_name) - 1] = 0;
     setPermission(READ_ONLY);
   };
-  StreamFile(const char* name, FilePermission permission) {
+  StreamFile(const char* name, FilePermission permission) : ringBuffer(_ringBuffer, sizeof(_ringBuffer)) {
     strncpy(_name, name, sizeof(_name) - 1);
     _name[sizeof(_name) - 1] = 0;
     setPermission(permission);
@@ -44,7 +44,8 @@ private:
   virtual bool parseWriteData() = 0;
 
   char _name[200];
-  CharRingBuffer<4096> ringBuffer;
+  unsigned char _ringBuffer[4096];
+  CharRingBuffer ringBuffer;
 };
 
 #endif // __GAVEL_STREAM_FILE_H

@@ -1,465 +1,318 @@
+
 #ifndef __GAVEL_TINY_JSON_PARSER_H
 #define __GAVEL_TINY_JSON_PARSER_H
-
 #include <Arduino.h>
-
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 /**
  * TinyJsonParser — minimal, event-driven JSON parser for Arduino.
  *
- * Goals:
- *  - Very small footprint, no dynamic allocation.
- *  - Streaming input from a char* buffer or a Stream* (Serial, WiFiClient, etc.).
- *  - Event callbacks for structure and values (SAX style).
- *  - Handles objects, arrays, strings, numbers, booleans, and null.
- *  - Tolerates reasonable nesting (configurable) and UTF-8 bytes in strings.
+ * Goals (complimentary to TinyJsonBuilder):
+ *  - Small, header-only, no dynamic allocations by default
+ *  - Works with in-memory JSON (const char*) and streaming (Stream&)
+ *  - Emits SAX-style events so you can react without building a DOM
+ *  - Understands objects, arrays, strings, numbers, true/false/null
+ *  - Handles common escapes (\" \\ \n \r \t). \uXXXX is passed through.
  *
- * Non-goals:
- *  - Full JSON Schema validation.
- *  - Big-number and exact floating parsing; numbers are reported as slices.
+ * Usage (in-memory):
+ *   TinyJsonParser::Events ev;
+ *   ev.onKey    = [](void* ctx, const char* s){ Serial.print("key:"); Serial.println(s); };
+ *   ev.onString = [](void* ctx, const char* s){ Serial.print("str:"); Serial.println(s); };
+ *   ev.onNumber = [](void* ctx, double v){ Serial.print("num:"); Serial.println(v, 6); };
+ *   TinyJsonParser p;
+ *   p.parse("{\"ok\":true,\"vals\":[12,\"foo\"],\"meta\":{\"device\":\"pico-w\"}}", ev);
  *
- * Usage (buffer):
- *    TinyJsonParser parser;
- *    struct MyHandler : TinyJsonHandler { /* override callbacks */ }
-h;
-*parser.setHandler(&h);
-*parser.parse("{\"ok\":true,\"n\":12,\"s\":\"hi\"}");
-**Usage(stream) : *parser.setInput(&Serial);
-*parser.parse(); // reads until eof (or bytesAvailable == 0)
-**Integration with TinyJsonBuilder : *-TinyJsonBuilder builds outbound JSON;
-TinyJsonParser parses inbound JSON.*-Numbers are passed to callbacks as(const char* slice, size_t len) to avoid* float /
-    double conversion costs on small MCUs.Helpers are provided.*/
-
-    // ---------------------------------------------------------------
-    // Handler interface (override what you need)
-    // ---------------------------------------------------------------
-    struct TinyJsonHandler {
-  virtual void onDocumentStart() {}
-  virtual void onDocumentEnd() {}
-
-  virtual void onObjectStart() {}
-  virtual void onObjectEnd() {}
-  virtual void onArrayStart() {}
-  virtual void onArrayEnd() {}
-
-  // Called before a value in an object: key is provided.
-  // key is a zero-terminated Arduino String-view (temporary); if streaming, it
-  // is built incrementally and valid only for the duration of the callback.
-  virtual void onKey(const char* key) {}
-
-  // Value callbacks
-  virtual void onString(const char* value) {}
-  virtual void onNumberSlice(const char* begin, size_t len) {}
-  virtual void onBool(bool value) {}
-  virtual void onNull() {}
-
-  virtual ~TinyJsonHandler() {}
-};
-
-// ---------------------------------------------------------------
-// Parser
-// ---------------------------------------------------------------
+ * Usage (streaming):
+ *   TinyJsonParser::Events ev = ...;
+ *   TinyJsonParser p;
+ *   p.parse(Serial, ev, 64, 1000);
+ */
 class TinyJsonParser {
 public:
-  explicit TinyJsonParser(Stream* in = nullptr) : in_(in) {}
+  struct Events {
+    void (*onObjectStart)(void* ctx) = nullptr;
+    void (*onObjectEnd)(void* ctx) = nullptr;
+    void (*onArrayStart)(void* ctx) = nullptr;
+    void (*onArrayEnd)(void* ctx) = nullptr;
 
-  void setInput(Stream* in) { in_ = in; }
-  void setHandler(TinyJsonHandler* h) { handler_ = h; }
+    void (*onKey)(void* ctx, const char* key) = nullptr;      // object field name
+    void (*onString)(void* ctx, const char* value) = nullptr; // string value
+    void (*onNumber)(void* ctx, double value) = nullptr;      // numeric value
+    void (*onBool)(void* ctx, bool value) = nullptr;          // true/false
+    void (*onNull)(void* ctx) = nullptr;                      // null
 
-  // Configuration
-  void setMaxDepth(uint8_t d) { maxDepth_ = d; }
-
-  // Parse from a null-terminated buffer.
-  bool parse(const char* json) {
-    reset();
-    src_ = json;
-    streaming_ = false;
-    return parseImpl();
-  }
-
-  // Parse from the configured Stream.
-  bool parse() {
-    if (!in_) return false;
-    reset();
-    streaming_ = true;
-    return parseImpl();
-  }
-
-  // Helpers: convert a number slice to long/unsigned long/float
-  static bool toLong(const char* b, size_t n, long* out) {
-    // Simple base-10 parsing; handles sign
-    long sign = 1;
-    size_t i = 0;
-    if (n && (b[0] == '-' || b[0] == '+')) {
-      sign = (b[0] == '-' ? -1 : 1);
-      i++;
-    }
-    long val = 0;
-    for (; i < n; ++i) {
-      char c = b[i];
-      if (c < '0' || c > '9') return false; // stop on non-digit
-      val = val * 10 + (c - '0');
-    }
-    *out = val * sign;
-    return true;
-  }
-
-  static bool toULong(const char* b, size_t n, unsigned long* out) {
-    unsigned long val = 0;
-    for (size_t i = 0; i < n; ++i) {
-      char c = b[i];
-      if (c < '0' || c > '9') return false;
-      val = val * 10 + (c - '0');
-    }
-    *out = val;
-    return true;
-  }
-
-  static bool toFloat(const char* b, size_t n, float* out) {
-    // Fallback: use Arduino String for compact conversion
-    String s;
-    s.reserve(n);
-    for (size_t i = 0; i < n; ++i) s += b[i];
-    *out = s.toFloat();
-    return true; // String::toFloat returns 0 on failure, caller can validate
-  }
-
-private:
-  enum class Tok { LBrace, RBrace, LBracket, RBracket, Colon, Comma, String, Number, True, False, Null, End, Bad };
-
-  struct State {
-    enum Ctx { InNone, InObject, InArray } ctx = InNone;
+    void (*onError)(void* ctx, const char* message) = nullptr; // parse error
+    void* user = nullptr;                                      // opaque user data
   };
 
-  // Reset parser state
-  void reset() {
+  // Configuration
+  static constexpr uint8_t MAX_DEPTH = 16; // nesting depth guard
+
+  TinyJsonParser() {}
+
+  // -------- In-memory parsing --------
+  bool parse(const char* json, Events& ev) {
+    if (!json) json = "";
+    const char* p = json;
     depth_ = 0;
-    hadError_ = false;
-    buf_.remove(0);
+    return parseCore(
+        [&]() -> int {
+          unsigned char c = (unsigned char) (*p);
+          return c ? (p++, c) : -1; // -1 signals end
+        },
+        [&]() -> void {
+          // no-op for in-memory: nothing to unread
+        },
+        [&]() -> bool { return *p != '\0'; }, ev);
   }
 
-  // Core parse loop
-  bool parseImpl() {
-    if (handler_) handler_->onDocumentStart();
-    Tok t;
-    State::Ctx ctx = State::InNone;
-    bool expectingValue = true; // after key or at start of array
-    bool inObjectKey = false;
+  // -------- Streaming parsing (reads from Arduino Stream) --------
+  bool parse(Stream& in, Events& ev, size_t maxTokenLen = 64, uint32_t timeoutMs = 1000) {
+    tokenBufLen_ = (maxTokenLen > 0 ? (maxTokenLen < sizeof(tokenBuf_) ? maxTokenLen : sizeof(tokenBuf_)) : 64);
+    depth_ = 0;
+    uint32_t deadline = millis() + timeoutMs;
 
-    // Stack remembers whether the current container is Object or Array
-    for (;;) {
-      t = nextToken();
-      if (t == Tok::Bad) {
-        hadError_ = true;
-        break;
+    auto nextCh = [&]() -> int {
+      while (!in.available()) {
+        if (timeoutMs && millis() > deadline) return -1;
+        delay(1);
       }
-      if (t == Tok::End) break;
-
-      switch (t) {
-      case Tok::LBrace: {
-        if (!push(State::InObject)) {
-          hadError_ = true;
-          goto done;
-        }
-        if (handler_) handler_->onObjectStart();
-        ctx = State::InObject;
-        inObjectKey = true;     // first thing in object can be a key or close
-        expectingValue = false; // we expect a key first
-      } break;
-      case Tok::RBrace: {
-        if (!pop(State::InObject)) {
-          hadError_ = true;
-          goto done;
-        }
-        if (handler_) handler_->onObjectEnd();
-        ctx = containerCtx();
-        // after closing a container, next state depends on parent
-        inObjectKey = (ctx == State::InObject);
-        expectingValue = (ctx == State::InArray);
-      } break;
-      case Tok::LBracket: {
-        if (!push(State::InArray)) {
-          hadError_ = true;
-          goto done;
-        }
-        if (handler_) handler_->onArrayStart();
-        ctx = State::InArray;
-        expectingValue = true;
-        inObjectKey = false;
-      } break;
-      case Tok::RBracket: {
-        if (!pop(State::InArray)) {
-          hadError_ = true;
-          goto done;
-        }
-        if (handler_) handler_->onArrayEnd();
-        ctx = containerCtx();
-        inObjectKey = (ctx == State::InObject);
-        expectingValue = (ctx == State::InArray);
-      } break;
-      case Tok::Comma: {
-        // comma separates items; context determines expectation
-        if (ctx == State::InObject) {
-          inObjectKey = true;
-          expectingValue = false;
-        } else if (ctx == State::InArray) {
-          expectingValue = true;
-        }
-      } break;
-      case Tok::Colon: {
-        // colon comes after a key; next token must be a value
-        expectingValue = true;
-        inObjectKey = false;
-      } break;
-      case Tok::String: {
-        if (inObjectKey) {
-          if (handler_) handler_->onKey(buf_.c_str());
-          inObjectKey = false; // value should follow after colon
-        } else {
-          if (handler_) handler_->onString(buf_.c_str());
-          expectingValue = (ctx == State::InArray);
-        }
-        buf_.remove(0);
-      } break;
-      case Tok::Number: {
-        if (handler_) handler_->onNumberSlice(buf_.c_str(), buf_.length());
-        buf_.remove(0);
-        expectingValue = (ctx == State::InArray);
-      } break;
-      case Tok::True: {
-        if (handler_) handler_->onBool(true);
-        expectingValue = (ctx == State::InArray);
-      } break;
-      case Tok::False: {
-        if (handler_) handler_->onBool(false);
-        expectingValue = (ctx == State::InArray);
-      } break;
-      case Tok::Null: {
-        if (handler_) handler_->onNull();
-        expectingValue = (ctx == State::InArray);
-      } break;
-      default: break;
-      }
-    }
-  done:
-    if (handler_) handler_->onDocumentEnd();
-    return !hadError_;
+      return in.read();
+    };
+    auto unread = [&]() -> void { /* Stream has no unread; we keep simple */ };
+    auto hasMore = [&]() -> bool { return in.available() > 0; };
+    return parseCore(nextCh, unread, hasMore, ev);
   }
-
-  // Container stack
-  bool push(State::Ctx c) {
-    if (depth_ >= maxDepth_) return false;
-    stack_[depth_++] = c;
-    return true;
-  }
-  bool pop(State::Ctx c) {
-    if (depth_ == 0) return false;
-    if (stack_[depth_ - 1] != c) return false;
-    --depth_;
-    return true;
-  }
-  State::Ctx containerCtx() const {
-    if (depth_ == 0) return State::InNone;
-    return stack_[depth_ - 1];
-  }
-
-  // Tokenizer
-  Tok nextToken() {
-    skipWs();
-    int ch = read();
-    if (ch < 0) return Tok::End;
-    switch (ch) {
-    case '{': return Tok::LBrace;
-    case '}': return Tok::RBrace;
-    case '[': return Tok::LBracket;
-    case ']': return Tok::RBracket;
-    case ':': return Tok::Colon;
-    case ',': return Tok::Comma;
-    case '"': return readString();
-    case '-':
-    case '0':
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9': unread(ch); return readNumber();
-    case 't': return readKeyword("rue", Tok::True);
-    case 'f': return readKeyword("alse", Tok::False);
-    case 'n': return readKeyword("ull", Tok::Null);
-    default: return Tok::Bad;
-    }
-  }
-
-  void skipWs() {
-    for (;;) {
-      int ch = peek();
-      if (ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t') {
-        read();
-        continue;
-      }
-      break;
-    }
-  }
-
-  Tok readString() {
-    buf_.remove(0);
-    for (;;) {
-      int ch = read();
-      if (ch < 0) return Tok::Bad; // unterminated
-      if (ch == '"') return Tok::String;
-      if (ch == '\\') {
-        int esc = read();
-        if (esc < 0) return Tok::Bad;
-        switch (esc) {
-        case '"': buf_ += '"'; break;
-        case '\\': buf_ += '\\'; break;
-        case '/': buf_ += '/'; break;
-        case 'b': buf_ += '\b'; break;
-        case 'f': buf_ += '\f'; break;
-        case 'n': buf_ += '\n'; break;
-        case 'r': buf_ += '\r'; break;
-        case 't': buf_ += '\t'; break;
-        case 'u': {
-          // Read 4 hex digits; store raw as UTF-8 via simple pass-through for ASCII
-          char hex[5];
-          for (int i = 0; i < 4; ++i) {
-            int h = read();
-            if (h < 0) return Tok::Bad;
-            hex[i] = (char) h;
-          }
-          hex[4] = 0;
-          // Convert basic BMP ASCII subset (<=0x7F) to char; otherwise keep as '?'
-          unsigned val = strtoul(hex, nullptr, 16);
-          if (val <= 0x7F)
-            buf_ += (char) val;
-          else
-            buf_ += '?';
-        } break;
-        default: return Tok::Bad;
-        }
-      } else {
-        buf_ += (char) ch;
-      }
-    }
-  }
-
-  Tok readKeyword(const char* tail, Tok as) {
-    for (const char* p = tail; *p; ++p) {
-      int ch = read();
-      if (ch != *p) return Tok::Bad;
-    }
-    return as;
-  }
-
-  Tok readNumber() {
-    buf_.remove(0);
-    bool hasDot = false, hasExp = false;
-    int ch = read();
-    if (ch == '-') {
-      buf_ += '-';
-      ch = read();
-    }
-    if (ch < 0) return Tok::Bad;
-    if (!isDigit(ch)) return Tok::Bad;
-    // integer part
-    if (ch == '0') {
-      buf_ += '0';
-      ch = peek();
-    } else {
-      do {
-        buf_ += (char) ch;
-        ch = peek();
-      } while (isDigit(ch) && (read(), true));
-    }
-    // fraction
-    if (ch == '.') {
-      hasDot = true;
-      read();
-      buf_ += '.';
-      ch = peek();
-      if (!isDigit(ch)) return Tok::Bad;
-      while (isDigit(ch)) {
-        buf_ += (char) ch;
-        read();
-        ch = peek();
-      }
-    }
-    // exponent
-    if (ch == 'e' || ch == 'E') {
-      hasExp = true;
-      read();
-      buf_ += 'e';
-      ch = peek();
-      if (ch == '+' || ch == '-') {
-        buf_ += (char) ch;
-        read();
-        ch = peek();
-      }
-      if (!isDigit(ch)) return Tok::Bad;
-      while (isDigit(ch)) {
-        buf_ += (char) ch;
-        read();
-        ch = peek();
-      }
-    }
-    return Tok::Number;
-  }
-
-  // ---------------------- I/O helpers ----------------------
-  int peek() {
-    if (streaming_) {
-      if (!in_) return -1;
-      while (in_->available() == 0) return -1;
-      int ch = in_->peek();
-      return ch;
-    } else {
-      if (!src_ || *src_ == 0) return -1;
-      return (int) (uint8_t) (*src_);
-    }
-  }
-
-  int read() {
-    if (streaming_) {
-      if (!in_) return -1;
-      while (in_->available() == 0) return -1;
-      return in_->read();
-    } else {
-      if (!src_ || *src_ == 0) return -1;
-      int ch = (int) (uint8_t) (*src_);
-      ++src_;
-      return ch;
-    }
-  }
-
-  void unread(int ch) {
-    if (streaming_) {
-      // Stream cannot unread; we rely on peek() before read() when needed.
-      // Here, do nothing.
-      (void) ch;
-    } else {
-      if (src_) --src_;
-    }
-  }
-
-  static bool isDigit(int ch) { return ch >= '0' && ch <= '9'; }
 
 private:
-  Stream* in_ = nullptr;
-  TinyJsonHandler* handler_ = nullptr;
-  bool streaming_ = false;
-  const char* src_ = nullptr; // buffer mode
+  // -------- Core parser (pulls via lambdas) --------
+  template <typename NextCh, typename Unread, typename HasMore>
+  bool parseCore(NextCh nextCh, Unread unread, HasMore hasMore, Events& ev) {
+    skipWs(nextCh);
+    int c = nextCh();
+    if (c == -1) return error(ev, "empty input");
+    unread(); // we consumed one when peeking; push back logically
 
-  // state
-  static constexpr uint8_t DEFAULT_MAX_DEPTH = 16;
-  uint8_t maxDepth_ = DEFAULT_MAX_DEPTH;
+    if (!parseValue(nextCh, unread, hasMore, ev)) return false;
+    skipWs(nextCh);
+    // must be end or only trailing whitespace
+    c = nextCh();
+    if (c != -1) {
+      // allow trailing whitespace
+      while (c != -1 && isspace(c)) c = nextCh();
+      if (c != -1) return error(ev, "trailing characters after value");
+    }
+    return true;
+  }
+
+  template <typename NextCh> void skipWs(NextCh nextCh) {
+    int c;
+    do { c = nextCh(); } while (c != -1 && isspace(c));
+    // we cannot unread universally; callers may simulate with their Unread
+  }
+
+  template <typename NextCh, typename Unread, typename HasMore>
+  bool parseValue(NextCh nextCh, Unread unread, HasMore hasMore, Events& ev) {
+    int c = readNonWs(nextCh);
+    if (c == -1) return error(ev, "unexpected end of input");
+
+    switch (c) {
+    case '{': return parseObject(nextCh, unread, hasMore, ev);
+    case '[': return parseArray(nextCh, unread, hasMore, ev);
+    case '\"': return parseString(nextCh, ev, /*isKey*/ false);
+    case 't':
+    case 'f':
+    case 'n': return parseLiteral(nextCh, c, ev);
+    default:
+      if (c == '-' || isdigit(c)) return parseNumber(nextCh, c, ev);
+      return error(ev, "invalid value start");
+    }
+  }
+
+  template <typename NextCh> int readNonWs(NextCh nextCh) {
+    int c;
+    do { c = nextCh(); } while (c != -1 && isspace(c));
+    return c;
+  }
+
+  template <typename NextCh, typename Unread, typename HasMore>
+  bool parseObject(NextCh nextCh, Unread unread, HasMore hasMore, Events& ev) {
+    if (!pushDepth(ev)) return false;
+    if (ev.onObjectStart) ev.onObjectStart(ev.user);
+    // object: { ( string : value )* }
+    bool first = true;
+    for (;;) {
+      int c = readNonWs(nextCh);
+      if (c == '}') {
+        if (!popDepth(ev)) return false;
+        if (ev.onObjectEnd) ev.onObjectEnd(ev.user);
+        return true;
+      }
+      if (!first) {
+        if (c != ',') return error(ev, "expected ',' between object fields");
+        c = readNonWs(nextCh);
+      }
+      if (c != '\"') return error(ev, "expected '\"' starting field name");
+      if (!parseString(nextCh, ev, /*isKey*/ true)) return false;
+      c = readNonWs(nextCh);
+      if (c != ':') return error(ev, "expected ':' after field name");
+      if (!parseValue(nextCh, unread, hasMore, ev)) return false;
+      first = false;
+    }
+  }
+
+  template <typename NextCh, typename Unread, typename HasMore>
+  bool parseArray(NextCh nextCh, Unread unread, HasMore hasMore, Events& ev) {
+    if (!pushDepth(ev)) return false;
+    if (ev.onArrayStart) ev.onArrayStart(ev.user);
+    bool first = true;
+    for (;;) {
+      int c = readNonWs(nextCh);
+      if (c == ']') {
+        if (!popDepth(ev)) return false;
+        if (ev.onArrayEnd) ev.onArrayEnd(ev.user);
+        return true;
+      }
+      if (!first) {
+        if (c != ',') return error(ev, "expected ',' between array items");
+        c = readNonWs(nextCh);
+      }
+      // unread not available generically; we dispatch based on c
+      if (c == '{') {
+        if (!parseObject(nextCh, unread, hasMore, ev)) return false;
+      } else if (c == '[') {
+        if (!parseArray(nextCh, unread, hasMore, ev)) return false;
+      } else if (c == '\"') {
+        if (!parseString(nextCh, ev, false)) return false;
+      } else if (c == 't' || c == 'f' || c == 'n') {
+        if (!parseLiteral(nextCh, c, ev)) return false;
+      } else if (c == '-' || isdigit(c)) {
+        if (!parseNumber(nextCh, c, ev)) return false;
+      } else
+        return error(ev, "invalid array item");
+      first = false;
+    }
+  }
+
+  template <typename NextCh> bool parseString(NextCh nextCh, Events& ev, bool isKey) {
+    // starting '\"' already consumed
+    size_t i = 0;
+    for (;;) {
+      int c = nextCh();
+      if (c == -1) return error(ev, "unterminated string");
+      if (c == '\"') break;
+      if (c == '\\') {
+        c = nextCh();
+        if (c == -1) return error(ev, "bad escape at end");
+        switch (c) {
+        case '\"': addChar('\"', i); break;
+        case '\\': addChar('\\', i); break;
+        case '/': addChar('/', i); break;
+        case 'n': addChar('\n', i); break;
+        case 'r': addChar('\r', i); break;
+        case 't': addChar('\t', i); break;
+        case 'b': addChar('\b', i); break;
+        case 'f': addChar('\f', i); break;
+        case 'u': {
+          // Pass through literally as \uXXXX to avoid heavy UTF-8 logic
+          addChar('\\', i);
+          addChar('u', i);
+          for (int k = 0; k < 4; k++) {
+            int h = nextCh();
+            if (h == -1) return error(ev, "bad \\u escape");
+            addChar((char) h, i);
+          }
+        } break;
+        default: return error(ev, "unsupported escape");
+        }
+      } else {
+        addChar((char) c, i);
+      }
+      if (i >= tokenBufLen_ - 1) return error(ev, "string token too long");
+    }
+    tokenBuf_[i] = '\0';
+    if (isKey) {
+      if (ev.onKey) ev.onKey(ev.user, tokenBuf_);
+    } else {
+      if (ev.onString) ev.onString(ev.user, tokenBuf_);
+    }
+    return true;
+  }
+
+  template <typename NextCh> bool parseLiteral(NextCh nextCh, int first, Events& ev) {
+    // first is one of 't','f','n'
+    if (first == 't') {
+      if (!expectWord(nextCh, "rue")) return error(ev, "bad 'true'");
+      if (ev.onBool) ev.onBool(ev.user, true);
+      return true;
+    } else if (first == 'f') {
+      if (!expectWord(nextCh, "alse")) return error(ev, "bad 'false'");
+      if (ev.onBool) ev.onBool(ev.user, false);
+      return true;
+    } else {
+      if (!expectWord(nextCh, "ull")) return error(ev, "bad 'null'");
+      if (ev.onNull) ev.onNull(ev.user);
+      return true;
+    }
+  }
+
+  template <typename NextCh> bool parseNumber(NextCh nextCh, int first, Events& ev) {
+    // Collect into tokenBuf_, then strtod
+    size_t i = 0;
+    addChar((char) first, i);
+    for (;;) {
+      int c = nextCh();
+      if (c == -1) break;
+      if (isdigit(c) || c == '+' || c == '-' || c == '.' || c == 'e' || c == 'E') {
+        addChar((char) c, i);
+        if (i >= tokenBufLen_ - 1) return error(ev, "number token too long");
+      } else { // delimiter
+        // simple pushback emulation: we cannot unread universally; assume caller accounts for delimiter via
+        // higher-level logic In our design, callers re-read from last point, so we do nothing.
+        break;
+      }
+    }
+    tokenBuf_[i] = '\0';
+    char* endp = nullptr;
+    double val = strtod(tokenBuf_, &endp);
+    if (endp == tokenBuf_) return error(ev, "invalid number");
+    if (ev.onNumber) ev.onNumber(ev.user, val);
+    return true;
+  }
+
+  template <typename NextCh> bool expectWord(NextCh nextCh, const char* tail) {
+    for (const char* p = tail; *p; ++p) {
+      int c = nextCh();
+      if (c != *p) return false;
+    }
+    return true;
+  }
+
+  bool pushDepth(Events& ev) {
+    if (depth_ >= MAX_DEPTH) return error(ev, "nesting too deep");
+    depth_++;
+    return true;
+  }
+  bool popDepth(Events& ev) {
+    if (depth_ == 0) return error(ev, "mismatched container end");
+    depth_--;
+    return true;
+  }
+
+  bool error(Events& ev, const char* msg) {
+    if (ev.onError) ev.onError(ev.user, msg);
+    return false;
+  }
+
+  void addChar(char c, size_t& i) {
+    if (i < tokenBufLen_ - 1) tokenBuf_[i++] = c;
+  }
+
+private:
   uint8_t depth_ = 0;
-  State::Ctx stack_[DEFAULT_MAX_DEPTH];
-
-  bool hadError_ = false;
-  String buf_; // temporary buffer for strings/numbers
+  size_t tokenBufLen_ = sizeof(tokenBuf_);
+  char tokenBuf_[128]; // default max token size for streaming; truncated if smaller
 };
 
 #endif // __GAVEL_TINY_JSON_PARSER_H
