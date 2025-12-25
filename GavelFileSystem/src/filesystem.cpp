@@ -204,29 +204,36 @@ void FileSystem::directory(OutputInterface* terminal) {
 
 void FileSystem::catFile(OutputInterface* terminal) {
   char* value;
-  char buffer[2] = {0, 0};
   DigitalDirectory* context = static_cast<DigitalDirectory*>(terminal->getContext(0));
   if (context == nullptr) {
     context = static_cast<DigitalDirectory*>(open("/"));
     terminal->setContext(0, (void*) context);
   }
   value = terminal->readParameter();
-  if (value != NULL) {
-    DigitalFile* file = context->open(value);
-
-    if (file && !file->isDirectory()) {
-      while (file->available()) {
-        buffer[0] = file->read();
-        terminal->print(INFO, buffer);
-        if (buffer[0] == '\n') terminal->print(INFO, "\r");
-      }
-      file->close();
-    } else {
-      terminal->println(ERROR, "\"" + String(value) + "\" File does not exist!!!");
-    }
-  } else {
+  if (!value) {
     terminal->invalidParameter();
+    terminal->println();
+    terminal->prompt();
+    return;
   }
+
+  DigitalFile* file = context->open(value);
+
+  if (file && !file->isDirectory()) {
+    // Prefer a larger buffer to minimize overhead
+    char buf[512];
+
+    while (file->available() > 0) {
+      int n = file->read((unsigned char*) buf, sizeof(buf) - 1);
+      if (n <= 0) break;
+      buf[n] = 0;
+      terminal->print(INFO, buf);
+    }
+    file->close();
+  } else {
+    terminal->println(ERROR, "\"" + String(value) + "\" File does not exist!!!");
+  }
+
   terminal->println();
   terminal->prompt();
 }
@@ -246,7 +253,11 @@ void FileSystem::changedir(OutputInterface* terminal) {
     } else {
       newDir = context->getDirectory(value);
     }
-    if (newDir != nullptr) { terminal->setContext(0, newDir); }
+    if (newDir != nullptr) {
+      terminal->setContext(0, newDir);
+    } else {
+      terminal->println(ERROR, "Directory does not exist.");
+    }
   }
   terminal->prompt();
 }

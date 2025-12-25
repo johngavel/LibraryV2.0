@@ -39,25 +39,28 @@ public:
     char charBuffer[256];
     unsigned int lengthBuffer = 0;
     memset(charBuffer, 0, sizeof(charBuffer));
-    if (_stream.available()) {
-      while (_stream.available()) {
-        unsigned char c = (unsigned char) _stream.pop();
-        if (c == '\n') {
-          charBuffer[lengthBuffer++] = '\\';
-          charBuffer[lengthBuffer++] = 'n';
-          sseBroadcastData(charBuffer);
-          memset(charBuffer, 0, sizeof(charBuffer));
-          lengthBuffer = 0;
-        } else {
-          charBuffer[lengthBuffer++] = c;
-        }
-        if (lengthBuffer >= sizeof(charBuffer)) {
-          sseBroadcastData(charBuffer);
-          memset(charBuffer, 0, sizeof(charBuffer));
+    while (_stream.available()) {
+      int byteVal = _stream.pop();
+      if (byteVal < 0) break;
+      unsigned char c = (unsigned char) byteVal;
+      if (c == '\r') continue;
+      if (c == '\n') {
+        sseBroadcastDataLines(charBuffer, lengthBuffer);
+        endSseEvent(); // close the event here
+        lengthBuffer = 0;
+      } else {
+        if (lengthBuffer == sizeof(charBuffer)) {
+          // Buffer full mid-line: emit more data lines but DO NOT end event
+          sseBroadcastDataLines(charBuffer, lengthBuffer);
           lengthBuffer = 0;
         }
+        charBuffer[lengthBuffer++] = static_cast<char>(c);
       }
-      sseBroadcastData(charBuffer);
+    }
+    // Final flush only if there is pending data
+    if (lengthBuffer > 0) {
+      sseBroadcastDataLines(charBuffer, lengthBuffer);
+      endSseEvent();
     }
     return true;
   };
@@ -66,15 +69,34 @@ public:
 
   Stream* stream() { return &_stream; };
 
-  void sseBroadcastData(const String& payload) {
-    // Emits a named event with one data line
-    String line = String("data: ") + String(payload) + String("\n\n");
-    print(line.c_str());
+  void sseBroadcastDataLines(const char* payload, unsigned int length) {
+    // Write "data: " + payload chunk + "\n" WITHOUT closing the event
+    const char* p = payload;
+    while (length > 0) {
+      // Choose a chunk size that fits comfortably (e.g., 200 bytes)
+      unsigned int chunk = (length > 200) ? 200 : length;
+      write((const uint8_t*) "data: ", 6); // "data: "
+      write((const uint8_t*) p, chunk);    // payload bytes
+      write((const uint8_t*) "\n", 1);     // end of data line
+      p += chunk;
+      length -= chunk;
+    }
   }
-  void sseBroadcastEvent(const char* eventName, const String& payload) {
+
+  // Call this once when the logical message (line) is complete
+  inline void endSseEvent() {
+    write((const uint8_t*) "\n", 1); // blank line to end event
+  }
+
+  void sseBroadcastEvent(const char* eventName, const char* payload) {
     // Emits a named event with one data line
-    String line = String("event: ") + String(eventName) + String("\ndata: ") + String(payload) + String("\n\n");
-    print(line.c_str());
+    write((const uint8_t*) "event: ", 7); // "event: "
+    write((const uint8_t*) eventName, strlen(eventName));
+    write((const uint8_t*) "\n", 1);                  // end of data line
+    write((const uint8_t*) "data: ", 6);              // "data: "
+    write((const uint8_t*) payload, strlen(payload)); // "data: "
+    write((const uint8_t*) "\n", 1);                  // end of data line
+    endSseEvent();
   }
 
 private:
@@ -123,6 +145,7 @@ private:
   void (*bannerFunction)(OutputInterface*) = nullptr;
   char promptString[20];
   void connectedCmd(OutputInterface* terminal) {
+    terminal->setContext(0, nullptr);
     terminal->banner();
     terminal->prompt();
   }
