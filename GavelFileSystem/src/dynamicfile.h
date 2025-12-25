@@ -13,6 +13,7 @@ public:
   // DigitalBase virtuals
   const char* name() const override;
   bool open(FileMode mode = READ_MODE) override;
+  bool reset() override;
   void close() override;
   bool isDirectory() const override { return false; };
 

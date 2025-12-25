@@ -11,6 +11,7 @@ public:
   virtual bool isDirectory() const = 0;
   virtual const char* name() const = 0;
   virtual bool open(FileMode mode = READ_MODE) = 0;
+  virtual bool reset() = 0;
   virtual void close() = 0;
   virtual ~DigitalBase(){};
   void setPermission(FilePermission permission) { _permission = permission; };
@@ -30,6 +31,7 @@ public:
   // DigitalBase virtuals
   virtual const char* name() const = 0;
   virtual bool open(FileMode mode = READ_MODE) = 0;
+  virtual bool reset() = 0;
   virtual void close() = 0;
   bool isDirectory() const override { return false; };
 
@@ -50,11 +52,20 @@ public:
   virtual void rewindDirectory() = 0;
   // DigitalBase virtuals
   virtual const char* name() const = 0;
-  virtual bool open(FileMode mode = READ_MODE) = 0;
+  virtual bool open(FileMode mode = READ_MODE) override { return false; };
+  virtual DigitalFile* open(const char* name, FileMode mode = READ_MODE) = 0;
+  virtual DigitalDirectory* getDirectory(const char* name) = 0;
+  virtual bool reset() override {
+    rewindDirectory();
+    return true;
+  };
   virtual void close() = 0;
   bool isDirectory() const override { return true; };
+  DigitalDirectory* getParent() { return _parentDir; };
+  void setParent(DigitalDirectory* parent) { _parentDir = parent; };
 
 private:
+  DigitalDirectory* _parentDir = nullptr;
 };
 
 class DigitalFileSystem {

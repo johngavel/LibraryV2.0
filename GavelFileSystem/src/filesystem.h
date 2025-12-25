@@ -46,9 +46,10 @@ private:
   DigitalBase* getFile(const char* path);
   ArrayDirectory* root;
 
-  DirectoryStat printDirectory(OutputInterface* terminal, const char* path);
+  DirectoryStat printDirectory(OutputInterface* terminal, DigitalDirectory* dir, bool recursive);
   void directory(OutputInterface* terminal);
   void catFile(OutputInterface* terminal);
+  void changedir(OutputInterface* terminal);
 };
 
 #endif // __GAVEL_ARRAY_FILE_SYSTEM_CLASS_H

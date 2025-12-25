@@ -21,8 +21,8 @@ public:
 
   void configure();
   void configure(byte* __macAddress, bool __isDHCP);
-  void configure(byte* __macAddress, bool __isDHCP, byte* __ipAddress, byte* __dnsAddress, byte* __subnetMask,
-                 byte* __gatewayAddress);
+  void configure(byte* __macAddress, bool __allowDHCP, bool __isDHCP, byte* __ipAddress, byte* __dnsAddress,
+                 byte* __subnetMask, byte* __gatewayAddress);
 
   bool linkStatus();
   IMemory* getMemory() { return &memory; };

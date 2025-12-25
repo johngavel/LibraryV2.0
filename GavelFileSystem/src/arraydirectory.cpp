@@ -20,7 +20,9 @@ bool ArrayDirectory::addDirectory(const char* name) {
   if (!name || !*name) return false;
   if (_fileCount >= MAX_FILES) return false;
   if (getFile(name) != nullptr) return false;
-  _files[_fileCount] = new ArrayDirectory(name);
+  ArrayDirectory* dir = new ArrayDirectory(name);
+  dir->setParent(this);
+  _files[_fileCount] = dir;
   _fileCount++;
   return true;
 };
@@ -45,7 +47,20 @@ const char* ArrayDirectory::name() const {
   return _name;
 };
 
-bool ArrayDirectory::open(FileMode mode) {
-  return true;
+DigitalFile* ArrayDirectory::open(const char* name, FileMode mode) {
+  DigitalBase* base = getFile(name);
+  if (!base) return nullptr;
+  if (base->isDirectory()) return nullptr;
+  DigitalFile* file = static_cast<DigitalFile*>(base);
+  file->open(mode);
+  return file;
 };
+
+DigitalDirectory* ArrayDirectory::getDirectory(const char* name) {
+  DigitalBase* base = getFile(name);
+  if (!base) return nullptr;
+  if (!base->isDirectory()) return nullptr;
+  return static_cast<DigitalDirectory*>(base);
+}
+
 void ArrayDirectory::close() {};

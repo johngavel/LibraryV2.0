@@ -13,7 +13,8 @@ public:
     unsigned char gatewayAddress[4];
     unsigned char dnsAddress[4];
     bool isDHCP;
-    unsigned char spare[9];
+    bool allowDHCP;
+    unsigned char spare[8];
   } EthernetData;
 
   static_assert(sizeof(EthernetData) == 32, "ProgramMemory size unexpected - check packing/padding.");
@@ -35,6 +36,7 @@ public:
   void initMemory() override {
     randomSeed(rp2040.hwrand32());
     memory.data.isDHCP = true;
+    memory.data.allowDHCP = true;
     memory.data.macAddress[0] = 0xDE;
     memory.data.macAddress[1] = 0xAD;
     memory.data.macAddress[2] = 0xCC;

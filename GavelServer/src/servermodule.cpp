@@ -1,5 +1,6 @@
 #include "servermodule.h"
 
+#include "asciitable/asciitable.h"
 #include "serverhelper.h"
 
 #include <GavelSPIWire.h>
@@ -11,7 +12,8 @@ ServerModule::ServerModule() : Task("HTTPServer") {
 
 void ServerModule::addCmd(TerminalCommand* __termCmd) {
   if (__termCmd) {
-    // No Commands at this time.
+    __termCmd->addCmd("client", "", "Prints a list of Tasks running in the system",
+                      [this](TerminalLibrary::OutputInterface* terminal) { clientCmd(terminal); });
   }
 }
 
@@ -40,4 +42,32 @@ bool ServerModule::executeTask() {
     clientPool.sweepDisconnected();
   }
   return true;
+}
+
+void ServerModule::clientCmd(OutputInterface* terminal) {
+  AsciiTable table(terminal);
+
+  bool verbose = false;
+  char* parameter = terminal->readParameter();
+  if ((parameter != NULL) && (safeCompare(parameter, "-v") == 0)) verbose = true;
+
+  table.addColumn(Magenta, "ID", 6);
+  table.addColumn(Green, "Used", 7);
+  table.addColumn(Green, "Valid", 7);
+  table.addColumn(Yellow, "State", 5);
+  table.addColumn(Normal, "File", 20);
+  table.printHeader();
+  for (unsigned int i = 0; i < clientPool.capacity(); i++) {
+    ClientFileEntry* cfe = clientPool.at(i);
+    StringBuilder idString = i;
+    StringBuilder usedString = cfe->used;
+    StringBuilder validString = cfe->isValid();
+    StringBuilder stateString = cfe->connection.state;
+    StringBuilder fileString = (cfe->connection.file) ? cfe->connection.file->name() : "none";
+    if (cfe->isValid() || verbose)
+      table.printData(idString.c_str(), usedString.c_str(), validString.c_str(), stateString.c_str(),
+                      fileString.c_str());
+  }
+  table.printDone("Client Done");
+  terminal->prompt();
 }

@@ -26,6 +26,7 @@ public:
   void setErrorPage(String name) { errorPage = name; };
   bool verifyPage(String name) { return dfs->verifyFile(name.c_str()); };
   VirtualServer* getServer() { return server; };
+  void clientCmd(OutputInterface* terminal);
 
 private:
   VirtualServer* server = nullptr;

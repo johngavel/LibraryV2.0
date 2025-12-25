@@ -25,6 +25,9 @@ public:
     if (_mode == READ_MODE) createReadData();
     return true;
   };
+
+  bool reset() override { return true; };
+
   void close() override {
     if (_mode == WRITE_MODE) parseWriteData();
   };
@@ -39,13 +42,14 @@ public:
   size_t write(unsigned char c) override { return ringBuffer.push(c); };
 
 protected:
+  CharRingBuffer ringBuffer;
+
 private:
   virtual bool createReadData() = 0;
   virtual bool parseWriteData() = 0;
 
   char _name[200];
   unsigned char _ringBuffer[4096];
-  CharRingBuffer ringBuffer;
 };
 
 #endif // __GAVEL_STREAM_FILE_H

@@ -53,6 +53,12 @@ bool DynamicFile::open(FileMode mode) {
   return true;
 }
 
+bool DynamicFile::reset() {
+  _cursor = 0;
+  _availableData = strnlen(_buffer, _sizeBuffer);
+  return true;
+}
+
 void DynamicFile::close() {
   if ((_mode == WRITE_MODE) && (_isOpen == true)) parseWriteData();
   _isOpen = false;

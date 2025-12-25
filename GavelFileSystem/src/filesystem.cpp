@@ -16,6 +16,8 @@ bool FileSystem::executeTask() {
 
 void FileSystem::addCmd(TerminalCommand* __termCmd) {
   if (__termCmd) {
+    __termCmd->addCmd("cd", "<path>", "Only goes up and down, via .. or <name>",
+                      [this](TerminalLibrary::OutputInterface* terminal) { changedir(terminal); });
     __termCmd->addCmd("dir", "<path><filename>", "Directory of list of the entire device",
                       [this](TerminalLibrary::OutputInterface* terminal) { directory(terminal); });
     __termCmd->addCmd("cat", "<path><filename>", "Displays the file",
@@ -113,14 +115,21 @@ bool FileSystem::deleteFile(const char* path) {
   return false;
 };
 
-DirectoryStat FileSystem::printDirectory(OutputInterface* terminal, const char* path) {
+DirectoryStat FileSystem::printDirectory(OutputInterface* terminal, DigitalDirectory* dir, bool recursive) {
   DirectoryStat total;
   StringBuilder sb;
   ClassicQueue queue(10, 32);
-  sb + "Directory: " + path;
+  if (dir == nullptr) return total;
+  dir->rewindDirectory();
+  sb + "Directory: " + dir->name();
   terminal->println(INFO, sb.c_str());
   sb.clear();
-  DigitalDirectory* dir = static_cast<DigitalDirectory*>(open(path));
+  sb + "<DIR>  " + ".";
+  terminal->println(INFO, sb.c_str());
+  sb.clear();
+  sb + "<DIR>  " + "..";
+  terminal->println(INFO, sb.c_str());
+  sb.clear();
   DigitalBase* base = dir->openNextFile();
   while (base) {
     if (!base->isDirectory()) {
@@ -138,10 +147,7 @@ DirectoryStat FileSystem::printDirectory(OutputInterface* terminal, const char* 
       sb + "<DIR>  " + directory->name();
       terminal->println(INFO, sb.c_str());
       sb.clear();
-
-      sb + path + directory->name() + "/";
-      queue.push((void*) sb.c_str());
-      sb.clear();
+      queue.push((void*) directory->name());
       total.directories++;
     }
     base = dir->openNextFile();
@@ -158,44 +164,63 @@ DirectoryStat FileSystem::printDirectory(OutputInterface* terminal, const char* 
   sb.clear();
   terminal->println();
 
-  for (unsigned long i = 0; i < queue.count(); i++) total += printDirectory(terminal, (char*) queue.get(i));
+  if (recursive) {
+    for (unsigned long i = 0; i < queue.count(); i++) {
+      total += printDirectory(terminal, dir->getDirectory((char*) queue.get(i)), recursive);
+    }
+  }
   return total;
 }
 
 void FileSystem::directory(OutputInterface* terminal) {
   StringBuilder sb;
   char tmpBuf[80];
-  DirectoryStat total = printDirectory(terminal, "/");
+  DigitalDirectory* context = static_cast<DigitalDirectory*>(terminal->getContext(0));
+  if (context == nullptr) {
+    context = static_cast<DigitalDirectory*>(open("/"));
+    terminal->setContext(0, (void*) context);
+  }
+
+  bool recursive = false;
+  char* parameter = terminal->readParameter();
+  if ((parameter != NULL) && (safeCompare(parameter, "-r") == 0)) recursive = true;
+
+  DirectoryStat total = printDirectory(terminal, context, recursive);
   terminal->println();
-  terminal->println(PASSED, "Total: ");
-  sb + "   " + total.directories + " Dir(s)";
-  sb + "   " + total.files + " File(s)";
-  strncpy(tmpBuf, sb.c_str(), sizeof(tmpBuf));
-  tab(22, tmpBuf, sizeof(tmpBuf));
-  terminal->print(INFO, tmpBuf);
-  sb.clear();
-  sb + total.size;
-  terminal->println(INFO, sb.c_str());
-  sb.clear();
-  terminal->println();
+  if (recursive) {
+    terminal->println(PASSED, "Total: ");
+    sb + "  " + total.directories + " Dir(s)";
+    sb + "  " + total.files + " File(s)  ";
+    strncpy(tmpBuf, sb.c_str(), sizeof(tmpBuf));
+    terminal->print(INFO, tmpBuf);
+    sb.clear();
+    sb + total.size;
+    terminal->println(INFO, sb.c_str());
+    sb.clear();
+    terminal->println();
+  }
   terminal->prompt();
 }
 
 void FileSystem::catFile(OutputInterface* terminal) {
   char* value;
   char buffer[2] = {0, 0};
+  DigitalDirectory* context = static_cast<DigitalDirectory*>(terminal->getContext(0));
+  if (context == nullptr) {
+    context = static_cast<DigitalDirectory*>(open("/"));
+    terminal->setContext(0, (void*) context);
+  }
   value = terminal->readParameter();
   if (value != NULL) {
-    if (verifyFile(value)) {
-      DigitalFile* file = readFile(value);
-      if (file && !file->isDirectory()) {
-        for (int i = 0; i < file->size(); i++) {
-          buffer[0] = file->read();
-          terminal->print(INFO, buffer);
-          if (buffer[0] == '\n') terminal->print(INFO, "\r");
-        }
-        file->close();
+    DigitalFile* file = context->open(value);
+
+    if (file && !file->isDirectory()) {
+      while (file->available()) {
+        buffer[0] = file->read();
+        terminal->print(INFO, buffer);
+        if (buffer[0] == '\n') terminal->print(INFO, "\r");
       }
+      file->close();
     } else {
       terminal->println(ERROR, "\"" + String(value) + "\" File does not exist!!!");
     }
@@ -203,5 +228,25 @@ void FileSystem::catFile(OutputInterface* terminal) {
     terminal->invalidParameter();
   }
   terminal->println();
+  terminal->prompt();
+}
+
+void FileSystem::changedir(OutputInterface* terminal) {
+  DigitalDirectory* context = static_cast<DigitalDirectory*>(terminal->getContext(0));
+  DigitalDirectory* newDir = nullptr;
+  if (context == nullptr) {
+    context = static_cast<DigitalDirectory*>(open("/"));
+    terminal->setContext(0, (void*) context);
+  }
+  char* value = terminal->readParameter();
+  if (value != NULL) {
+    if (safeCompare(value, ".") == 0) {
+    } else if (safeCompare(value, "..") == 0) {
+      newDir = context->getParent();
+    } else {
+      newDir = context->getDirectory(value);
+    }
+    if (newDir != nullptr) { terminal->setContext(0, newDir); }
+  }
   terminal->prompt();
 }

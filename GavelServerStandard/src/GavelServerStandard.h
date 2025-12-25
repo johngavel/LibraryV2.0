@@ -5,7 +5,8 @@
 #include <GavelFileSystem.h>
 #include <GavelPicoStandard.h>
 #include <GavelServer.h>
+#include <GavelTask.h>
 
-void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSystem* fs);
+void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSystem* fs, TaskManager* taskManager);
 
 #endif // __GAVEL_SERVER_STD_H

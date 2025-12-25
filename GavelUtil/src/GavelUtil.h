@@ -12,7 +12,5 @@
 #include "stringbuilder.h"
 #include "stringutils.h"
 #include "timer.h"
-#include "tinyjsonbuilder.h"
-#include "tinyjsonparser.h"
 
 #endif // __GAVELUTIL_H

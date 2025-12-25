@@ -1,5 +1,6 @@
 #include "program.h"
 
+#include <ArduinoJson.h>
 #include <GavelUtil.h>
 #include <Terminal.h>
 
@@ -25,32 +26,26 @@ const char* ProgramInfo::compileDate = __DATE__;
 const char* ProgramInfo::compileTime = __TIME__;
 const unsigned long ProgramInfo::BuildVersion = GAVEL_VERSION;
 
-/**
- * Static API handler implemented using TinyJsonBuilder.
- * Matches: ApiCallbackFn signature declared in apicallback.h
- */
-
 // ---- Static API handler (builds JSON with TinyJsonBuilder) ----
 bool ProgramInfo::createReadData() {
   // Compose "major.minor.build"
   String version = String(MajorVersion) + "." + String(MinorVersion) + "." + String(BuildVersion);
 
-  TinyJsonBuilder jb;
-  jb.beginObject();
-  jb.add("product", String(AppName));
-  jb.add("shortName", String(ShortName));
-  jb.add("author", String(AuthorName));
+  JsonDocument doc;
+  char json[512];
 
-  jb.add("program", (int) ProgramNumber); // numeric
-  jb.add("version", version);
+  doc["product"] = AppName;
+  doc["shortName"] = ShortName;
+  doc["author"] = AuthorName;
 
-  jb.add("build_date", String(compileDate));
-  jb.add("build_time", String(compileTime));
-  jb.add("device", String(stringHardware(hw_type)));
+  doc["program"] = ProgramNumber;
+  doc["version"] = version;
 
-  jb.endObject();
-
-  return loadReadBuffer(jb.str().c_str(), jb.str().length()); // finalize JSON
+  doc["build_date"] = compileDate;
+  doc["build_time"] = compileTime;
+  doc["device"] = stringHardware(hw_type);
+  serializeJson(doc, json, sizeof(json));
+  return loadReadBuffer(json, strnlen(json, sizeof(json)));
 }
 
 bool ProgramInfo::parseWriteData() {

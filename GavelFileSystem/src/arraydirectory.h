@@ -15,7 +15,8 @@ public:
   void rewindDirectory() override;
   // DigitalBase virtuals
   const char* name() const override;
-  bool open(FileMode mode = READ_MODE) override;
+  virtual DigitalFile* open(const char* name, FileMode mode = READ_MODE) override;
+  virtual DigitalDirectory* getDirectory(const char* name) override;
   void close() override;
 
 private:

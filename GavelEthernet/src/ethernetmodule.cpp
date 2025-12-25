@@ -59,14 +59,18 @@ void EthernetModule::configure() {
 
 void EthernetModule::configure(byte* __macAddress, bool __isDHCP) {
   unsigned char blankAddress[4] = {0, 0, 0, 0};
-  configure(__macAddress, __isDHCP, blankAddress, blankAddress, blankAddress, blankAddress);
+  configure(__macAddress, true, __isDHCP, blankAddress, blankAddress, blankAddress, blankAddress);
 }
 
-void EthernetModule::configure(byte* __macAddress, bool __isDHCP, byte* __ipAddress, byte* __dnsAddress,
-                               byte* __subnetMask, byte* __gatewayAddress) {
+void EthernetModule::configure(byte* __macAddress, bool __allowDHCP, bool __isDHCP, byte* __ipAddress,
+                               byte* __dnsAddress, byte* __subnetMask, byte* __gatewayAddress) {
   configure();
   memcpy(memory.memory.data.macAddress, __macAddress, sizeof(memory.memory.data.macAddress));
-  memory.memory.data.isDHCP = __isDHCP;
+  memory.memory.data.allowDHCP = __allowDHCP;
+  if (__allowDHCP)
+    memory.memory.data.isDHCP = __isDHCP;
+  else
+    memory.memory.data.isDHCP = false;
   memcpy(memory.memory.data.ipAddress, __ipAddress, sizeof(memory.memory.data.ipAddress));
   memcpy(memory.memory.data.dnsAddress, __dnsAddress, sizeof(memory.memory.data.dnsAddress));
   memcpy(memory.memory.data.subnetMask, __subnetMask, sizeof(memory.memory.data.subnetMask));
@@ -238,9 +242,14 @@ bool configParser(OutputInterface* terminal, EthernetMemory* memory) {
     // Check DHCP flags
     if (!matched) {
       if (safeCompare(action, "-dhcp") == 0) {
-        memory->memory.data.isDHCP = true;
-        memory->setInternal(true);
-        actionTaken = true;
+        if (memory->memory.data.allowDHCP) {
+          memory->memory.data.isDHCP = true;
+          memory->setInternal(true);
+          actionTaken = true;
+        } else {
+          memory->memory.data.isDHCP = false;
+          terminal->println(WARNING, "DHCP Mode is disabled.");
+        }
       } else if (safeCompare(action, "-nodhcp") == 0) {
         memory->memory.data.isDHCP = false;
         memory->setInternal(true);

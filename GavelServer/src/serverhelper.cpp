@@ -56,15 +56,11 @@ String contentTypeFromPath(const String& path) {
 
 void sendHttpHeader(Client* client, int code, const String& contentType, size_t contentLength, bool connectionClose) {
   String response = "HTTP/1.1 " + String(code) + " " + statusText(code) + "\r\n";
+  response += "Content-Type: " + contentType + "\r\n";
+  if (contentLength > 0) { response += "Content-Length: " + String(contentLength) + "\r\n"; }
+  if (connectionClose) { response += "Connection: close\r\n"; }
+  response += "\r\n";
   clientPrint(client, response);
-  response = "Content-Type: " + contentType + "\r\n";
-  clientPrint(client, response);
-  if (contentLength > 0) {
-    response = "Content-Length: " + String(contentLength) + "\r\n";
-    clientPrint(client, response);
-  }
-  if (connectionClose) { clientPrint(client, "Connection: close\r\n"); }
-  clientPrint(client, "\r\n");
 }
 
 String normalizePath(const String& rawPath) {

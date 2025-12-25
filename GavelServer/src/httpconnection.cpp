@@ -85,7 +85,10 @@ ClientState HttpConnection::readRequestLine() {
         code = BadRequestReturnCode;
         return SendHeader;
       }
-      responseContentLength = file->size();
+      if (isReadMethod(method))
+        responseContentLength = file->size();
+      else
+        responseContentLength = 0;
       _buffer = "";
       return ReadingHeaders;
     }
@@ -176,8 +179,9 @@ ClientState HttpConnection::sendHeader() {
 static char fileBuffer[BUFFER_SIZE];
 static bool transferFileToClient(Client* client, DigitalFile* file) {
   memset(fileBuffer, 0, BUFFER_SIZE);
-  unsigned long remainder = file->size() % BUFFER_SIZE;
-  unsigned long loops = file->size() / BUFFER_SIZE;
+  if (file->available() == 0) return false;
+  unsigned long remainder = file->available() % BUFFER_SIZE;
+  unsigned long loops = file->available() / BUFFER_SIZE;
   unsigned long bytes = 0;
   for (unsigned long i = 0; i < loops; i++) {
     bytes = file->readBytes(fileBuffer, BUFFER_SIZE);
@@ -193,11 +197,8 @@ ClientState HttpConnection::processClient() {
   if (isReadMethod(method)) transferFileToClient(_client, file);
   // else reading the body has already written to the file.
 
-  if (!closeConnection) {
-    clearStateMachine();
-    return StartClientConnection;
-  }
   clearStateMachine();
+  if (!closeConnection) { return StartClientConnection; }
   clientClose(_client);
   return CompleteClientConnection;
 }

@@ -13,5 +13,6 @@
 #include "stylecss.h"
 #include "templatehtml.h"
 #include "terminalhtml.h"
+#include "testhtml.h"
 
 #endif // __GAVEL_WEBPAGE_ALL_H 

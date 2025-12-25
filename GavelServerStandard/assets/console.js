@@ -128,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStatus('Connected', 'ok');
         lastHeartbeat = Date.now();
         reconnectBackoffMs = 2000;
+        submitCommand("banner", false);
       };
       eventSource.onmessage = (event) => {
         appendMessage(event.data);
@@ -154,12 +155,14 @@ document.addEventListener('DOMContentLoaded', () => {
       scheduleReconnect();
     }
   }, 10_000);
-  function submitCommand(cmd) {
+  function submitCommand(cmd, display) {
     const command = cmd.trim();
     if (!command) return;
-    appendCommand(command);
-    commandHistory.push(command);
-    historyIndex = commandHistory.length;
+    if (display) {
+      appendCommand(command);
+      commandHistory.push(command);
+      historyIndex = commandHistory.length;
+    }
     const headers = { 'Content-Type': 'application/json' };
     if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
     fetch(ENDPOINTS.command, {
@@ -177,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
-      submitCommand(input.value);
+      submitCommand(input.value, true);
       input.value = '';
       return;
     }
