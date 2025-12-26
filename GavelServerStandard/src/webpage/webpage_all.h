@@ -6,6 +6,8 @@
 #include "errorhtml.h"
 #include "footerjs.h"
 #include "headerjs.h"
+#include "ipconfightml.h"
+#include "ipconfigjs.h"
 #include "ipinfojs.h"
 #include "rebootbuttonjs.h"
 #include "redirectjs.h"

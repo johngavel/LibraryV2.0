@@ -111,6 +111,16 @@ td {
   background-color: green;
 }
 
+.button5 {
+  background-color: var(--warn);    /* orange tone from your tokens */
+}
+
+.button:hover { filter: brightness(0.95); }
+.button2:hover { filter: brightness(0.95); }
+.button3:hover { filter: brightness(0.95); }
+.button4:hover { filter: brightness(0.95); }
+.button5:hover { filter: brightness(0.95); }
+
 footer {
   text-align: center;
   font-size: 14px;
@@ -145,3 +155,119 @@ footer {
   border-radius: 8px;
   font-weight: bold;
 }
+
+
+/* === IP Configuration Page (ipconfig.html) === */
+
+/* Page header and helper text */
+.page-header .hint {
+  color: var(--muted);
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+/* Card-like container for the form */
+.card {
+  width: 95%;
+  max-width: 900px;
+  margin: 0 auto 16px;
+  padding: 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  text-align: left;
+}
+
+/* Fieldset + legend */
+.fieldset {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  margin: 8px 0;
+}
+.fieldset > legend {
+  padding: 0 6px;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+/* Layout rows */
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 640px) {
+  .row { grid-template-columns: 1fr; }
+}
+
+/* Form field block */
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+/* Labels */
+.label {
+  font-weight: 600;
+}
+
+/* Text inputs */
+.text {
+  padding: 8px 10px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  outline: none;
+  background-color: #f7f7f7;
+  color: var(--fg);
+}
+
+/* Reuse console monospace for IP fields */
+.mono { font-family: var(--console-font); }
+
+/* Disabled inputs */
+.text:disabled {
+  background-color: #efefef;
+  color: #777;
+}
+
+/* Switch line */
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.switch-label { font-weight: 600; }
+
+/* Buttons area */
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Feedback messages */
+.msg {
+  display: none;           /* made visible via JS */
+  margin-top: 12px;
+  margin-bottom: 8ps;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 2px solid var(--border);
+  background: #f9f9f9;
+  color: var(--fg);
+}
+.msg.ok {
+  display: block;
+  border-color: var(--ok);
+  background: rgba(46, 204, 113, .1);
+  color: var(--ok);
+}
+.msg.err {
+  display: block;
+  border-color: var(--error);
+  background: rgba(217, 83, 79, .1);
+  color: var(--error);
+}
+

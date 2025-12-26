@@ -14,6 +14,7 @@ void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSyst
   dir->addDirectory("js");
   dir->addDirectory("style");
   dir->addFile(new StaticFile(errorhtml_string, errorhtml, errorhtml_len));
+  dir->addFile(new StaticFile(ipconfightml_string, ipconfightml, ipconfightml_len));
   dir->addFile(new StaticFile(serverhtml_string, serverhtml, serverhtml_len));
   dir->addFile(new StaticFile(terminalhtml_string, terminalhtml, terminalhtml_len));
   dir->addFile(new StaticFile(testhtml_string, testhtml, testhtml_len));
@@ -22,6 +23,7 @@ void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSyst
   dir->addFile(new StaticFile(consolejs_string, consolejs, consolejs_len));
   dir->addFile(new StaticFile(footerjs_string, footerjs, footerjs_len));
   dir->addFile(new StaticFile(headerjs_string, headerjs, headerjs_len));
+  dir->addFile(new StaticFile(ipconfigjs_string, ipconfigjs, ipconfigjs_len));
   dir->addFile(new StaticFile(ipinfojs_string, ipinfojs, ipinfojs_len));
   dir->addFile(new StaticFile(rebootbuttonjs_string, rebootbuttonjs, rebootbuttonjs_len));
   dir->addFile(new StaticFile(redirectjs_string, redirectjs, redirectjs_len));

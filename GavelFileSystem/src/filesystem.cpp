@@ -136,10 +136,17 @@ DirectoryStat FileSystem::printDirectory(OutputInterface* terminal, DigitalDirec
       DigitalFile* file = static_cast<DigitalFile*>(base);
       total.files++;
       total.size += file->size();
-      char filename[100];
-      strncpy(filename, file->name(), sizeof(filename));
-      terminal->print(INFO, tab(22, filename, sizeof(filename)));
-      terminal->println(INFO, String(file->size()));
+      char filedesc[100];
+      strncpy(filedesc, file->name(), sizeof(filedesc));
+      terminal->print(INFO, tab(22, filedesc, sizeof(filedesc)));
+      numToA(file->size(), filedesc, sizeof(filedesc));
+      terminal->print(INFO, tab(8, filedesc, sizeof(filedesc)));
+      switch (file->getPermission()) {
+      case READ_ONLY: terminal->println(INFO, "R"); break;
+      case WRITE_ONLY: terminal->println(INFO, "W"); break;
+      case READ_WRITE: terminal->println(INFO, "RW"); break;
+      default: break;
+      }
       file->close();
     }
     if (base->isDirectory()) {
@@ -239,25 +246,72 @@ void FileSystem::catFile(OutputInterface* terminal) {
 }
 
 void FileSystem::changedir(OutputInterface* terminal) {
-  DigitalDirectory* context = static_cast<DigitalDirectory*>(terminal->getContext(0));
-  DigitalDirectory* newDir = nullptr;
-  if (context == nullptr) {
-    context = static_cast<DigitalDirectory*>(open("/"));
-    terminal->setContext(0, (void*) context);
+  // Get current context or initialize to root
+  DigitalDirectory* current = static_cast<DigitalDirectory*>(terminal->getContext(0));
+  if (current == nullptr) {
+    current = static_cast<DigitalDirectory*>(open("/"));
+    terminal->setContext(0, (void*) current);
   }
+
+  // Read the requested path
   char* value = terminal->readParameter();
-  if (value != NULL) {
-    if (safeCompare(value, ".") == 0) {
-    } else if (safeCompare(value, "..") == 0) {
-      newDir = context->getParent();
-    } else {
-      newDir = context->getDirectory(value);
-    }
-    if (newDir != nullptr) {
-      terminal->setContext(0, newDir);
-    } else {
-      terminal->println(ERROR, "Directory does not exist.");
-    }
+  if (!value || !*value) {
+    terminal->println(ERROR, "No path provided.");
+    terminal->prompt();
+    return;
   }
+
+  // Decide starting point: absolute -> root, relative -> current
+  DigitalDirectory* start = (value[0] == '/') ? static_cast<DigitalDirectory*>(open("/")) : current;
+
+  if (!start) {
+    terminal->println(ERROR, "Root directory is unavailable.");
+    terminal->prompt();
+    return;
+  }
+
+  // Work copy we can tokenize safely (no heap fragmentation with String)
+  // NOTE: If your environment lacks std::strncpy, ensure value is not huge.
+  char pathBuf[256];
+  strncpy(pathBuf, value, sizeof(pathBuf) - 1);
+  pathBuf[sizeof(pathBuf) - 1] = '\0';
+
+  // Tokenize on '/' (skip empty tokens caused by leading/trailing/multiple '/')
+  DigitalDirectory* resolved = start;
+  char* token = strtok(pathBuf, "/");
+
+  while (token != nullptr) {
+    // Handle current-directory and empty segments
+    if (token[0] == '\0' || (token[0] == '.' && token[1] == '\0')) {
+      // no-op
+    }
+    // Handle parent-directory ".."
+    else if (token[0] == '.' && token[1] == '.' && token[2] == '\0') {
+      DigitalDirectory* parent = resolved->getParent();
+      if (parent != nullptr) {
+        resolved = parent;
+      } else {
+        // already at root, stay there (common shell behavior)
+        // Alternatively, treat as error:
+        // terminal->println(ERROR, "Cannot go above root.");
+        // return terminal->prompt();
+      }
+    }
+    // Normal directory name
+    else {
+      DigitalDirectory* next = resolved->getDirectory(token);
+      if (next == nullptr) {
+        terminal->println(ERROR, "Directory does not exist: " + String(token));
+        terminal->prompt();
+        return; // abort without changing context
+      }
+      resolved = next;
+    }
+
+    token = strtok(nullptr, "/");
+  }
+
+  // Success: update context atomically
+  terminal->setContext(0, (void*) resolved);
   terminal->prompt();
 }
