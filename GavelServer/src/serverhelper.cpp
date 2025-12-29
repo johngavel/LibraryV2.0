@@ -67,12 +67,7 @@ const char* contentTypeFromPath(const char* path) {
   return "application/octet-stream";
 }
 
-#include <GavelDebug.h>
 void sendHttpHeader(Client* client, int code, const char* contentType, size_t contentLength, bool connectionClose) {
-  char dbg[96];
-  snprintf(dbg, sizeof(dbg), "Send Header: %d %s %lu %s", code, contentType ? contentType : "(null)",
-           (unsigned long) contentLength, connectionClose ? "close" : "open");
-  DEBUG(dbg);
   // Build line-by-line to reduce heap churn
   char line[96];
 

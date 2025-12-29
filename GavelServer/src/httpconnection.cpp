@@ -1,6 +1,5 @@
 #include "httpconnection.h"
 
-#include <GavelDebug.h>
 /*
 typedef enum {
   Start,
@@ -15,7 +14,6 @@ typedef enum {
  */
 void HttpConnection::execute() {
   if ((_client == nullptr) || (!clientConnected(_client))) {
-    DEBUG("Invalid Client!!!!");
     state = CompleteClientConnection;
     return;
   }
@@ -91,7 +89,6 @@ ClientState HttpConnection::readRequestLine() {
         code = BadRequestReturnCode;
         return SendHeader;
       }
-      DEBUG(String("File Name 1: ") + file->name());
       if (isReadMethod(method))
         responseContentLength = file->size();
       else
@@ -117,7 +114,6 @@ ClientState HttpConnection::readHeaders() {
           _client->setTimeout(timeoutTimeLong);
         else
           _client->setTimeout(timeoutTime);
-        DEBUG(String("File Name 2: ") + file->name());
         return ReadingBody; // end of headers
       }
       _buffer.trim();
@@ -149,23 +145,16 @@ ClientState HttpConnection::readBody() {
   // For write methods (e.g., POST), stream directly to file
   if (!isReadMethod(method) && requestContentLength > 0) {
     closeConnection = true;
-    DEBUG(String("File Name 3: ") + file->name());
     if (clientConnected(_client) && clientAvailable(_client) && bytesRecieved < requestContentLength) {
-      DEBUG(String("Bytes Received: ") + bytesRecieved);
-      DEBUG(String("requestContentLength: ") + requestContentLength);
       char buf[128];
       int need = (int) min((size_t) sizeof(buf), (size_t) (requestContentLength - bytesRecieved));
-      DEBUG(String("sizeof(buf): ") + sizeof(buf));
-      DEBUG(String("need: ") + need);
       int n = clientRead(_client, buf, need);
-      DEBUG(String("read: ") + n);
       if (n > 0) {
         file->write((const unsigned char*) buf, (size_t) n);
         bytesRecieved += n;
       }
     }
     if (bytesRecieved >= requestContentLength) {
-      DEBUG(String("File Name 4: ") + file->name());
       code = AcceptedReturnCode;
       return SendHeader;
     }
@@ -178,24 +167,6 @@ ClientState HttpConnection::readBody() {
 }
 
 ClientState HttpConnection::sendHeader() {
-  DEBUG("Send Header");
-
-  DEBUG(String("file ptr=") + String((uintptr_t) file, HEX));
-  const char* nm = (file ? file->name() : nullptr);
-  DEBUG(String("file->name ptr=") + String((uintptr_t) nm, HEX));
-  if (nm) {
-    // Print at most first 64 chars; avoid strlen
-    char peek[65] = {0};
-    size_t i = 0;
-    while (i < 64 && nm[i] && nm[i] >= 0x20 && nm[i] < 0x7F) {
-      peek[i] = nm[i];
-      i++;
-    }
-    DEBUG(String("DEBUGfile->name preview=") + String(peek));
-  } else {
-    DEBUG("DEBUGfile->name is NULL");
-  }
-
   if (stream) {
     sendHttpHeader(_client, OkReturnCode, "text/event-stream", 0, false);
   } else if (file != nullptr) {
@@ -203,7 +174,6 @@ ClientState HttpConnection::sendHeader() {
   } else {
     sendHttpHeader(_client, code, "text/plain");
   }
-  DEBUG("Finished Send Header");
   if ((!closeConnection) && (stream)) return StreamMode;
   if (!closeConnection) return KeepAlive;
   return CompleteClientConnection;

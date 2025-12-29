@@ -32,33 +32,27 @@ public:
   };
 
   virtual bool parseWriteData() override {
-    char buffer[500];
-    memset(buffer, 0, sizeof(buffer));
-    DEBUG("IP Info Received.");
-    DEBUG("Length: " + String(available()));
-    readBytes(buffer, available());
-    DEBUG(buffer);
-    // JsonDocument doc;
-    // DeserializationError error = deserializeJson(doc, *this);
-    // if (error) return false;
-    // bool isDHCP = doc["isDHCP"];
-    // const char* ipAddress = doc["ipAddress"];
-    // const char* subnetMask = doc["subnetMask"];
-    // const char* gatewayAddress = doc["gatewayAddress"];
-    // const char* dnsAddress = doc["dnsAddress"];
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, *this);
+    if (error) return false;
+    bool isDHCP = doc["isDHCP"];
+    const char* ipAddress = doc["ipAddress"];
+    const char* subnetMask = doc["subnetMask"];
+    const char* gatewayAddress = doc["gatewayAddress"];
+    const char* dnsAddress = doc["dnsAddress"];
 
-    // if (_memory->memory.data.allowDHCP) {
-    //   if (isDHCP)
-    //     DEBUG("Setting DHCP");
-    //   else
-    //     DEBUG("Clearing DHCP");
-    //   //_memory->memory.data.isDHCP = isDHCP;
-    // }
+    if (_memory->memory.data.allowDHCP) {
+      if (isDHCP)
+        DEBUG("Setting DHCP");
+      else
+        DEBUG("Clearing DHCP");
+      //_memory->memory.data.isDHCP = isDHCP;
+    }
 
-    // if (ipAddress) { DEBUG(ipAddress); }
-    // if (subnetMask) { DEBUG(subnetMask); }
-    // if (gatewayAddress) { DEBUG(gatewayAddress); }
-    // if (dnsAddress) { DEBUG(dnsAddress); }
+    if (ipAddress) { DEBUG(ipAddress); }
+    if (subnetMask) { DEBUG(subnetMask); }
+    if (gatewayAddress) { DEBUG(gatewayAddress); }
+    if (dnsAddress) { DEBUG(dnsAddress); }
 
     return true;
   };
