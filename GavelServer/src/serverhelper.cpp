@@ -37,30 +37,60 @@ const char* statusText(int code) {
   }
 }
 
-String contentTypeFromPath(const String& path) {
-  if (path.endsWith(".html")) return "text/html";
-  if (path.endsWith(".htm")) return "text/html";
-  if (path.endsWith(".css")) return "text/css";
-  if (path.endsWith(".js")) return "application/javascript";
-  if (path.endsWith(".json")) return "application/json";
-  if (path.endsWith(".png")) return "image/png";
-  if (path.endsWith(".jpg")) return "image/jpeg";
-  if (path.endsWith(".jpeg")) return "image/jpeg";
-  if (path.endsWith(".gif")) return "image/gif";
-  if (path.endsWith(".svg")) return "image/svg+xml";
-  if (path.endsWith(".ico")) return "image/x-icon";
-  if (path.endsWith(".txt")) return "text/plain";
-  if (path.endsWith(".stream")) return "text/event-stream";
+// Case-sensitive endsWith helper for const char*
+static bool endsWith(const char* s, const char* suffix) {
+  if (!s || !suffix) return false;
+  unsigned int ls = strlen(s);
+  unsigned int lf = strlen(suffix);
+  if (lf > ls) return false;
+  const char* a = s + (ls - lf);
+  for (unsigned int i = 0; i < lf; ++i) {
+    if (a[i] != suffix[i]) return false;
+  }
+  return true;
+}
+
+const char* contentTypeFromPath(const char* path) {
+  if (endsWith(path, ".html")) return "text/html";
+  if (endsWith(path, ".htm")) return "text/html";
+  if (endsWith(path, ".css")) return "text/css";
+  if (endsWith(path, ".js")) return "application/javascript";
+  if (endsWith(path, ".json")) return "application/json";
+  if (endsWith(path, ".png")) return "image/png";
+  if (endsWith(path, ".jpg")) return "image/jpeg";
+  if (endsWith(path, ".jpeg")) return "image/jpeg";
+  if (endsWith(path, ".gif")) return "image/gif";
+  if (endsWith(path, ".svg")) return "image/svg+xml";
+  if (endsWith(path, ".ico")) return "image/x-icon";
+  if (endsWith(path, ".txt")) return "text/plain";
+  if (endsWith(path, ".stream")) return "text/event-stream";
   return "application/octet-stream";
 }
 
-void sendHttpHeader(Client* client, int code, const String& contentType, size_t contentLength, bool connectionClose) {
-  String response = "HTTP/1.1 " + String(code) + " " + statusText(code) + "\r\n";
-  response += "Content-Type: " + contentType + "\r\n";
-  if (contentLength > 0) { response += "Content-Length: " + String(contentLength) + "\r\n"; }
-  if (connectionClose) { response += "Connection: close\r\n"; }
-  response += "\r\n";
-  clientPrint(client, response);
+#include <GavelDebug.h>
+void sendHttpHeader(Client* client, int code, const char* contentType, size_t contentLength, bool connectionClose) {
+  char dbg[96];
+  snprintf(dbg, sizeof(dbg), "Send Header: %d %s %lu %s", code, contentType ? contentType : "(null)",
+           (unsigned long) contentLength, connectionClose ? "close" : "open");
+  DEBUG(dbg);
+  // Build line-by-line to reduce heap churn
+  char line[96];
+
+  int n = snprintf(line, sizeof(line), "HTTP/1.1 %d %s\r\n", code, statusText(code));
+  if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
+
+  n = snprintf(line, sizeof(line), "Content-Type: %s\r\n", contentType);
+  if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
+
+  // Always send Content-Length (0 for no body)
+  n = snprintf(line, sizeof(line), "Content-Length: %lu\r\n", (unsigned long) contentLength);
+  if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
+
+  n = snprintf(line, sizeof(line), "Connection: %s\r\n", connectionClose ? "close" : "keep-alive");
+  if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
+
+  clientWrite(client, "\r\n", 2); // header terminator
+  return;
 }
 
 String normalizePath(const String& rawPath) {

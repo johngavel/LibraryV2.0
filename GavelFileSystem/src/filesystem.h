@@ -49,6 +49,7 @@ private:
   DirectoryStat printDirectory(OutputInterface* terminal, DigitalDirectory* dir, bool recursive);
   void directory(OutputInterface* terminal);
   void catFile(OutputInterface* terminal);
+  void writeFile(OutputInterface* terminal);
   void changedir(OutputInterface* terminal);
 };
 

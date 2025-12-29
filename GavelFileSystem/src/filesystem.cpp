@@ -18,10 +18,12 @@ void FileSystem::addCmd(TerminalCommand* __termCmd) {
   if (__termCmd) {
     __termCmd->addCmd("cd", "<path>", "Only goes up and down, via .. or <name>",
                       [this](TerminalLibrary::OutputInterface* terminal) { changedir(terminal); });
-    __termCmd->addCmd("dir", "<path><filename>", "Directory of list of the entire device",
+    __termCmd->addCmd("dir", "<path> [-r]", "Directory of list of the entire device",
                       [this](TerminalLibrary::OutputInterface* terminal) { directory(terminal); });
-    __termCmd->addCmd("cat", "<path><filename>", "Displays the file",
+    __termCmd->addCmd("cat", "<filename>", "Displays the file",
                       [this](TerminalLibrary::OutputInterface* terminal) { catFile(terminal); });
+    __termCmd->addCmd("write", "<filename> <filecontents>", "Write the file",
+                      [this](TerminalLibrary::OutputInterface* terminal) { writeFile(terminal); });
   }
 }
 
@@ -235,6 +237,39 @@ void FileSystem::catFile(OutputInterface* terminal) {
       if (n <= 0) break;
       buf[n] = 0;
       terminal->print(INFO, buf);
+    }
+    file->close();
+  } else {
+    terminal->println(ERROR, "\"" + String(value) + "\" File does not exist!!!");
+  }
+
+  terminal->println();
+  terminal->prompt();
+}
+
+void FileSystem::writeFile(OutputInterface* terminal) {
+  char* value;
+  DigitalDirectory* context = static_cast<DigitalDirectory*>(terminal->getContext(0));
+  if (context == nullptr) {
+    context = static_cast<DigitalDirectory*>(open("/"));
+    terminal->setContext(0, (void*) context);
+  }
+  value = terminal->readParameter();
+  if (!value) {
+    terminal->invalidParameter();
+    terminal->println();
+    terminal->prompt();
+    return;
+  }
+
+  DigitalFile* file = context->open(value, WRITE_MODE);
+
+  if (file && !file->isDirectory()) {
+    value = terminal->readParameter();
+    while (value) {
+      file->print(value);
+      file->print(" ");
+      value = terminal->readParameter();
     }
     file->close();
   } else {

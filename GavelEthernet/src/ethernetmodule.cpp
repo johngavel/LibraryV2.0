@@ -3,7 +3,6 @@
 #include <GavelSPIWire.h>
 
 static void ipAddressToBuffer(IPAddress address, unsigned char* buffer);
-static bool parseIPAddress(const char* ipString, unsigned char* buffer);
 
 EthernetModule::EthernetModule() : Task("EthernetModule") {}
 
@@ -176,33 +175,6 @@ void ipAddressToBuffer(IPAddress address, unsigned char* buffer) {
   buffer[1] = address[1];
   buffer[2] = address[2];
   buffer[3] = address[3];
-}
-
-bool parseIPAddress(const char* ipString, unsigned char* buffer) {
-  if (!ipString || !buffer) return 0;
-
-  char temp[32];
-  strncpy(temp, ipString, sizeof(temp) - 1);
-  temp[sizeof(temp) - 1] = '\0';
-
-  char* token = strtok(temp, ".");
-  int octetCount = 0;
-
-  while (token != NULL) {
-    // Check if token is numeric
-    for (int i = 0; token[i] != '\0'; i++) {
-      if (!isdigit((unsigned char) token[i])) return 0;
-    }
-
-    int value = atoi(token);
-    if (value < 0 || value > 255) return 0;
-
-    buffer[octetCount++] = (unsigned char) value;
-
-    token = strtok(NULL, ".");
-  }
-
-  return (octetCount == 4); // Must have exactly 4 octets
 }
 
 bool configParser(OutputInterface* terminal, EthernetMemory* memory) {

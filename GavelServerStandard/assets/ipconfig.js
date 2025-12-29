@@ -104,7 +104,7 @@
 
   // ------- Save settings -------
   async function saveSettings(payload) {
-    const resp = await fetch('/api/ip-config', {
+    const resp = await fetch('/api/ip-info.json', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload),

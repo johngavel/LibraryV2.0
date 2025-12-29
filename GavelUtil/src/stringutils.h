@@ -18,6 +18,7 @@ char* decByteString(unsigned char value, char* buffer, int size);
 char* getMacString(unsigned char* mac, char* buffer, int size);
 
 char* getIPString(unsigned char* ip, char* buffer, int size);
+bool parseIPAddress(const char* ipString, unsigned char* buffer);
 
 char* timeString(unsigned long seconds, char* buffer, int size);
 

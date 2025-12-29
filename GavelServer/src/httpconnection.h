@@ -55,6 +55,7 @@ public:
     contentType = "";
     closeConnection = true;
     stream = false;
+    bytesRecieved = 0;
   }
 
   void newConnection(Client* c, DigitalFileSystem* dfs, String errorPage) {
@@ -83,6 +84,7 @@ public:
   String contentType = "";
   bool closeConnection = true;
   bool stream = false;
+  int bytesRecieved = 0;
 
 private:
   ClientState readRequestLine();

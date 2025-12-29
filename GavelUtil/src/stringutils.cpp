@@ -4,6 +4,7 @@
 #include <cstring>
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 bool isValidCString(const char* str, unsigned int maxLen) {
   if (!str) return false;
@@ -126,6 +127,33 @@ char* getIPString(unsigned char* ip, char* buffer, int size) {
   if (!ip || !buffer || size < MAX_IP_STRING) return buffer; // Safety check
   snprintf(buffer, size, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
   return buffer;
+}
+
+bool parseIPAddress(const char* ipString, unsigned char* buffer) {
+  if (!ipString || !buffer) return 0;
+
+  char temp[32];
+  strncpy(temp, ipString, sizeof(temp) - 1);
+  temp[sizeof(temp) - 1] = '\0';
+
+  char* token = strtok(temp, ".");
+  int octetCount = 0;
+
+  while (token != NULL) {
+    // Check if token is numeric
+    for (int i = 0; token[i] != '\0'; i++) {
+      if (!isdigit((unsigned char) token[i])) return 0;
+    }
+
+    int value = atoi(token);
+    if (value < 0 || value > 255) return 0;
+
+    buffer[octetCount++] = (unsigned char) value;
+
+    token = strtok(NULL, ".");
+  }
+
+  return (octetCount == 4); // Must have exactly 4 octets
 }
 
 #define MAX_TIME_STRING 3

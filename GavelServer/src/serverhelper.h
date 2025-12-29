@@ -83,8 +83,8 @@ AcceptType parseAcceptHeader(const String& acceptHeader);
 
 HttpMethod StringToHttpMethod(const char* methodStr);
 const char* statusText(int code);
-String contentTypeFromPath(const String& path);
-void sendHttpHeader(Client* client, int code, const String& contentType, size_t contentLength = 0,
+const char* contentTypeFromPath(const char* path);
+void sendHttpHeader(Client* client, int code, const char* contentType, size_t contentLength = 0,
                     bool connectionClose = true);
 String normalizePath(const String& rawPath);
 

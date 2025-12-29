@@ -13,7 +13,7 @@ char clientRead(Client* client) {
 unsigned int clientRead(Client* client, char* buffer, unsigned int length) {
   unsigned int receivedBytes = 0;
   spiWire.wireTake();
-  receivedBytes = client->read((unsigned char*) buffer, BUFFER_SIZE);
+  receivedBytes = client->read((unsigned char*) buffer, length);
   spiWire.wireGive();
   return receivedBytes;
 }
@@ -32,24 +32,40 @@ bool clientAvailable(Client* client) {
   return a;
 }
 
-static unsigned int __clientWrite(Client* client, char* buffer, unsigned int length) {
-  unsigned int __length = (length > BUFFER_SIZE) ? BUFFER_SIZE : length;
-  unsigned int totalBytes = 0;
-  spiWire.wireTake();
-  totalBytes = client->write((const unsigned char*) buffer, __length);
-  spiWire.wireGive();
-  return totalBytes;
+// Writes exactly len bytes or fails after deadlineMs.
+// Returns true on success, false on timeout/disconnect.
+static unsigned int writeAll(Client* client, const unsigned char* data, unsigned int len,
+                             unsigned long deadlineMs = 2000) {
+  unsigned int sent = 0;
+  unsigned long start = millis();
+  while (sent < len) {
+    if (!clientConnected(client)) return 0;
+
+    // Try to write remaining bytes
+    unsigned int n;
+    // Keep the SPI lock as SHORT as possible (or remove if driver handles SPI internally).
+    spiWire.wireTake();
+    n = client->write(data + sent, (unsigned int) (len - sent));
+    spiWire.wireGive();
+
+    if (n > 0) {
+      sent += (size_t) n;
+      continue;
+    }
+
+    // No progress: check timeout and yield so net stack can drain buffers
+    if ((millis() - start) > deadlineMs) return sent;
+    delay(1);
+  }
+  return sent;
 }
 
-unsigned int clientWrite(Client* client, char* buffer, unsigned int length) {
-  unsigned int totalBytes = 0;
-  unsigned long remainder = length % BUFFER_SIZE;
-  unsigned long loops = length / BUFFER_SIZE;
-  for (unsigned long i = 0; i < loops; i++) {
-    totalBytes += __clientWrite(client, &buffer[i * BUFFER_SIZE], BUFFER_SIZE);
-  }
-  totalBytes += __clientWrite(client, &buffer[loops * BUFFER_SIZE], remainder);
-  return totalBytes;
+unsigned int clientWrite(Client* client, const char* buffer, unsigned int length) {
+  return writeAll(client, (const unsigned char*) buffer, length);
+}
+
+unsigned int clientWrite(Client* client, void* buffer, unsigned int length) {
+  return writeAll(client, (const unsigned char*) buffer, length);
 }
 
 unsigned int clientWrite(Client* client, char c) {
@@ -61,7 +77,8 @@ unsigned int clientWrite(Client* client, char c) {
 }
 
 unsigned int clientPrint(Client* client, String str) {
-  return clientWrite(client, (char*) str.c_str(), str.length());
+  const unsigned char* p = (const unsigned char*) str.c_str();
+  return writeAll(client, p, str.length());
 }
 
 bool clientConnected(Client* client) {
