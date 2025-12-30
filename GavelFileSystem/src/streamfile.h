@@ -21,7 +21,7 @@ public:
     if (!_isOpen) return -1;
     return ringBuffer.read(buf, __size);
   };
-  operator bool() const override { return true; };
+  operator bool() const override { return _isOpen; };
   // DigitalBase virtuals
   const char* name() const override { return _name; };
   bool open(FileMode mode = READ_MODE) override {
@@ -73,7 +73,7 @@ private:
 
   bool _isOpen = false;
   char _name[200];
-  unsigned char _ringBuffer[4096];
+  unsigned char _ringBuffer[8192];
 };
 
 #endif // __GAVEL_STREAM_FILE_H

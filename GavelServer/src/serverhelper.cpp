@@ -69,7 +69,7 @@ const char* contentTypeFromPath(const char* path) {
 
 void sendHttpHeader(Client* client, int code, const char* contentType, size_t contentLength, bool connectionClose) {
   // Build line-by-line to reduce heap churn
-  char line[96];
+  char line[128];
 
   int n = snprintf(line, sizeof(line), "HTTP/1.1 %d %s\r\n", code, statusText(code));
   if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
@@ -78,7 +78,12 @@ void sendHttpHeader(Client* client, int code, const char* contentType, size_t co
   if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
 
   // Always send Content-Length (0 for no body)
-  n = snprintf(line, sizeof(line), "Content-Length: %lu\r\n", (unsigned long) contentLength);
+  if (contentLength > 0) {
+    n = snprintf(line, sizeof(line), "Content-Length: %lu\r\n", (unsigned long) contentLength);
+    if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
+  }
+
+  n = snprintf(line, sizeof(line), "Cache-Control: no-cache\r\n");
   if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
 
   n = snprintf(line, sizeof(line), "Connection: %s\r\n", connectionClose ? "close" : "keep-alive");

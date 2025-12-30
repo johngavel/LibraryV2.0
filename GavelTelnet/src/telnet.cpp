@@ -2,9 +2,6 @@
 
 #include <GavelSPIWire.h>
 
-#define BUFFER_SIZE 1024
-#define HEADER_LENGTH 4096
-
 TelnetModule::TelnetModule() : Task("Telnet") {
   setRefreshMilli(10);
   client = nullptr;

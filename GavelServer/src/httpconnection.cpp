@@ -89,6 +89,10 @@ ClientState HttpConnection::readRequestLine() {
         code = BadRequestReturnCode;
         return SendHeader;
       }
+      if (!file) {
+        code = ServerErrorReturnCode;
+        return SendHeader;        
+      }
       if (isReadMethod(method))
         responseContentLength = file->size();
       else
@@ -144,7 +148,6 @@ ClientState HttpConnection::readHeaders() {
 ClientState HttpConnection::readBody() {
   // For write methods (e.g., POST), stream directly to file
   if (!isReadMethod(method) && requestContentLength > 0) {
-    closeConnection = true;
     if (clientConnected(_client) && clientAvailable(_client) && bytesRecieved < requestContentLength) {
       char buf[128];
       int need = (int) min((size_t) sizeof(buf), (size_t) (requestContentLength - bytesRecieved));

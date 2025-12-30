@@ -16,23 +16,74 @@
     <h1>Server</h1>
   </header>
 
-  <div class="container">
-    <!-- Program / Build Info -->
-    <section aria-labelledby="program_title">
-      <h2 id="program_title">Program / Build Info</h2>
-      <table id="program_table" role="table" aria-label="Program build information">
-        <!-- Rows injected by script -->
-      </table>
+   <main class="container">
+    <!-- Program Info Card -->
+    <section class="card" id="program-card" aria-labelledby="program-title">
+      <h2 id="program-title">Program Info</h2>
+      <div class="fieldset">
+        <div class="row">
+          <div class="field">
+            <div class="label">Product</div>
+            <div id="prog-product" class="mono">—</div>
+          </div>
+          <div class="field">
+            <div class="label">Version</div>
+            <div id="prog-version" class="mono">—</div>
+          </div>
+          <div class="field">
+            <div class="label">Build Date</div>
+            <div id="prog-date" class="mono">—</div>
+          </div>
+          <div class="field">
+            <div class="label">Build Time</div>
+            <div id="prog-time" class="mono">—</div>
+          </div>
+          <div class="field">
+            <div class="label">Author</div>
+            <div id="prog-author" class="mono">—</div>
+          </div>
+          <div class="field">
+            <div class="label">Device</div>
+            <div id="prog-device" class="mono">—</div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- IP Configuration -->
-    <section aria-labelledby="ip_title">
-      <h2 id="ip_title">IP Configuration</h2>
-      <table id="ip_table" role="table" aria-label="IP configuration data">
-        <!-- Rows injected by script -->
-      </table>
+    <!-- IP Info Card -->
+    <section class="card" id="ip-card" aria-labelledby="ip-title">
+      <h2 id="ip-title">IP Info</h2>
+      <div class="fieldset">
+        <div class="row">
+          <div class="field">
+            <div class="label">MAC Address</div>
+            <div id="ip-mac" class="mono">—</div>
+          </div>
+          <div class="field">
+            <div class="label">IP Address</div>
+            <div id="ip-addr" class="mono">—</div>
+          </div>
+          <div class="field">
+            <div class="label">Subnet Mask</div>
+            <div id="ip-mask" class="mono">—</div>
+          </div>
+          <div class="field">
+            <div class="label">Gateway</div>
+            <div id="ip-gw" class="mono">—</div>
+          </div>
+          <div class="field">
+            <div class="label">DNS</div>
+            <div id="ip-dns" class="mono">—</div>
+          </div>
+          <div class="field">
+            <div class="label">DHCP</div>
+            <div id="ip-dhcp" class="mono">—</div>
+          </div>
+        </div>
+      </div>
     </section>
-  </div>
+  </main>
+
 
   <table class="center">
     <tr>
@@ -108,56 +159,40 @@
   <script src="/js/footer.js"></script>
 
   <!-- Page wiring: fetch data and render into tables -->
+  <!-- Card population script -->
   <script>
-    (async function render() {
-      const programTable = document.getElementById('program_table');
-      const ipTable = document.getElementById('ip_table');
-
-      let build = {};
-      let ip = {};
+    (async function populateCards() {
       try {
-        [build, ip] = await Promise.all([
-          BuildInfo.getBuildInfo(),   // from buildinfo.js
-          IpInfo.getIpInfo()          // from ipinfo.js
-        ]);
-      } catch (e) {
-        // Fallbacks if globals or fetch fail
-        build = build || { product: 'unknown', version: 'unknown', build_date: 'unknown', build_time: 'unknown', author: 'unknown' };
-        ip = ip || { macAddress: 'unknown', ipAddress: 'unknown', subnetMask: 'unknown', gatewayAddress: 'unknown', dnsAddress: 'unknown', isDHCP: 'unknown' };
+        // Build/Program Info
+        const bi = await BuildInfo.getBuildInfo();
+        setText("prog-product", safe(bi.product));
+        setText("prog-version", safe(bi.version));
+        setText("prog-date", safe(bi.build_date));
+        setText("prog-time", safe(bi.build_time));
+        setText("prog-author", safe(bi.author));
+        setText("prog-device", safe(bi.device ?? "—"));
+
+        // IP Info
+        const ii = await IpInfo.getIpInfo();
+        setText("ip-mac", safe(ii.macAddress));
+        setText("ip-addr", safe(ii.ipAddress));
+        setText("ip-mask", safe(ii.subnetMask));
+        setText("ip-gw", safe(ii.gatewayAddress));
+        setText("ip-dns", safe(ii.dnsAddress));
+        setText("ip-dhcp", safe(ii.isDHCP));
+      } catch (err) {
+        console.error(err);
       }
-
-      // Normalize optional fields
-      const device   = build.device ?? build.board ?? '';
-      const firmware = build.firmware ?? build.fw ?? '';
-
-      // Build info table
-      programTable.innerHTML = [
-        tr('Product', escapeHtml(build.product ?? 'unknown')),
-        tr('Version', escapeHtml(build.version ?? 'unknown')),
-        tr('Build Date', escapeHtml(build.build_date ?? 'unknown')),
-        tr('Build Time', escapeHtml(build.build_time ?? 'unknown')),
-        tr('Author', escapeHtml(build.author ?? 'unknown')),
-        device   ? tr('Device/Board', escapeHtml(device))   : '',
-        firmware ? tr('Firmware', escapeHtml(firmware)) : ''
-      ].join('');
-
-      // DHCP status badge using your CSS classes
-      const isDhcp = String(ip.isDHCP).toLowerCase();
-      const dhcpBadge =
-        (isDhcp === 'true' || isDhcp === 'yes')   ? '<span class="ok">DHCP: enabled</span>' :
-        (isDhcp === 'false' || isDhcp === 'no')   ? '<span class="warn">DHCP: disabled</span>' :
-                                                     '<span>DHCP: unknown</span>';
-
-      // IP info table
-      ipTable.innerHTML = [
-        tr('MAC Address', escapeHtml(ip.macAddress ?? 'unknown')),
-        tr('IP Address', escapeHtml(ip.ipAddress ?? 'unknown')),
-        tr('Subnet Mask', escapeHtml(ip.subnetMask ?? 'unknown')),
-        tr('Gateway', escapeHtml(ip.gatewayAddress ?? 'unknown')),
-        tr('DNS', escapeHtml(ip.dnsAddress ?? 'unknown')),
-        tr('Mode', dhcpBadge)
-      ].join('');
     })();
+
+    function setText(id, text) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text ?? "—";
+    }
+    function safe(s) {
+      // Minimal sanitization for defensive display (mirrors pattern in header/footer)
+      return String(s ?? "—");
+    }
   </script>
 </body>
 </html>

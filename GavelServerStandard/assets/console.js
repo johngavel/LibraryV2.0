@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         eventSource = null;
       }
       updateStatus('Connecting…', 'warn');
-      eventSource = new EventSource(ENDPOINTS.events, { withCredentials: true });
+      eventSource = new EventSource(ENDPOINTS.events);
       eventSource.onopen = () => {
         updateStatus('Connected', 'ok');
         lastHeartbeat = Date.now();

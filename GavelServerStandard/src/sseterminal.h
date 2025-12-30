@@ -100,7 +100,7 @@ public:
   }
 
 private:
-  unsigned char _buffer[4096];
+  unsigned char _buffer[8192];
   CharRingBuffer _stream;
 };
 
