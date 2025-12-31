@@ -1,5 +1,4 @@
 #include "GavelServerStandard.h"
-#include "ipinfofile.h"
 #include "rebootfile.h"
 #include "sseterminal.h"
 #include "webpage/webpage_all.h"
@@ -28,8 +27,8 @@ void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSyst
   dir->addFile(new StaticFile(rebootbuttonjs_string, rebootbuttonjs, rebootbuttonjs_len));
   dir->addFile(new StaticFile(redirectjs_string, redirectjs, redirectjs_len));
   dir = static_cast<ArrayDirectory*>(fs->open("/www/api"));
-  dir->addFile(&programInfo);
-  dir->addFile(new IpInfoFile(ethernet));
+  dir->addFile(new JsonFile(&programMem, "build-info.json", READ_ONLY));
+  dir->addFile(new JsonFile(ethernet, "ip-info.json", READ_WRITE));
   dir->addFile(new RebootFile());
 
   dir = static_cast<ArrayDirectory*>(fs->open("/www/style"));

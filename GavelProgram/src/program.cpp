@@ -26,30 +26,24 @@ const char* ProgramInfo::compileDate = __DATE__;
 const char* ProgramInfo::compileTime = __TIME__;
 const unsigned long ProgramInfo::BuildVersion = GAVEL_VERSION;
 
-// ---- Static API handler (builds JSON with TinyJsonBuilder) ----
-bool ProgramInfo::createReadData() {
-  // Compose "major.minor.build"
-  String version = String(MajorVersion) + "." + String(MinorVersion) + "." + String(BuildVersion);
-
+JsonDocument ProgramMemory::createJson() {
   JsonDocument doc;
-  char json[512];
 
-  doc["product"] = AppName;
-  doc["shortName"] = ShortName;
-  doc["author"] = AuthorName;
+  // Compose "major.minor.build"
+  String version = String(memory.data.MajorVersion) + "." + String(memory.data.MinorVersion) + "." +
+                   String(ProgramInfo::BuildVersion);
+  doc["product"] = ProgramInfo::AppName;
+  doc["shortName"] = ProgramInfo::ShortName;
+  doc["author"] = ProgramInfo::AuthorName;
 
-  doc["program"] = ProgramNumber;
+  doc["program"] = ProgramInfo::ProgramNumber;
   doc["version"] = version;
 
-  doc["build_date"] = compileDate;
-  doc["build_time"] = compileTime;
-  doc["device"] = stringHardware(hw_type);
-  serializeJson(doc, json, sizeof(json));
-  return loadReadBuffer(json, strnlen(json, sizeof(json)));
-}
+  doc["build_date"] = ProgramInfo::compileDate;
+  doc["build_time"] = ProgramInfo::compileTime;
+  doc["device"] = stringHardware(ProgramInfo::hw_type);
 
-bool ProgramInfo::parseWriteData() {
-  return false;
+  return doc;
 }
 
 const char* stringHardware(HW_TYPES hw_type) {

@@ -1,12 +1,14 @@
 #ifndef __GAVEL_MEMORY_H
 #define __GAVEL_MEMORY_H
 
+#include "json_interface.h"
+
 #include <GavelUtil.h>
 #include <Terminal.h>
 #include <cstddef> // std::size_t
 #include <string.h>
 
-class IMemory : public Identifiable {
+class IMemory : public Identifiable, public JsonInterface {
 public:
   IMemory() : updatedInternal(false) {}
   virtual ~IMemory() = default;
@@ -23,6 +25,10 @@ public:
   virtual void initMemory() = 0;
   virtual void printData(OutputInterface* terminal) = 0;
   virtual void updateExternal() = 0;
+
+  // Json Interface
+  virtual JsonDocument createJson() = 0;
+  virtual bool parseJson(JsonDocument& doc) = 0;
 
   // These flags for for signaling between the owner of the memory
   // And for those who consume the memory.

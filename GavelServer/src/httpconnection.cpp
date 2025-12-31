@@ -91,7 +91,7 @@ ClientState HttpConnection::readRequestLine() {
       }
       if (!file) {
         code = ServerErrorReturnCode;
-        return SendHeader;        
+        return SendHeader;
       }
       if (isReadMethod(method))
         responseContentLength = file->size();

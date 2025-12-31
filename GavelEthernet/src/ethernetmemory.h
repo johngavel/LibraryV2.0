@@ -1,6 +1,7 @@
 #ifndef __GAVEL_ETHERNET_MEMORY_H
 #define __GAVEL_ETHERNET_MEMORY_H
 
+#include <GavelDebug.h>
 #include <GavelInterfaces.h>
 #include <GavelUtil.h>
 
@@ -85,6 +86,44 @@ public:
     terminal->println(INFO, sb.c_str());
   }
   EthernetUnion memory;
+
+  virtual JsonDocument createJson() override {
+    char temp[128];
+    JsonDocument doc;
+    doc["macAddress"] = getMacString(memory.data.macAddress, temp, sizeof(temp));
+    doc["ipAddress"] = getIPString(memory.data.ipAddress, temp, sizeof(temp));
+    doc["subnetMask"] = getIPString(memory.data.subnetMask, temp, sizeof(temp));
+    doc["gatewayAddress"] = getIPString(memory.data.gatewayAddress, temp, sizeof(temp));
+    doc["dnsAddress"] = getIPString(memory.data.dnsAddress, temp, sizeof(temp));
+    doc["isDHCP"] = memory.data.isDHCP;
+    doc["allowDHCP"] = memory.data.allowDHCP;
+    DEBUG("Creating Ethernet Memory JSON");
+
+    return doc;
+  };
+
+  virtual bool parseJson(JsonDocument& doc) override {
+    bool isDHCP = doc["isDHCP"];
+    const char* ipAddress = doc["ipAddress"];
+    const char* subnetMask = doc["subnetMask"];
+    const char* gatewayAddress = doc["gatewayAddress"];
+    const char* dnsAddress = doc["dnsAddress"];
+
+    if (memory.data.allowDHCP) {
+      if (isDHCP)
+        DEBUG("Setting DHCP");
+      else
+        DEBUG("Clearing DHCP");
+      //_memory->memory.data.isDHCP = isDHCP;
+    }
+
+    if (ipAddress) { DEBUG(ipAddress); }
+    if (subnetMask) { DEBUG(subnetMask); }
+    if (gatewayAddress) { DEBUG(gatewayAddress); }
+    if (dnsAddress) { DEBUG(dnsAddress); }
+
+    return true;
+  };
 
 private:
 };

@@ -21,6 +21,7 @@ void loop_0();
 void loop_1();
 
 extern ProgramInfo programInfo;
+extern ProgramMemory programMem;
 extern PicoCommand pico;
 extern TaskManager taskManager;
 extern SerialPort serialPort;

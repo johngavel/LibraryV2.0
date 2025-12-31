@@ -4,6 +4,7 @@
 #include "arraydirectory.h"
 #include "dynamicfile.h"
 #include "filesystem.h"
+#include "jsonfile.h"
 #include "staticfile.h"
 #include "streamfile.h"
 

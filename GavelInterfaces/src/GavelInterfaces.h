@@ -6,6 +6,7 @@
 #include "digitalfile.h"
 #include "dynamicfile.h"
 #include "imemory.h"
+#include "json_interface.h"
 #include "networkinterface.h"
 
 #endif // __GAVELINTERFACES_H

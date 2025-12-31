@@ -53,32 +53,55 @@
     <!-- IP Info Card -->
     <section class="card" id="ip-card" aria-labelledby="ip-title">
       <h2 id="ip-title">IP Info</h2>
+            <!-- Mode -->
+      <div class="fieldset" id="allowdhcp">
+        <legend>Mode</legend>
+        <label class="switch">
+          <input type="checkbox" id="dhcp" disabled/>
+          <span class="switch-label">Obtain an IP address automatically (DHCP)</span>
+        </label>
+      </div>
       <div class="fieldset">
+        <legend>Static Settings</legend>
+
         <div class="row">
-          <div class="field">
-            <div class="label">MAC Address</div>
-            <div id="ip-mac" class="mono">—</div>
-          </div>
-          <div class="field">
-            <div class="label">IP Address</div>
+          <label class="field">
+            <span class="label">IP Address</span>
             <div id="ip-addr" class="mono">—</div>
-          </div>
-          <div class="field">
-            <div class="label">Subnet Mask</div>
+          </label>
+
+          <label class="field">
+            <span class="label">Subnet Mask</span>
             <div id="ip-mask" class="mono">—</div>
-          </div>
-          <div class="field">
-            <div class="label">Gateway</div>
+          </label>
+        </div>
+
+        <div class="row">
+          <label class="field">
+            <span class="label">Default Gateway</span>
             <div id="ip-gw" class="mono">—</div>
-          </div>
-          <div class="field">
-            <div class="label">DNS</div>
+          </label>
+
+          <label class="field">
+            <span class="label">DNS Server</span>
             <div id="ip-dns" class="mono">—</div>
-          </div>
-          <div class="field">
-            <div class="label">DHCP</div>
-            <div id="ip-dhcp" class="mono">—</div>
-          </div>
+          </label>
+        </div>
+      </div>
+      <!-- Device Info -->
+      <div class="fieldset">
+        <legend>Device Info</legend>
+
+        <div class="row">
+          <label class="field">
+            <span class="label">MAC Address</span>
+            <div id="ip-mac" class="mono">—</div>
+          </label>
+
+          <label class="field">
+            <span class="label">Current IP</span>
+            <div id="cur-ip-addr" class="mono">—</div>
+          </label>
         </div>
       </div>
     </section>
@@ -180,6 +203,10 @@
         setText("ip-gw", safe(ii.gatewayAddress));
         setText("ip-dns", safe(ii.dnsAddress));
         setText("ip-dhcp", safe(ii.isDHCP));
+        setText("cur-ip-addr", safe(ii.ipAddress));
+        // Form fields
+        const dhcpMode = !!ii.isDHCP;
+        dhcp.checked = dhcpMode;
       } catch (err) {
         console.error(err);
       }

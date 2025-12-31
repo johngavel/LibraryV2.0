@@ -7,9 +7,9 @@
 typedef enum { HW_UNKNOWN, HW_RP2040_ZERO, HW_RASPBERRYPI_PICO, HW_RASPBERRYPI_PICOW, HW_GAVEL_MINI_PICO_ETH } HW_TYPES;
 const char* stringHardware(HW_TYPES hw_type);
 
-class ProgramInfo : public DynamicFile {
+class ProgramInfo {
 public:
-  ProgramInfo() : DynamicFile("build-info.json", READ_ONLY, _buffer, sizeof(_buffer)){};
+  ProgramInfo(){};
   static const char* AppName;
   static const char* ShortName;
   static const HW_TYPES hw_type;
@@ -22,9 +22,6 @@ public:
   static const char* AuthorName;
 
 private:
-  bool createReadData() override;
-  bool parseWriteData() override;
-  char _buffer[250];
 };
 
 class ProgramMemory : public IMemory {
@@ -80,6 +77,10 @@ public:
   }
 
   bool getConflict() { return conflict; };
+
+  virtual JsonDocument createJson() override;
+
+  virtual bool parseJson(JsonDocument& doc) override { return false; }
 
   ProgramUnion memory;
 
