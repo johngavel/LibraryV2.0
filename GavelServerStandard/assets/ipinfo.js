@@ -21,7 +21,8 @@ const IpInfo = (() => {
           subnetMask: json.subnetMask || 'unknown',
           gatewayAddress: json.gatewayAddress || 'unknown',
           dnsAddress: json.dnsAddress || 'unknown',
-          isDHCP: json.isDHCP || 'unknown'
+          isDHCP: typeof json.isDHCP === 'boolean' ? json.isDHCP : null,
+          allowDHCP: typeof json.allowDHCP === 'boolean' ? json.allowDHCP : null
         };
       } catch (err) {
         // Fallback if endpoint is unavailable
@@ -31,7 +32,8 @@ const IpInfo = (() => {
           subnetMask: 'unknown',
           gatewayAddress: 'unknown',
           dnsAddress: 'unknown',
-          isDHCP: 'unknown'
+          isDHCP: null,
+          allowDHCP: null
         };
       }
       inflight = null;

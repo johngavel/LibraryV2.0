@@ -202,16 +202,18 @@
         setText("ip-mask", safe(ii.subnetMask));
         setText("ip-gw", safe(ii.gatewayAddress));
         setText("ip-dns", safe(ii.dnsAddress));
-        setText("ip-dhcp", safe(ii.isDHCP));
         setText("cur-ip-addr", safe(ii.ipAddress));
         // Form fields
         const dhcpMode = !!ii.isDHCP;
-        dhcp.checked = dhcpMode;
+        setCheckbox("dhcp", dhcpMode);
       } catch (err) {
         console.error(err);
       }
     })();
-
+    function setCheckbox(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.checked = value;
+    }
     function setText(id, text) {
       const el = document.getElementById(id);
       if (el) el.textContent = text ?? "—";
