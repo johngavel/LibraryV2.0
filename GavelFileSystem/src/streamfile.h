@@ -1,6 +1,7 @@
 #ifndef __GAVEL_STREAM_FILE_H
 #define __GAVEL_STREAM_FILE_H
 
+#include <GavelDebug.h>
 #include <GavelFileSystem.h>
 #include <GavelUtil.h>
 
@@ -22,6 +23,7 @@ public:
     return ringBuffer.read(buf, __size);
   };
   operator bool() const override { return _isOpen; };
+  bool isOpen() const override { return _isOpen; };
   // DigitalBase virtuals
   const char* name() const override { return _name; };
   bool open(FileMode mode = READ_MODE) override {

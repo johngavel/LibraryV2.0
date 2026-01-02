@@ -65,9 +65,9 @@ void ServerModule::clientCmd(OutputInterface* terminal) {
     StringBuilder validString = cfe->isValid();
     StringBuilder stateString = cfe->connection.state;
     StringBuilder fileString = (cfe->connection.file) ? cfe->connection.file->name() : "none";
-    StringBuilder fileStatString = (cfe->connection.file->getPermission() == READ_ONLY)? "R ": "W ";
+    StringBuilder fileStatString = (cfe->connection.file->getPermission() == READ_ONLY) ? "R " : "W ";
     if (cfe->connection.file)
-      fileStatString += (cfe->connection.file->getMode() == READ_MODE)? "Read":"Write";
+      fileStatString += (cfe->connection.file->getMode() == READ_MODE) ? "Read" : "Write";
     else
       fileStatString += "Close";
     if (cfe->isValid() || verbose)

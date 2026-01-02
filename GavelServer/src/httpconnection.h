@@ -41,7 +41,7 @@ public:
   };
 
   void clearStateMachine() {
-    if (file) file->close();
+    if (file && file->isOpen()) file->close();
     file = nullptr;
     _buffer = "";
 

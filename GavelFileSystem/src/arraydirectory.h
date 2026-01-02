@@ -11,7 +11,7 @@ public:
   bool addDirectory(const char* name);
   DigitalBase* getFile(const char* name);
   // DigitalDirectory virtuals
-  DigitalBase* openNextFile() override;
+  DigitalBase* getNextFile() override;
   void rewindDirectory() override;
   // DigitalBase virtuals
   const char* name() const override;

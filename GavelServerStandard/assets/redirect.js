@@ -1,9 +1,13 @@
-(async function () {
+(async function() {
   try {
-    const response = await fetch('/api/ip-info.json', { cache: 'no-store' });
+    const response = await fetch('/api/ip-info.json', {
+      cache: 'no-store'
+    });
     if (!response.ok) throw new Error('Failed to fetch IP info');
 
-    const { ipAddress = '' } = await response.json();
+    const {
+      ipAddress = ''
+    } = await response.json();
     const ip = ipAddress.trim();
 
     const ipv4Pattern = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;

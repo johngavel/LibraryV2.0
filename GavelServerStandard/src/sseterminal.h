@@ -1,6 +1,7 @@
 #ifndef __GAVEL_SSE_TERM_H
 #define __GAVEL_SSE_TERM_H
 
+#include <GavelDebug.h>
 #include <GavelFileSystem.h>
 #include <GavelTask.h>
 #include <GavelUtil.h>
@@ -70,18 +71,13 @@ public:
   Stream* stream() { return &_stream; };
 
   void sseBroadcastDataLines(const char* payload, unsigned int length) {
+    size_t w = 0;
     // Write "data: " + payload chunk + "\n" WITHOUT closing the event
-    const char* p = payload;
-    while (length > 0) {
-      // Choose a chunk size that fits comfortably (e.g., 200 bytes)
-      unsigned int chunk = (length > 200) ? 200 : length;
-      write((const uint8_t*) "data: ", 6); // "data: "
-      write((const uint8_t*) p, chunk);    // payload bytes
-      write((const uint8_t*) "\n", 1);     // end of data line
-      p += chunk;
-      length -= chunk;
-    }
-  }
+    // Choose a chunk size that fits comfortably (e.g., 200 bytes)
+    w += write((const uint8_t*) "data: ", 6);     // "data: "
+    w += write((const uint8_t*) payload, length); // payload bytes
+    w += write((const uint8_t*) "\n", 1);         // end of data line
+  };
 
   // Call this once when the logical message (line) is complete
   inline void endSseEvent() {
@@ -89,13 +85,14 @@ public:
   }
 
   void sseBroadcastEvent(const char* eventName, const char* payload) {
+    size_t w = 0;
     // Emits a named event with one data line
-    write((const uint8_t*) "event: ", 7); // "event: "
-    write((const uint8_t*) eventName, strlen(eventName));
-    write((const uint8_t*) "\n", 1);                  // end of data line
-    write((const uint8_t*) "data: ", 6);              // "data: "
-    write((const uint8_t*) payload, strlen(payload)); // "data: "
-    write((const uint8_t*) "\n", 1);                  // end of data line
+    w += write((const uint8_t*) "event: ", 7); // "event: "
+    w += write((const uint8_t*) eventName, strlen(eventName));
+    w += write((const uint8_t*) "\n", 1);                  // end of data line
+    w += write((const uint8_t*) "data: ", 6);              // "data: "
+    w += write((const uint8_t*) payload, strlen(payload)); // "data: "
+    w += write((const uint8_t*) "\n", 1);                  // end of data line
     endSseEvent();
   }
 
@@ -130,7 +127,7 @@ public:
     return true;
   };
   bool executeTask() override {
-    if (heartbeat.expired()) event.sseBroadcastEvent("heartbeat", "ping");
+    if (heartbeat.expired() && event.isOpen()) event.sseBroadcastEvent("heartbeat", "ping");
 
     terminal.loop();
     event.createReadData();

@@ -34,7 +34,7 @@ DigitalBase* ArrayDirectory::getFile(const char* name) {
   return nullptr;
 }
 
-DigitalBase* ArrayDirectory::openNextFile() {
+DigitalBase* ArrayDirectory::getNextFile() {
   if (_cursor < _fileCount) return _files[_cursor++];
   return nullptr;
 };
@@ -52,6 +52,7 @@ DigitalFile* ArrayDirectory::open(const char* name, FileMode mode) {
   if (!base) return nullptr;
   if (base->isDirectory()) return nullptr;
   DigitalFile* file = static_cast<DigitalFile*>(base);
+  if (file->isOpen()) return nullptr;
   file->open(mode);
   return file;
 };

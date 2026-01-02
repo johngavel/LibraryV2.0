@@ -10,7 +10,11 @@ const IpInfo = (() => {
 
     inflight = (async () => {
       try {
-        const resp = await fetch('/api/ip-info.json', { headers: { 'Accept': 'application/json' } });
+        const resp = await fetch('/api/ip-info.json', {
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const json = await resp.json();
 
@@ -43,5 +47,7 @@ const IpInfo = (() => {
     return inflight;
   }
 
-  return { getIpInfo };
+  return {
+    getIpInfo
+  };
 })();

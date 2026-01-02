@@ -10,7 +10,11 @@ const BuildInfo = (() => {
 
     inflight = (async () => {
       try {
-        const resp = await fetch('/api/build-info.json', { headers: { 'Accept': 'application/json' } });
+        const resp = await fetch('/api/build-info.json', {
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const json = await resp.json();
 
@@ -41,5 +45,7 @@ const BuildInfo = (() => {
     return inflight;
   }
 
-  return { getBuildInfo };
+  return {
+    getBuildInfo
+  };
 })();

@@ -99,18 +99,20 @@ DigitalFile* FileSystem::readFile(const char* path) {
   DigitalBase* file = open(path, READ_MODE);
   if (file == nullptr) return nullptr;
   if (file->isDirectory()) return nullptr;
-  if (!file) return nullptr;
-  if (file->getPermission() == WRITE_ONLY) return nullptr;
-  return static_cast<DigitalFile*>(file);
+  DigitalFile* rFile = static_cast<DigitalFile*>(file);
+  if (!rFile->isOpen()) return nullptr;
+  if (rFile->getPermission() == WRITE_ONLY) return nullptr;
+  return rFile;
 };
 
 DigitalFile* FileSystem::writeFile(const char* path) {
   DigitalBase* file = open(path, WRITE_MODE);
   if (file == nullptr) return nullptr;
   if (file->isDirectory()) return nullptr;
-  if (!file) return nullptr;
-  if (file->getPermission() == READ_ONLY) return nullptr;
-  return static_cast<DigitalFile*>(file);
+  DigitalFile* wFile = static_cast<DigitalFile*>(file);
+  if (!wFile->isOpen()) return nullptr;
+  if (wFile->getPermission() == READ_ONLY) return nullptr;
+  return wFile;
 };
 
 bool FileSystem::deleteFile(const char* path) {
@@ -132,7 +134,7 @@ DirectoryStat FileSystem::printDirectory(OutputInterface* terminal, DigitalDirec
   sb + "<DIR>  " + "..";
   terminal->println(INFO, sb.c_str());
   sb.clear();
-  DigitalBase* base = dir->openNextFile();
+  DigitalBase* base = dir->getNextFile();
   while (base) {
     if (!base->isDirectory()) {
       DigitalFile* file = static_cast<DigitalFile*>(base);
@@ -149,7 +151,6 @@ DirectoryStat FileSystem::printDirectory(OutputInterface* terminal, DigitalDirec
       case READ_WRITE: terminal->println(INFO, "RW"); break;
       default: break;
       }
-      file->close();
     }
     if (base->isDirectory()) {
       DigitalDirectory* directory = static_cast<DigitalDirectory*>(base);
@@ -159,7 +160,7 @@ DirectoryStat FileSystem::printDirectory(OutputInterface* terminal, DigitalDirec
       queue.push((void*) directory->name());
       total.directories++;
     }
-    base = dir->openNextFile();
+    base = dir->getNextFile();
   }
   dir->rewindDirectory();
   sb + "   " + total.files + " File(s)";
@@ -240,7 +241,7 @@ void FileSystem::catFile(OutputInterface* terminal) {
     }
     file->close();
   } else {
-    terminal->println(ERROR, "\"" + String(value) + "\" File does not exist!!!");
+    terminal->println(ERROR, "\"" + String(value) + "\" File does not exist or is already open!!!");
   }
 
   terminal->println();
@@ -273,7 +274,7 @@ void FileSystem::writeFile(OutputInterface* terminal) {
     }
     file->close();
   } else {
-    terminal->println(ERROR, "\"" + String(value) + "\" File does not exist!!!");
+    terminal->println(ERROR, "\"" + String(value) + "\" File does not exist or is already open!!!");
   }
 
   terminal->println();

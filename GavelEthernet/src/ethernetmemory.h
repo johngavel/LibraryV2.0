@@ -97,26 +97,29 @@ public:
     doc["dnsAddress"] = getIPString(memory.data.dnsAddress, temp, sizeof(temp));
     doc["isDHCP"] = memory.data.isDHCP;
     doc["allowDHCP"] = memory.data.allowDHCP;
-    DEBUG("Creating Ethernet Memory JSON");
 
     return doc;
   };
 
   virtual bool parseJson(JsonDocument& doc) override {
-      unsigned char ip_buffer[4];
-    bool isDHCP = doc["isDHCP"];
+    unsigned char ip_buffer[4];
+    bool isDHCP = memory.data.isDHCP;
+
+    if (!doc["isDHCP"].isNull()) isDHCP = doc["isDHCP"];
+
     const char* ipAddress = doc["ipAddress"];
     const char* subnetMask = doc["subnetMask"];
     const char* gatewayAddress = doc["gatewayAddress"];
     const char* dnsAddress = doc["dnsAddress"];
 
     if (memory.data.allowDHCP) memory.data.isDHCP = isDHCP;
-    else memory.data.isDHCP = false;
+
     if (!memory.data.isDHCP) {
       if ((ipAddress) && parseIPAddress(ipAddress, ip_buffer)) memcpy(memory.data.ipAddress, ip_buffer, 4);
       if ((subnetMask) && parseIPAddress(subnetMask, ip_buffer)) memcpy(memory.data.subnetMask, ip_buffer, 4);
-      if ((gatewayAddress) && parseIPAddress(gatewayAddress, ip_buffer)) memcpy(memory.data.gatewayAddress, ip_buffer, 4);
-      if ((dnsAddress) && parseIPAddress(dnsAddress, ip_buffer)) memcpy(memory.data.ipAddress, dnsAddress, 4);
+      if ((gatewayAddress) && parseIPAddress(gatewayAddress, ip_buffer))
+        memcpy(memory.data.gatewayAddress, ip_buffer, 4);
+      if ((dnsAddress) && parseIPAddress(dnsAddress, ip_buffer)) memcpy(memory.data.dnsAddress, ip_buffer, 4);
     }
 
     return true;

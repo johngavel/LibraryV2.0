@@ -28,6 +28,7 @@ public:
   virtual int size() = 0;
   virtual int read(unsigned char* buf, int __size) = 0;
   virtual operator bool() const = 0;
+  virtual bool isOpen() const = 0;
   // DigitalBase virtuals
   virtual const char* name() const = 0;
   virtual bool open(FileMode mode = READ_MODE) = 0;
@@ -48,7 +49,7 @@ private:
 
 class DigitalDirectory : public DigitalBase {
 public:
-  virtual DigitalBase* openNextFile() = 0;
+  virtual DigitalBase* getNextFile() = 0;
   virtual void rewindDirectory() = 0;
   // DigitalBase virtuals
   virtual const char* name() const = 0;

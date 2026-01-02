@@ -10,6 +10,7 @@ public:
   int size() override;
   int read(unsigned char* buf, int __size) override;
   operator bool() const override { return _isOpen; };
+  bool isOpen() const override { return _isOpen; };
   // DigitalBase virtuals
   const char* name() const override;
   bool open(FileMode mode = READ_MODE) override;

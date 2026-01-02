@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const RECONNECT_BACKOFF_MAX_MS = 60_000;
   const commandHistory = [];
   let historyIndex = 0;
+
   function updateStatus(text, level = 'ok') {
     status.textContent = text;
     status.classList.remove('ok', 'warn', 'error');
@@ -37,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     36: 'cyan',
     37: 'white'
   };
+
   function parseANSI(text) {
     const frag = document.createDocumentFragment();
     const ansiRe = /\x1b\[([\d;]*)([A-Za-z])/g;
@@ -45,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentColor = '';
     let currentBold = false;
     let currentUnderline = false;
+
     function pushChunk(chunk) {
       if (!chunk) return;
       const span = document.createElement('span');
@@ -92,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pushChunk(text.slice(lastIndex));
     return frag;
   }
+
   function appendMessage(text, cssClass = '') {
     const message = document.createElement('div');
     if (cssClass) message.className = cssClass;
@@ -102,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     terminal.scrollTop = terminal.scrollHeight;
   }
+
   function appendCommand(text) {
     let lastChild = terminal.lastElementChild;
     if (!lastChild) {
@@ -111,15 +116,19 @@ document.addEventListener('DOMContentLoaded', () => {
     lastChild.appendChild(parseANSI(text));
     terminal.scrollTop = terminal.scrollHeight;
   }
+
   function scheduleReconnect() {
     updateStatus(`Connection lost. Reconnecting in ${Math.round(reconnectBackoffMs / 1000)}s…`, 'error');
     setTimeout(connectSSE, reconnectBackoffMs);
     reconnectBackoffMs = Math.min(reconnectBackoffMs * 2, RECONNECT_BACKOFF_MAX_MS);
   }
+
   function connectSSE() {
     try {
       if (eventSource) {
-        try { eventSource.close(); } catch {}
+        try {
+          eventSource.close();
+        } catch {}
         eventSource = null;
       }
       updateStatus('Connecting…', 'warn');
@@ -139,7 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       eventSource.onerror = () => {
         appendMessage('[Error] Connection error detected. Attempting to reconnect…', 'error');
-        try { eventSource && eventSource.close(); } catch {}
+        try {
+          eventSource && eventSource.close();
+        } catch {}
         scheduleReconnect();
       };
     } catch (e) {
@@ -151,10 +162,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Date.now() - lastHeartbeat > HEARTBEAT_TIMEOUT_MS) {
       updateStatus('No heartbeat. Reconnecting…', 'error');
       appendMessage('[Warning] No heartbeat detected. Reconnecting…', 'warn');
-      try { eventSource && eventSource.close(); } catch {}
+      try {
+        eventSource && eventSource.close();
+      } catch {}
       scheduleReconnect();
     }
   }, 10_000);
+
   function submitCommand(cmd, display) {
     const command = cmd.trim();
     if (!command) return;
@@ -163,13 +177,17 @@ document.addEventListener('DOMContentLoaded', () => {
       commandHistory.push(command);
       historyIndex = commandHistory.length;
     }
-    const headers = { 'Content-Type': 'application/json' };
+    const headers = {
+      'Content-Type': 'application/json'
+    };
     if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
     fetch(ENDPOINTS.command, {
       method: 'POST',
       headers,
       credentials: 'same-origin',
-      body: JSON.stringify({ command })
+      body: JSON.stringify({
+        command
+      })
     }).then((response) => {
       if (!response.ok) {
         appendMessage(`[Error] Server responded with ${response.status}`, 'error');
