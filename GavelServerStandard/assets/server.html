@@ -18,6 +18,8 @@
 
    <main class="container">
     <!-- Program Info Card -->
+    <section class="card" id="config-card" aria-labelledby="config-title">
+      <h2 id="config-title"></h2>
     <section class="card" id="program-card" aria-labelledby="program-title">
       <h2 id="program-title">Program Info</h2>
       <div class="fieldset">
@@ -105,56 +107,18 @@
         </div>
       </div>
     </section>
-  </main>
-
-
-  <table class="center">
-    <tr>
-      <td>
-        <a href="/ipconfig.html">Configure IP Addresses</a>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <a href="/import">Import Switch Configuration</a>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <a href="/export">Export Switch Configuration</a>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <a href="/upgrade">Upgrade the Power Switch</a>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <a href="/code">Source Code of the Pico Power Switch</a>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <a href="/terminal.html">Console Terminal for the Pico Power Switch</a>
-      </td>
-    </tr>
-  </table>
-  <br> 
-  <br>
-  <script src="/js/rebootbutton.js"></script>
-  <table class="center">
-    <tr>
-      <td>
+    <div class="fieldset">
+      <div class="buttons">
         <a href="/"><button type="button" class="button2 button">Cancel</button></a>
-      </td>
-    </tr>
-    <tr>
-      <td>
+        <a href="/ipconfig.html"><button type="button" class="button4 button">Configure IP</button></a>
+        <a href="/terminal.html"><button type="button" class="button3 button">Console</button></a>
+        <button type="button" class="button button7" onclick="uploadJSON()">Import</button>
+        <button type="button" class="button button6" onclick="downloadJSON()">Export</button>
         <button id="btn-reboot" type="button" class="button">REBOOT</button>
-      </td>
-    </tr>
-  </table>
+      </div>
+    </div>
+    </section>
+  </main>
   <!-- Footer populated by footer.js -->
   <footer id="site-footer"></footer>
 
@@ -182,6 +146,9 @@
   <script src="/js/footer.js"></script>
 
   <!-- Page wiring: fetch data and render into tables -->
+  <script src="/js/transfer.js"></script>  
+  <script src="/js/rebootbutton.js"></script>
+
   <!-- Card population script -->
   <script>
     (async function populateCards() {

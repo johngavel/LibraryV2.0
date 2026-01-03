@@ -1,11 +1,15 @@
 #include "GavelServerStandard.h"
+#include "import.h"
 #include "rebootfile.h"
 #include "sseterminal.h"
 #include "webpage/webpage_all.h"
 
+#include <GavelEEProm.h>
+
 static SSETerminal terminal;
 
-void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSystem* fs, TaskManager* taskManager) {
+void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSystem* fs, TaskManager* taskManager,
+                        EEpromMemory* memory) {
   ArrayDirectory* dir = static_cast<ArrayDirectory*>(fs->open("/"));
   dir->addDirectory("www");
   dir = static_cast<ArrayDirectory*>(fs->open("/www"));
@@ -26,9 +30,11 @@ void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSyst
   dir->addFile(new StaticFile(ipinfojs_string, ipinfojs, ipinfojs_len));
   dir->addFile(new StaticFile(rebootbuttonjs_string, rebootbuttonjs, rebootbuttonjs_len));
   dir->addFile(new StaticFile(redirectjs_string, redirectjs, redirectjs_len));
+  dir->addFile(new StaticFile(transferjs_string, transferjs, transferjs_len));
   dir = static_cast<ArrayDirectory*>(fs->open("/www/api"));
   dir->addFile(new JsonFile(&programMem, "build-info.json", READ_ONLY));
   dir->addFile(new JsonFile(ethernet, "ip-info.json", READ_WRITE));
+  dir->addFile(new JsonFile(new ImportFile(memory), "export.json", READ_WRITE));
   dir->addFile(new RebootFile());
 
   dir = static_cast<ArrayDirectory*>(fs->open("/www/style"));
