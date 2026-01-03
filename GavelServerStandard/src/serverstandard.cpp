@@ -20,7 +20,6 @@ void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSyst
   dir->addFile(new StaticFile(ipconfightml_string, ipconfightml, ipconfightml_len));
   dir->addFile(new StaticFile(serverhtml_string, serverhtml, serverhtml_len));
   dir->addFile(new StaticFile(terminalhtml_string, terminalhtml, terminalhtml_len));
-  dir->addFile(new StaticFile(testhtml_string, testhtml, testhtml_len));
   dir = static_cast<ArrayDirectory*>(fs->open("/www/js"));
   dir->addFile(new StaticFile(buildinfojs_string, buildinfojs, buildinfojs_len));
   dir->addFile(new StaticFile(consolejs_string, consolejs, consolejs_len));

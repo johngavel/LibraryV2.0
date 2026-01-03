@@ -20,6 +20,7 @@ public:
   bool executeTask() override;
 
   void configure();
+  void allowDHCP(bool __allowDHCP);
   void configure(byte* __macAddress, bool __isDHCP);
   void configure(byte* __macAddress, bool __allowDHCP, bool __isDHCP, byte* __ipAddress, byte* __dnsAddress,
                  byte* __subnetMask, byte* __gatewayAddress);
@@ -38,6 +39,7 @@ private:
   bool resetW5500();
   bool setupW5500();
   bool updateMemory();
+  void setAllowDHCP(bool allow) { memory.memory.data.allowDHCP = allow; };
 
   // Only used for initial configuration
   EthernetMemory memory;

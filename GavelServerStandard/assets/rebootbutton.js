@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const resp = await fetch('/api/reboot.json', {
         method: 'POST',
         headers: {
-          'Accepted': 'application/json'
+          'Ok': 'application/json'
         }
       });
 

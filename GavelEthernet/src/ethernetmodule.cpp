@@ -56,6 +56,10 @@ void EthernetModule::configure() {
   memory.setInternal(false);
 }
 
+void EthernetModule::allowDHCP(bool __allowDHCP) {
+  if (__allowDHCP == false) memory.disallowDHCP();
+}
+
 void EthernetModule::configure(byte* __macAddress, bool __isDHCP) {
   unsigned char blankAddress[4] = {0, 0, 0, 0};
   configure(__macAddress, true, __isDHCP, blankAddress, blankAddress, blankAddress, blankAddress);
@@ -99,6 +103,7 @@ bool EthernetModule::setupTask(OutputInterface* __terminal) {
   terminal = __terminal;
 
   setRefreshMilli(60000);
+  memory.checkDHCPAllowed();
   if (memory.getInternal()) { status &= setupW5500(); }
   status &= updateMemory();
   runTimer(status);

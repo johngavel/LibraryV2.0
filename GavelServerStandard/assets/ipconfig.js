@@ -6,6 +6,7 @@
   const $ = (id) => document.getElementById(id);
 
   // Inputs and UI elements
+  const allowdhcp = $('allowdhcp');
   const dhcp = $('dhcp');
   const ipAddress = $('ipAddress');
   const subnetMask = $('subnetMask');
@@ -63,7 +64,16 @@
       currentIp.value = info.ipAddress || 'unknown';
 
       // Form fields
-      const dhcpMode = !!info.isDHCP;
+      dhcpMode = !!info.isDHCP;
+      const showDCHP = !!info.allowDHCP;
+
+      if (showDCHP === false) {
+        allowdhcp.classList.add('hidden');
+        dhcpMode = false;
+      } else {
+        allowdhcp.classList.remove('hidden');
+      }
+
       dhcp.checked = dhcpMode;
 
       ipAddress.value = (info.ipAddress && info.ipAddress !== 'unknown') ? info.ipAddress : '';
@@ -126,21 +136,28 @@
   // ------- Reboot device -------
   async function rebootDevice() {
     //  Send POST request to /reboot endpoint
-    const resp = await fetch('/api/reboot.json', {
-      method: 'POST',
-      headers: {
-        'Accepted': 'application/json'
-      }
-    });
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    return resp.text().catch(() => '');
+    try {
+      const resp = await fetch('/api/reboot.json', {
+        method: 'POST',
+        headers: {
+          'Ok': 'application/json'
+        }
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    } catch (err) {
+      alert('Failed to send reboot command.');
+    }
   }
 
   // ------- Event: DHCP toggle -------
   dhcp.addEventListener('change', () => setStaticInputsEnabled(!dhcp.checked));
 
   // ------- Event: Reload -------
-  btnReload?.addEventListener('click', load);
+  function reload() {
+    IpInfo.refreshIpInfo();
+    load();
+  }
+  btnReload?.addEventListener('click', reload);
 
   // ------- Event: Save Settings (form submit) -------
   form?.addEventListener('submit', async (ev) => {
@@ -185,7 +202,7 @@
       }, 1000);
       setTimeout(() => {
         window.location.replace('/index.html');
-      }, 5000); // redirect after 10s
+      }, 5000); // redirect after 5s
     } catch (err) {
       showMsg('err', err.message || String(err));
     }

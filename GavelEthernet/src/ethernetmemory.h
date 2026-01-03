@@ -31,13 +31,23 @@ public:
   const unsigned char& operator[](std::size_t index) const override { return memory.buffer[index]; }
   unsigned char& operator[](std::size_t index) override { return memory.buffer[index]; }
   void updateExternal() { setInternal(true); };
+  void disallowDHCP() {
+    allowDHCP = false;
+    memory.data.allowDHCP = false;
+  };
+  void checkDHCPAllowed() {
+    if (allowDHCP == false) disallowDHCP();
+  };
 
   std::size_t size() const noexcept override { return sizeof(EthernetUnion::buffer); }
 
   void initMemory() override {
     randomSeed(rp2040.hwrand32());
-    memory.data.isDHCP = true;
-    memory.data.allowDHCP = true;
+    memory.data.allowDHCP = allowDHCP;
+    if (!allowDHCP)
+      memory.data.isDHCP = false;
+    else
+      memory.data.isDHCP = true;
     memory.data.macAddress[0] = 0xDE;
     memory.data.macAddress[1] = 0xAD;
     memory.data.macAddress[2] = 0xCC;
@@ -67,7 +77,11 @@ public:
     StringBuilder sb;
     char buffer[20];
     terminal->println(HELP, "Ethernet Module Data: ");
-    sb + "DHCP: " + memory.data.isDHCP;
+    sb = "Allow DHCP: ";
+    sb + memory.data.allowDHCP;
+    terminal->println(INFO, sb.c_str());
+    sb = "DHCP: ";
+    sb + memory.data.isDHCP;
     terminal->println(INFO, sb.c_str());
     sb = "MAC Address: ";
     sb + getMacString(memory.data.macAddress, buffer, sizeof(buffer));
@@ -126,6 +140,7 @@ public:
   };
 
 private:
+  bool allowDHCP = true;
 };
 
 #endif // __GAVEL_ETHERNET_MEMORY_H

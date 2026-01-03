@@ -171,7 +171,15 @@
         setText("ip-dns", safe(ii.dnsAddress));
         setText("cur-ip-addr", safe(ii.ipAddress));
         // Form fields
-        const dhcpMode = !!ii.isDHCP;
+        dhcpMode = !!ii.isDHCP;
+        setCheckbox("dhcp", dhcpMode);
+        const dhcpEl = document.getElementById('allowdhcp');        
+        if (ii.allowDHCP === false) {
+          if (dhcpEl) dhcpEl.classList.add('hidden');
+          dhcpMode = false;
+        } else {
+          if (dhcpEl) dhcpEl.classList.remove('hidden');
+        }
         setCheckbox("dhcp", dhcpMode);
       } catch (err) {
         console.error(err);

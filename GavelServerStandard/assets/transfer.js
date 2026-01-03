@@ -65,7 +65,9 @@ window.uploadJSON = async function uploadJSON() {
       // POST JSON to backend (adjust endpoint/method if needed)
       const resp = await fetch('/api/export.json', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(payload),
       });
 

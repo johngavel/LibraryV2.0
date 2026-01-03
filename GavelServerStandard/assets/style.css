@@ -282,3 +282,7 @@ footer {
   color: var(--error);
 }
 
+.hidden { 
+  display: none !important; 
+}
+
