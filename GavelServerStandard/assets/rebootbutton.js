@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (err) {
       alert('Failed to send reboot command. Please try again or check server logs.');
       btn.disabled = false;
-      btn.textContent = 'REBOOT';
+      btn.textContent = 'Reboot';
     }
   });
 });

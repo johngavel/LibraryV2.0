@@ -9,7 +9,7 @@
 class SSECmd : public DynamicFile {
 public:
   SSECmd()
-      : DynamicFile("sse_command.json", READ_WRITE, _fileBuffer, sizeof(_fileBuffer)),
+      : DynamicFile("terminal_command.json", READ_WRITE, _fileBuffer, sizeof(_fileBuffer)),
         _stream(_buffer, sizeof(_buffer)){};
   bool createReadData() override { return true; };
 
@@ -35,7 +35,7 @@ private:
 
 class SSEEvent : public StreamFile {
 public:
-  SSEEvent() : StreamFile("sse_events.stream", READ_ONLY), _stream(_buffer, sizeof(_buffer)){};
+  SSEEvent() : StreamFile("terminal_events.stream", READ_ONLY), _stream(_buffer, sizeof(_buffer)){};
   bool createReadData() override {
     char charBuffer[256];
     unsigned int lengthBuffer = 0;

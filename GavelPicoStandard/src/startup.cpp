@@ -2,7 +2,6 @@
 
 #include "picobackend.h"
 
-#include <GavelProgram.h>
 #include <GavelUtil.h>
 
 static Mutex startupMutex;
@@ -17,9 +16,22 @@ Blink blink;
 Watchdog watchdog;
 FileSystem fileSystem;
 GPIOManager gpioManager;
+License license;
 
 void setup0Start(TerminalCommand* __termCmd) {
   startupMutex.take();
+#ifdef ARDUINO_WAVESHARE_RP2040_ZERO
+  license.addLibrary(ADAFRUIT_NEOPIXEL_INDEX);
+#endif
+  license.addLibrary(ARDUINO_CLI_INDEX);
+  license.addLibrary(ARDUINO_IDE_INDEX);
+  license.addLibrary(ARDUINO_PICO_INDEX);
+  license.addLibrary(ARDUINOJSON_INDEX);
+  license.addLibrary(ETHERNET_INDEX);
+  license.addLibrary(I2C_EEPROM_INDEX);
+  license.addLibrary(TERMINAL_INDEX);
+  license.addLibrary(GAVEL_LIBRARIES_INDEX);
+
   gpioManager.addDevice(new RP2040Backend());
 
   serialPort.configureUSBSerial();
@@ -33,6 +45,7 @@ void setup0Start(TerminalCommand* __termCmd) {
   taskManager.add(&blink);
   taskManager.add(&watchdog);
   taskManager.add(&fileSystem);
+  taskManager.add(&license);
 
   addStandardTerminalCommands(__termCmd);
   if (__termCmd) {

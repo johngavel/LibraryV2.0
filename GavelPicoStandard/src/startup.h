@@ -6,6 +6,7 @@
 #include <GavelBlinkPico.h>
 #include <GavelFileSystem.h>
 #include <GavelGPIO.h>
+#include <GavelLicense.h>
 #include <GavelPico.h>
 #include <GavelProgram.h>
 #include <GavelSerialPort.h>
@@ -29,5 +30,6 @@ extern Blink blink;
 extern Watchdog watchdog;
 extern GPIOManager gpioManager;
 extern FileSystem fileSystem;
+extern License license;
 
 #endif // __GAVEL_STARTUP_H
