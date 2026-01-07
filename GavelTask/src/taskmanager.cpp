@@ -22,7 +22,7 @@ bool TaskManager::setupTask(OutputInterface* terminal) {
   setRefreshMilli(10);
   StringBuilder sb;
   if (terminal) {
-    // terminal->clearScreen();
+    terminal->clearScreen();
     terminal->println(PROMPT, (sb + ProgramInfo::AppName + " Version: " + ProgramInfo::MajorVersion + "." +
                                ProgramInfo::MinorVersion + "." + ProgramInfo::BuildVersion)
                                   .c_str());
