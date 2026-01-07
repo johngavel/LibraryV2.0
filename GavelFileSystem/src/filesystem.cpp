@@ -60,7 +60,7 @@ DigitalBase* FileSystem::getFile(const char* path) {
   while (*p == '/') p++;
   if (*p == '\0') return root;
 
-  ArrayDirectory* curDir = root;
+  DigitalDirectory* curDir = root;
   DigitalBase* current = curDir;
 
   char component[100];
@@ -73,7 +73,7 @@ DigitalBase* FileSystem::getFile(const char* path) {
     if (!child) return nullptr;
     if (!lastComponent) {
       if (!child->isDirectory()) return nullptr;
-      curDir = static_cast<ArrayDirectory*>(child);
+      curDir = static_cast<DigitalDirectory*>(child);
       current = curDir;
     } else {
       current = child;

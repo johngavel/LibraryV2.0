@@ -106,17 +106,28 @@
         </div>
       </div>
     </section>
-    <div class="fieldset">
-      <div class="buttons">
-        <a href="/index.html"><button type="button" class="button2 button">Cancel</button></a>
-        <a href="/ipconfig.html"><button type="button" class="button4 button">Configure IP</button></a>
-        <a href="/license.html"><button type="button" class="button4 button">Code</button></a>
-        <a href="/terminal.html"><button type="button" class="button4 button">Terminal</button></a>
-        <button type="button" class="button" onclick="uploadJSON()">Import</button>
-        <button type="button" class="button button4" onclick="downloadJSON()">Export</button>
-        <button id="btn-reboot" type="button" class="button">REBOOT</button>
+    <section class="card" id="ip-card" aria-labelledby="ip-title">
+      <h2 id="ip-title">Configuration and Control</h2>
+      <div class="fieldset">
+        <legend>Configuration</legend>
+        <div class="buttons">
+          <a href="/index.html"><button type="button" class="button2 button">Cancel</button></a>
+          <a href="/license.html"><button type="button" class="button4 button">Code</button></a>
+          <button type="button" class="button button4" onclick="downloadJSON()">Export</button>
+          <a href="/ipconfig.html"><button type="button" class="button4 button">Configure IP</button></a>
+        </div>
       </div>
-    </div>
+      <div class="fieldset">
+        <legend>Control</legend>
+        <div class="buttons">
+          <a href="/terminal.html"><button type="button" class="button4 button">Terminal</button></a>
+          <button type="button" class="button" onclick="uploadJSON()">Import</button>
+          <button id="btn-upgrade" type="button" class="button">Upgrade</button>
+          <button id="btn-reboot" type="button" class="button">Reboot</button>
+        </div>
+        <div id="status" class="msg" role="alert" aria-live="polite"></div>
+      </div>
+    </section>
     </section>
   </main>
   <!-- Footer populated by footer.js -->
@@ -148,6 +159,7 @@
   <!-- Page wiring: fetch data and render into tables -->
   <script src="/js/transfer.js"></script>  
   <script src="/js/rebootbutton.js"></script>
+  <script src="/js/upgradebutton.js"></script>
 
   <!-- Card population script -->
   <script>

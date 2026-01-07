@@ -24,14 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
-      let remaining = 5;
-      const ticker = setInterval(() => {
-        remaining--;
-        if (remaining <= 0) clearInterval(ticker);
-      }, 1000);
-      setTimeout(() => {
-        window.location.replace('/index.html');
-      }, 5000); // redirect after 10s
+      setTimeout(() => window.location.replace('/index.html'), 5000);
     } catch (err) {
       alert('Failed to send reboot command. Please try again or check server logs.');
       btn.disabled = false;

@@ -148,7 +148,11 @@ ClientState HttpConnection::readHeaders() {
 ClientState HttpConnection::readBody() {
   // For write methods (e.g., POST), stream directly to file
   if (!isReadMethod(method) && requestContentLength > 0) {
-    if (clientConnected(_client) && clientAvailable(_client) && bytesRecieved < requestContentLength) {
+    Timer t;
+    t.setRefreshMilli(500);
+    t.reset();
+    while (!t.expired() && clientConnected(_client) && clientAvailable(_client) &&
+           bytesRecieved < requestContentLength) {
       char buf[128];
       int need = (int) min((size_t) sizeof(buf), (size_t) (requestContentLength - bytesRecieved));
       int n = clientRead(_client, buf, need);

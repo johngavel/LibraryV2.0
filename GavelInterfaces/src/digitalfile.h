@@ -56,6 +56,7 @@ public:
   virtual bool open(FileMode mode = READ_MODE) override { return false; };
   virtual DigitalFile* open(const char* name, FileMode mode = READ_MODE) = 0;
   virtual DigitalDirectory* getDirectory(const char* name) = 0;
+  virtual DigitalBase* getFile(const char* path) = 0;
   virtual bool reset() override {
     rewindDirectory();
     return true;

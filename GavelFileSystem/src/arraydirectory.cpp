@@ -27,6 +27,16 @@ bool ArrayDirectory::addDirectory(const char* name) {
   return true;
 };
 
+bool ArrayDirectory::addDirectory(DigitalDirectory* dir) {
+  if (!dir) return false;
+  if (_fileCount >= MAX_FILES) return false;
+  if (getFile(dir->name()) != nullptr) return false;
+  dir->setParent(this);
+  _files[_fileCount] = dir;
+  _fileCount++;
+  return true;
+}
+
 DigitalBase* ArrayDirectory::getFile(const char* name) {
   for (int i = 0; i < _fileCount; i++) {
     if (safeCompare(_files[i]->name(), name) == 0) return _files[i];

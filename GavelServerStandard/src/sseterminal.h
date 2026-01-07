@@ -1,7 +1,6 @@
 #ifndef __GAVEL_SSE_TERM_H
 #define __GAVEL_SSE_TERM_H
 
-#include <GavelDebug.h>
 #include <GavelFileSystem.h>
 #include <GavelTask.h>
 #include <GavelUtil.h>

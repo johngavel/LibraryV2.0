@@ -5,6 +5,7 @@
 #include "dynamicfile.h"
 #include "filesystem.h"
 #include "jsonfile.h"
+#include "littlefs_digitalfile.h"
 #include "staticfile.h"
 #include "streamfile.h"
 

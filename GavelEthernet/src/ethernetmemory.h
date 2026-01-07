@@ -1,7 +1,6 @@
 #ifndef __GAVEL_ETHERNET_MEMORY_H
 #define __GAVEL_ETHERNET_MEMORY_H
 
-#include <GavelDebug.h>
 #include <GavelInterfaces.h>
 #include <GavelUtil.h>
 

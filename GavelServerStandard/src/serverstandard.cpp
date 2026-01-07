@@ -8,11 +8,22 @@
 
 static SSETerminal terminal;
 
+static void setupUpload(ArrayDirectory* dir) {
+  LittleFS.format();
+  LittleFS.begin();
+  AliasDirectory* var = new AliasDirectory("var");
+  var->setParent(dir);
+  var->addAlias("pico.bin", "/pico.bin", READ_WRITE);
+  dir->addDirectory(var);
+}
+
 void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSystem* fs, TaskManager* taskManager,
                         EEpromMemory* memory) {
   ArrayDirectory* dir = static_cast<ArrayDirectory*>(fs->open("/"));
   dir->addDirectory("www");
   dir = static_cast<ArrayDirectory*>(fs->open("/www"));
+  setupUpload(dir);
+
   dir->addDirectory("api");
   dir->addDirectory("js");
   dir->addDirectory("style");
@@ -32,12 +43,14 @@ void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSyst
   dir->addFile(new StaticFile(redirectjs_string, redirectjs, redirectjs_len));
   dir->addFile(new StaticFile(transferjs_string, transferjs, transferjs_len));
   dir->addFile(new StaticFile(librarytablejs_string, librarytablejs, librarytablejs_len));
+  dir->addFile(new StaticFile(upgradebuttonjs_string, upgradebuttonjs, upgradebuttonjs_len));
   dir = static_cast<ArrayDirectory*>(fs->open("/www/api"));
   dir->addFile(new JsonFile(&programMem, "build-info.json", READ_ONLY));
   dir->addFile(new JsonFile(ethernet, "ip-info.json", READ_WRITE));
   dir->addFile(new JsonFile(new ImportFile(memory), "export.json", READ_WRITE));
   dir->addFile(new JsonFile(&license, "license-info.json", READ_ONLY));
   dir->addFile(new RebootFile());
+  dir->addFile(new UpgradeFile());
 
   dir = static_cast<ArrayDirectory*>(fs->open("/www/style"));
   dir->addFile(new StaticFile(stylecss_string, stylecss, stylecss_len));

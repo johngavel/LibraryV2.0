@@ -9,7 +9,8 @@ public:
   ArrayDirectory(const char* name);
   bool addFile(DigitalFile* file);
   bool addDirectory(const char* name);
-  DigitalBase* getFile(const char* name);
+  bool addDirectory(DigitalDirectory* dir);
+  DigitalBase* getFile(const char* name) override;
   // DigitalDirectory virtuals
   DigitalBase* getNextFile() override;
   void rewindDirectory() override;

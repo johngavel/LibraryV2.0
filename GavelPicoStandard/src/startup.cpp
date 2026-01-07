@@ -71,7 +71,6 @@ void setup1Start() {
 void setup0Complete() {
   startupMutex.give();
   startupMutex1.take();
-  serialPort.getMainSerialPort()->clearScreen();
   taskManager.reservePins(&gpioManager);
   taskManager.setup(serialPort.getMainSerialPort());
 

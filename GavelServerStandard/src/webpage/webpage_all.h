@@ -1,5 +1,5 @@
-#ifndef __GAVEL_WEBPAGE_ALL_H
-#define __GAVEL_WEBPAGE_ALL_H
+#ifndef __GAVEL_SERVER_WEBPAGE_ALL_H
+#define __GAVEL_SERVER_WEBPAGE_ALL_H
 
 #include "buildinfojs.h"
 #include "errorhtml.h"
@@ -18,5 +18,6 @@
 #include "terminalhtml.h"
 #include "terminaljs.h"
 #include "transferjs.h"
+#include "upgradebuttonjs.h"
 
-#endif // __GAVEL_WEBPAGE_ALL_H 
+#endif // __GAVEL_SERVER_WEBPAGE_ALL_H 

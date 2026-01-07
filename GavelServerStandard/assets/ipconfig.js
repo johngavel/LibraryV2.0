@@ -195,14 +195,7 @@
       // Reboot
       await rebootDevice();
       showMsg('ok', 'Save & Reboot initiated. The device may be temporarily unavailable.');
-      let remaining = 5;
-      const ticker = setInterval(() => {
-        remaining--;
-        if (remaining <= 0) clearInterval(ticker);
-      }, 1000);
-      setTimeout(() => {
-        window.location.replace('/index.html');
-      }, 5000); // redirect after 5s
+      setTimeout(() => window.location.replace('/index.html'), 5000);
     } catch (err) {
       showMsg('err', err.message || String(err));
     }

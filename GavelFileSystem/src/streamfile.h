@@ -1,7 +1,6 @@
 #ifndef __GAVEL_STREAM_FILE_H
 #define __GAVEL_STREAM_FILE_H
 
-#include <GavelDebug.h>
 #include <GavelFileSystem.h>
 #include <GavelUtil.h>
 
