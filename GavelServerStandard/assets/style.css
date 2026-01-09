@@ -1,3 +1,4 @@
+
 :root {
   --bg: #ffffff;
   --fg: #000000;
@@ -6,12 +7,13 @@
   --border: #D4D4D4;
   --warn: #ff8c00;
   --error: #d9534f;
-  --ok: #2ecc71;
+  --ok: green;
   --console-bg: #000000;
   --console-fg: #ffffff;
   --console-font: "Courier New", Courier, monospace;
 }
 
+/* Base layout */
 html, body {
   margin: 0;
   padding: 0;
@@ -35,17 +37,16 @@ h1, h2 {
 .container {
   width: 100%;
   max-width: 800px;
-  max-width: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
 }
 
+/* Tables */
 table {
   margin: 0 auto;
   border-collapse: collapse;
-  /* Optional: outer border to frame the grid */
   border: 1px solid var(--border);
 }
 
@@ -59,13 +60,14 @@ thead th, tbody td {
 }
 
 thead {
-  background: #f4f6f8; /* subtle header background */
+  background: #f4f6f8;
 }
 
 tbody tr:nth-child(odd) {
-  background: #fafafa; /* zebra striping for readability */
+  background: #fafafa;
 }
 
+/* Terminal */
 #terminal {
   width: 95%;
   max-width: 900px;
@@ -83,6 +85,7 @@ tbody tr:nth-child(odd) {
   margin: 10px auto;
 }
 
+/* Controls */
 .controls {
   display: flex;
   justify-content: center;
@@ -103,6 +106,35 @@ tbody tr:nth-child(odd) {
   padding: 8px;
 }
 
+/* Nav buttons */
+.nav-button {
+  background-color: red;
+  border: none;
+  color: white;
+  padding: 10px 18px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.nav-button:hover { filter: brightness(0.80); }
+.nav-button:active { transform: translateY(1px); }
+
+.nav-button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
+  filter: grayscale(10%);
+}
+
+/* Color mapping */
+.nav-button[data-color="primary"]  { background: var(--accent); }
+.nav-button[data-color="success"]  { background: var(--ok); }
+.nav-button[data-color="warning"]  { background: var(--warn); }
+.nav-button[data-color="danger"]   { background: var(--error); }
+.nav-button[data-color="forward"]  { background: var(--ok); }
+.nav-button[data-color="backward"] { background: var(--fg); }
+
+/* Restored button classes */
 .button {
   background-color: red;
   border: none;
@@ -113,39 +145,16 @@ tbody tr:nth-child(odd) {
   border-radius: 4px;
 }
 
-.button2 {
-  background-color: #000;
-}
-
-.button3 {
-  background-color: grey;
-}
-
 .button4 {
   background-color: green;
 }
 
-.button5 {
-  background-color: var(--warn);    /* orange tone from your tokens */
+.button:hover,
+.button4:hover {
+  filter: brightness(0.90);
 }
 
-.button6 {
-  background-color: navy;
-}
-
-.button7 {
-  background-color: teal;
-}
-
-
-.button:hover { filter: brightness(0.90); }
-.button2:hover { filter: brightness(0.90); }
-.button3:hover { filter: brightness(0.90); }
-.button4:hover { filter: brightness(0.90); }
-.button5:hover { filter: brightness(0.90); }
-.button6:hover { filter: brightness(0.90); }
-.button7:hover { filter: brightness(0.90); }
-
+/* Footer */
 footer {
   text-align: center;
   font-size: 14px;
@@ -156,21 +165,12 @@ footer {
   width: 100%;
 }
 
-.ok {
-  color: var(--ok);
-  font-weight: bold;
-}
+/* Status colors */
+.ok    { color: var(--ok); font-weight: bold; }
+.error { color: var(--error); font-weight: bold; }
+.warn  { color: var(--warn); font-weight: bold; }
 
-.error {
-  color: var(--error);
-  font-weight: bold;
-}
-
-.warn {
-  color: var(--warn);
-  font-weight: bold;
-}
-
+/* Warning container */
 .warning-container {
   border: 2px solid var(--error);
   padding: 16px;
@@ -181,17 +181,13 @@ footer {
   font-weight: bold;
 }
 
-
-/* === IP Configuration Page (ipconfig.html) === */
-
-/* Page header and helper text */
+/* IP Configuration Page */
 .page-header .hint {
   color: var(--muted);
   margin: 0 0 12px;
   font-size: 14px;
 }
 
-/* Card-like container for the form */
 .card {
   width: 95%;
   max-width: 900px;
@@ -203,13 +199,13 @@ footer {
   text-align: left;
 }
 
-/* Fieldset + legend */
 .fieldset {
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 12px;
   margin: 8px 0;
 }
+
 .fieldset > legend {
   padding: 0 6px;
   font-weight: bold;
@@ -222,22 +218,14 @@ footer {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
+
 @media (max-width: 640px) {
   .row { grid-template-columns: 1fr; }
 }
 
-/* Form field block */
-.field {
-  display: grid;
-  gap: 6px;
-}
-
-/* Labels */
-.label {
-  font-weight: 600;
-}
-
-/* Text inputs */
+/* Form fields */
+.field { display: grid; gap: 6px; }
+.label { font-weight: 600; }
 .text {
   padding: 8px 10px;
   border: 2px solid var(--border);
@@ -247,16 +235,14 @@ footer {
   color: var(--fg);
 }
 
-/* Reuse console monospace for IP fields */
 .mono { font-family: var(--console-font); }
 
-/* Disabled inputs */
 .text:disabled {
   background-color: #efefef;
   color: #777;
 }
 
-/* Switch line */
+/* Switch */
 .switch {
   display: flex;
   align-items: center;
@@ -267,28 +253,29 @@ footer {
 /* Buttons area */
 .buttons {
   display: flex;
-  justify-content: center; /* Was originally flex-end */
+  justify-content: center;
   gap: 8px;
   margin-top: 8px;
 }
 
 /* Feedback messages */
 .msg {
-  display: none;           /* made visible via JS */
+  display: none;
   margin-top: 12px;
-  margin-bottom: 8ps;
   padding: 10px 14px;
   border-radius: 6px;
   border: 2px solid var(--border);
   background: #f9f9f9;
   color: var(--fg);
 }
+
 .msg.ok {
   display: block;
   border-color: var(--ok);
   background: rgba(46, 204, 113, .1);
   color: var(--ok);
 }
+
 .msg.err {
   display: block;
   border-color: var(--error);
@@ -296,7 +283,31 @@ footer {
   color: var(--error);
 }
 
-.hidden { 
-  display: none !important; 
+.hidden { display: none !important; }
+
+/* Group container */
+.element-group {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  margin: 8px 0;
+  justify-content: center;
+  display: flex;
+  gap: 8px;
 }
 
+.element-legend {
+  font-weight: bold;
+  color: var(--accent);
+}
+
+/* Config-card grid */
+config-card.row section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+config-card.row section > h2 {
+  grid-column: 1 / -1;
+}

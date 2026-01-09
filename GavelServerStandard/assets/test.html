@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Import the JS modules -->
+  <script type="module" src="js/main.js"></script>
+  <script src="/js/transfer.js"></script>  
+  <script src="/js/rebootbutton.js"></script>
+  <script src="/js/upgradebutton.js"></script>
+  <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+  <!-- Use the custom elements -->
+  <my-header></my-header>
+
+  <main class="container">
+    <!-- Your main page content goes here -->
+    <config-card title="Program Info" class="row">
+      <div class="label">Product</div>
+      <div id="prog-product" class="mono">—</div>
+      <div class="label">Version</div>
+      <div id="prog-version" class="mono">—</div>
+      <div class="label">Build Date</div>
+      <div id="prog-date" class="mono">—</div>
+      <div class="label">Build Time</div>
+      <div id="prog-time" class="mono">—</div>
+      <div class="label">Author</div>
+      <div id="prog-author" class="mono">—</div>
+      <div class="label">Device</div>
+      <div id="prog-device" class="mono">—</div>
+    </config-card>
+    <config-card title="Configuration and Control">
+      <element-group legend="Configuration">
+        <nav-button link="/index.html" color="backward">Cancel</nav-button>
+        <nav-button link="/license.html" color="forward">Code</nav-button>
+        <button type="button" class="button button4" onclick="downloadJSON()">Export</button>
+        <nav-button link="/ipconfig.html" color="forward">Configure</nav-button>
+      </element-group>
+      <element-group legend="Control">
+        <nav-button link="/terminal.html" color="forward">Terminal</nav-button>
+        <button type="button" class="button" onclick="uploadJSON()">Import</button>
+        <button id="btn-upgrade" type="button" class="button">Upgrade</button>
+        <button id="btn-reboot" type="button" class="button">Reboot</button>
+      </element-group>
+    </config-card>
+  </main>
+  
+  <my-footer></my-footer>
+
+  <script>
+    // Fetch build info from API and populate fields
+    async function loadBuildInfo() {
+      try {
+        const response = await fetch('/api/build-info.json', {
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const info = await response.json();
+
+        // Populate fields with data or fallback to 'N/A'
+        document.getElementById('prog-product').textContent = info.product || 'N/A';
+        document.getElementById('prog-version').textContent = info.version || 'N/A';
+        document.getElementById('prog-date').textContent = info.build_date || 'N/A';
+        document.getElementById('prog-time').textContent = info.build_time || 'N/A';
+        document.getElementById('prog-author').textContent = info.author || 'N/A';
+        document.getElementById('prog-device').textContent = info.device || 'N/A';
+      } catch (error) {
+       console.error('Failed to load build info:', error);
+      }
+    }
+
+    // Load data when page is ready
+    document.addEventListener('DOMContentLoaded', loadBuildInfo);
+  </script>
+
+</body>
+</html>

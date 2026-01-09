@@ -25,7 +25,7 @@ static const LibraryInfo libraries[] = {
   {"Ethernet", "2.0.2", "README.adoc", "https://www.arduino.cc/en/Reference/Ethernet" },
   {"Gavel Libraries", "2.0.0", "", "https://github.com/johngavel/LibraryV2.0" },
   {"I2C_EEPROM", "1.9.4", "LICENSE", "https://github.com/RobTillaart/I2C_EEPROM.git" },
-  {"TCA9555", "0.4.3", "LICENSE", "https://github.com/RobTillaart/TCA9555" },
+  {"TCA9555", "0.4.4", "LICENSE", "https://github.com/RobTillaart/TCA9555" },
   {"Terminal", "1.0.12", "license.txt", "https://github.com/johngavel/Terminal" },
 };
 

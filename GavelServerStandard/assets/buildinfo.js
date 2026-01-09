@@ -49,3 +49,7 @@ const BuildInfo = (() => {
     getBuildInfo
   };
 })();
+
+export {
+  BuildInfo
+};
