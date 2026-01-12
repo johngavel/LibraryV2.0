@@ -1,31 +1,23 @@
 <!DOCTYPE html>
-<!-- terminal.html -->
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Optional: include CSRF token meta if your backend requires it -->
-  <!-- <meta name="csrf-token" content="YOUR_TOKEN_HERE"> -->
-
-  <!-- External stylesheet -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta id="refresh-meta" http-equiv="refresh" content="" />
+  <!-- Import the JS modules -->
+  <script type="module" src="/js/main.js"></script>
   <link rel="stylesheet" href="/style/style.css">
-  <!-- External script, loads after HTML is parsed -->
-  <script src="/js/buildinfo.js" defer></script>
-  <script src="/js/header.js" defer></script>
-  <script src="/js/footer.js" defer></script>
   <script src="/js/terminal.js" defer></script>
 </head>
 <body>
   <!-- Header injected by header.js -->
-  <header id="site-header"></header>
-  <main>
-    <div class="container">
-      <!-- role="log" with aria-live for accessibility of streaming updates -->
-      <div id="terminal" role="log" aria-live="polite" aria-atomic="false"></div>
+  <my-header></my-header>
 
+  <main class="container">
+    <config-card title="Terminal">
+      <div id="terminal" role="log" aria-live="polite" aria-atomic="false"></div>
       <div class="controls">
-        <label for="input">Enter a command</label>
-        
+        <label for="input">Enter a command</label>        
         <!-- Input field -->
         <input
           type="text"
@@ -37,17 +29,12 @@
           autofocus
           aria-label="Command input"
         />
-        <a href="/server.html">
-          <button type="button" class="button button2" aria-label="Cancel and return">Cancel</button>
-        </a>
+        <back-button link="/server.html" color="backward">Cancel</back-button>
       </div>
-
       <div id="status" class="status">Startup…</div>
-    </div>
-    <br><br>
-    <hr style="width:50%">
+    </config-card>
   </main>
-  <!-- Footer injected by footer.js -->
-  <footer id="site-footer"></footer>
+  
+  <my-footer></my-footer>
 </body>
 </html>

@@ -1,27 +1,20 @@
-<!doctype html>
-<!-- server.html -->
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Server Status</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Use your existing stylesheet -->
-  <link rel="stylesheet" href="/style/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Import the JS modules -->
+  <script type="module" src="/js/main.js"></script>
+  <link rel="stylesheet" href="/style/style.css">
 </head>
 <body>
+  <!-- Use the custom elements -->
+  <my-header></my-header>
 
-  <!-- Header populated by header.js -->
-  <header id="site-header">
-    <h1>Server</h1>
-  </header>
-
-   <main class="container">
-    <!-- Program Info Card -->
-    <section class="card" id="config-card" aria-labelledby="config-title">
-      <h2 id="config-title"></h2>
-    <section class="card" id="program-card" aria-labelledby="program-title">
-      <h2 id="program-title">Program Info</h2>
-      <div class="fieldset">
+  <main class="container">
+    <!-- Your main page content goes here -->
+    <config-card title="Server">
+      <element-group legend="Program Information">
         <div class="row">
           <div class="field">
             <div class="label">Product</div>
@@ -48,167 +41,103 @@
             <div id="prog-device" class="mono">—</div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- IP Info Card -->
-    <section class="card" id="ip-card" aria-labelledby="ip-title">
-      <h2 id="ip-title">IP Info</h2>
-            <!-- Mode -->
-      <div class="fieldset" id="allowdhcp">
-        <legend>Mode</legend>
-        <label class="switch">
-          <input type="checkbox" id="dhcp" disabled/>
-          <span class="switch-label">Obtain an IP address automatically (DHCP)</span>
-        </label>
-      </div>
-      <div class="fieldset">
-        <legend>Static Settings</legend>
-
-        <div class="row">
-          <label class="field">
-            <span class="label">IP Address</span>
-            <div id="ip-addr" class="mono">—</div>
+      </element-group>
+      <element-group legend="IP Information">
+        <element-group legend="Mode" id="allowDHCP">
+          <label class="switch">
+            <input type="checkbox" id="dhcp" disabled/>
+            <span class="switch-label">Obtain an IP address automatically (DHCP)</span>
           </label>
-
-          <label class="field">
-            <span class="label">Subnet Mask</span>
-            <div id="ip-mask" class="mono">—</div>
-          </label>
-        </div>
-
-        <div class="row">
-          <label class="field">
-            <span class="label">Default Gateway</span>
-            <div id="ip-gw" class="mono">—</div>
-          </label>
-
-          <label class="field">
-            <span class="label">DNS Server</span>
-            <div id="ip-dns" class="mono">—</div>
-          </label>
-        </div>
-      </div>
-      <!-- Device Info -->
-      <div class="fieldset">
-        <legend>Device Info</legend>
-
-        <div class="row">
-          <label class="field">
-            <span class="label">MAC Address</span>
-            <div id="ip-mac" class="mono">—</div>
-          </label>
-
-          <label class="field">
-            <span class="label">Current IP</span>
-            <div id="cur-ip-addr" class="mono">—</div>
-          </label>
-        </div>
-      </div>
-    </section>
-    <section class="card" id="ip-card" aria-labelledby="ip-title">
-      <h2 id="ip-title">Configuration and Control</h2>
-      <div class="fieldset">
-        <legend>Configuration</legend>
-        <div class="buttons">
-          <a href="/index.html"><button type="button" class="button2 button">Cancel</button></a>
-          <a href="/license.html"><button type="button" class="button4 button">Code</button></a>
-          <button type="button" class="button button4" onclick="downloadJSON()">Export</button>
-          <a href="/ipconfig.html"><button type="button" class="button4 button">Configure IP</button></a>
-        </div>
-      </div>
-      <div class="fieldset">
-        <legend>Control</legend>
-        <div class="buttons">
-          <a href="/terminal.html"><button type="button" class="button4 button">Terminal</button></a>
-          <button type="button" class="button" onclick="uploadJSON()">Import</button>
-          <button id="btn-upgrade" type="button" class="button">Upgrade</button>
-          <button id="btn-reboot" type="button" class="button">Reboot</button>
-        </div>
-        <div id="status" class="msg" role="alert" aria-live="polite"></div>
-      </div>
-    </section>
-    </section>
+        </element-group>
+        <element-group legend="Static Settings">
+          <div class="row">
+            <div class="field">
+              <div class="label">IP Address</div>
+              <div id="ip-addr" class="mono">—</div>
+            </div>
+            <div class="field">
+              <div class="label">Subnet Mask</div>
+              <div id="ip-mask" class="mono">—</div>
+            </div>
+            <div class="field">
+              <div class="label">Default Gateway</div>
+              <div id="ip-gw" class="mono">—</div>
+            </div>
+            <div class="field">
+              <div class="label">DNS Server</div>
+              <div id="ip-dns" class="mono">—</div>
+            </div>
+          </div>
+        </element-group>
+        <element-group legend="Device Info">
+          <div class="row">
+            <div class="field">
+              <div class="label">MAC Address</div>
+              <div id="ip-mac" class="mono">—</div>
+            </div>
+            <div class="field">
+              <div class="label">Current IP</div>
+              <div id="cur-ip-addr" class="mono">—</div>
+            </div>
+          </div>
+        </element-group>
+      </element-group>
+    </config-card>
+    <config-card title="Configuration and Control">
+      <element-group legend="Configuration">
+        <back-button link="/index.html" color="backward">Cancel</back-button>
+        <nav-button link="/license.html" color="forward">Code</nav-button>
+        <download-button color="forward" url="/api/export.json" filename="export.json">Export</download-button>
+        <nav-button link="/ipconfig.html" color="forward">Configure</nav-button>
+      </element-group>
+      <element-group legend="Control">
+        <nav-button link="/terminal.html" color="forward">Terminal</nav-button>
+        <upload-button color="danger" endpoint="/api/export.json">Import</upload-button>
+        <upgrade-button color="danger" upload-url="/var/pico.bin" upgrade-url="/api/upgrade.json">Upgrade</upgrade-button>
+        <reboot-button color="danger">Reboot</reboot-button>
+      </element-group>
+    </config-card>
   </main>
-  <!-- Footer populated by footer.js -->
-  <footer id="site-footer"></footer>
+  
+  <my-footer></my-footer>
 
-  <!-- Utilities: minimal HTML escaping -->
-  <script>
-    function escapeHtml(s) {
-      return String(s)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/\"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-    function tr(key, valueHtml) {
-      return `<tr><td class="k">${escapeHtml(key)}</td><td class="v">${valueHtml}</td></tr>`;
-    }
-  </script>
+  <script type="module"> 
+    import { BuildInfo } from '/js/buildinfo.js';
+    import { IpInfo } from '/js/ipinfo.js';
 
-  <!-- Your modules (as uploaded) -->
-  <script src="/js/buildinfo.js"></script>
-  <script src="/js/ipinfo.js"></script>
-
-  <!-- Header/Footer scripts (they already call BuildInfo) -->
-  <script src="/js/header.js"></script>
-  <script src="/js/footer.js"></script>
-
-  <!-- Page wiring: fetch data and render into tables -->
-  <script src="/js/transfer.js"></script>  
-  <script src="/js/rebootbutton.js"></script>
-  <script src="/js/upgradebutton.js"></script>
-
-  <!-- Card population script -->
-  <script>
-    (async function populateCards() {
+    async function render() {
       try {
-        // Build/Program Info
+        BuildInfo.refreshBuildInfo();
         const bi = await BuildInfo.getBuildInfo();
-        setText("prog-product", safe(bi.product));
-        setText("prog-version", safe(bi.version));
-        setText("prog-date", safe(bi.build_date));
-        setText("prog-time", safe(bi.build_time));
-        setText("prog-author", safe(bi.author));
-        setText("prog-device", safe(bi.device ?? "—"));
-
-        // IP Info
+        document.getElementById('prog-product').textContent=bi.product;
+        document.getElementById('prog-version').textContent=bi.version;
+        document.getElementById('prog-date').textContent=bi.build_date;
+        document.getElementById('prog-time').textContent=bi.build_time;
+        document.getElementById('prog-author').textContent=bi.author;
+        document.getElementById('prog-device').textContent=bi.device;
+        
+        IpInfo.refreshIpInfo();
         const ii = await IpInfo.getIpInfo();
-        setText("ip-mac", safe(ii.macAddress));
-        setText("ip-addr", safe(ii.ipAddress));
-        setText("ip-mask", safe(ii.subnetMask));
-        setText("ip-gw", safe(ii.gatewayAddress));
-        setText("ip-dns", safe(ii.dnsAddress));
-        setText("cur-ip-addr", safe(ii.ipAddress));
-        // Form fields
-        dhcpMode = !!ii.isDHCP;
-        setCheckbox("dhcp", dhcpMode);
-        const dhcpEl = document.getElementById('allowdhcp');        
-        if (ii.allowDHCP === false) {
-          if (dhcpEl) dhcpEl.classList.add('hidden');
-          dhcpMode = false;
-        } else {
-          if (dhcpEl) dhcpEl.classList.remove('hidden');
-        }
-        setCheckbox("dhcp", dhcpMode);
+        document.getElementById('ip-addr').textContent=ii.ipAddress;
+        document.getElementById('ip-mask').textContent=ii.subnetMask;
+        document.getElementById('ip-gw').textContent=ii.gatewayAddress;
+        document.getElementById('ip-dns').textContent=ii.dnsAddress;
+        document.getElementById('ip-mac').textContent=ii.macAddress;
+        document.getElementById('cur-ip-addr').textContent=ii.ipAddress;
+        document.getElementById('allowDHCP').hidden=!ii.allowDHCP;
+        document.getElementById('dhcp').disabled=!ii.allowDHCP;
+        document.getElementById('dhcp').checked=ii.isDHCP;
       } catch (err) {
-        console.error(err);
+        console.error('[render error]', err);
       }
-    })();
-    function setCheckbox(id, value) {
-      const el = document.getElementById(id);
-      if (el) el.checked = value;
     }
-    function setText(id, text) {
-      const el = document.getElementById(id);
-      if (el) el.textContent = text ?? "—";
-    }
-    function safe(s) {
-      // Minimal sanitization for defensive display (mirrors pattern in header/footer)
-      return String(s ?? "—");
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', render, { once: true });
+    } else {
+      render();
     }
   </script>
+
 </body>
 </html>

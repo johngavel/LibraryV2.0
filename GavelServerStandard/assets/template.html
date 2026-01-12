@@ -1,39 +1,23 @@
 <!DOCTYPE html>
-<!-- template.html -->
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <!-- <meta id="refresh-meta" http-equiv="refresh" content="10; url=http://placeholder"> -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Optional: include CSRF token meta if your backend requires it -->
-  <!-- <meta name="csrf-token" content="YOUR_TOKEN_HERE"> -->
-
-  <!-- External stylesheet -->
-  <link rel="stylesheet" href="/style/style.css">
-  <!-- External script, loads after HTML is parsed -->
-  <script src="/js/buildinfo.js" defer></script>
-  <script src="/js/header.js" defer></script>
-  <script src="/js/footer.js" defer></script>
-  <!-- <script src="/js/redirect.js" defer></script> -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta id="refresh-meta" http-equiv="refresh" content="" />
+  <!-- Import the JS modules -->
+  <script type="module" src="/js/main.js"></script>
+  <link rel="stylesheet" href="style/style.css">
 </head>
 <body>
-  <!-- Header injected by header.js -->
-  <header id="site-header">
-    <h1>Template</h1>
-  </header>
-  <main>
-    <!-- Place Web Page Body Here -->
-    <!-- Program Info Card -->
-    <section class="card" id="main-card" aria-labelledby="main-title">
-      <h2 id="main-title"></h2>
-      <section class="card" id="first-card" aria-labelledby="first-title">
-        <h2 id="first-title">Program Info</h2>
-        <div class="fieldset">
-        </div>
-     </section>
-    </section>
+  <!-- Use the custom elements -->
+  <my-header></my-header>
+
+  <main class="container">
+
   </main>
-  <!-- Footer injected by footer.js -->
-  <footer id="site-footer"></footer>
+  
+  <my-footer></my-footer>
+
 </body>
 </html>
+

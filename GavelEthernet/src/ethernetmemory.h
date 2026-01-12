@@ -29,13 +29,17 @@ public:
   // IMemory overrides
   const unsigned char& operator[](std::size_t index) const override { return memory.buffer[index]; }
   unsigned char& operator[](std::size_t index) override { return memory.buffer[index]; }
-  void updateExternal() { setInternal(true); };
+  void updateExternal() {
+    setInternal(true);
+    checkDHCPAllowed();
+  };
   void disallowDHCP() {
     allowDHCP = false;
     memory.data.allowDHCP = false;
   };
-  void checkDHCPAllowed() {
+  bool checkDHCPAllowed() {
     if (allowDHCP == false) disallowDHCP();
+    return allowDHCP;
   };
 
   std::size_t size() const noexcept override { return sizeof(EthernetUnion::buffer); }
@@ -43,7 +47,7 @@ public:
   void initMemory() override {
     randomSeed(rp2040.hwrand32());
     memory.data.allowDHCP = allowDHCP;
-    if (!allowDHCP)
+    if (!checkDHCPAllowed())
       memory.data.isDHCP = false;
     else
       memory.data.isDHCP = true;

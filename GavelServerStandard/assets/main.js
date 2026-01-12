@@ -3,9 +3,13 @@ import {
   BuildInfo
 } from '/js/buildinfo.js';
 import {
+  IpInfo
+} from '/js/ipinfo.js';
+import {
   escapeHtml
 } from '/js/util.js';
 import '/js/ui.js';
+import '/js/buttons.js'
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Components loaded');

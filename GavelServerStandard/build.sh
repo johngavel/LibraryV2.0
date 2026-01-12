@@ -82,7 +82,7 @@ case "$BUILD" in
   --clean)
     generate_from_assets.sh -c -n SERVER -i "$CURRENT_DIR"/assets -o "$CURRENT_DIR"/src/webpage
     clean_tests $CURRENT_DIR
-    DELETE "$REGISTER_FILE"
+    Delete "$REGISTER_FILE"
     ;;
 
   --pre)

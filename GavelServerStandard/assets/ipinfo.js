@@ -28,8 +28,8 @@ const IpInfo = (() => {
         subnetMask: 'unknown',
         gatewayAddress: 'unknown',
         dnsAddress: 'unknown',
-        isDHCP: null,
-        allowDHCP: null
+        isDHCP: true,
+        allowDHCP: true
       };
     } finally {
       inflight = null;
@@ -76,3 +76,7 @@ const IpInfo = (() => {
     clearIpInfoCache
   };
 })();
+
+export {
+  IpInfo
+};

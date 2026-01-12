@@ -1,101 +1,68 @@
-<!doctype html>
-<!-- ipconfig.html -->
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>IP Configuration</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Use your shared stylesheet -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Import the JS modules -->
+  <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/ipconfig.js"></script>
   <link rel="stylesheet" href="/style/style.css">
 </head>
 <body>
-  <div class="container">
-
-    <header id="site-header">
-      <h1>IP Configuration</h1>
-    </header>
-    <header class="page-header">
-      <h2>IP Configuration</h2>
-      <p class="hint">View and set the device’s network settings.</p>
-    </header>
-
-    <form id="ipForm" class="card" novalidate>
-      <!-- Mode -->
-      <fieldset class="fieldset" id="allowdhcp">
-        <legend>Mode</legend>
-        <label class="switch">
-          <input type="checkbox" id="dhcp" />
-          <span class="switch-label">Obtain an IP address automatically (DHCP)</span>
-        </label>
-      </fieldset>
-
-      <!-- Static Settings -->
-      <fieldset class="fieldset">
-        <legend>Static Settings</legend>
-
-        <div class="row">
-          <label class="field">
-            <span class="label">IP Address</span>
-            <input type="text" id="ipAddress" placeholder="e.g., 192.168.1.50" class="text mono" />
+    <!-- Use the custom elements -->
+  <my-header></my-header>
+  <main class="container">
+    <form id="ipForm" novalidate>
+      <element-group legend="IP Information">
+        <element-group legend="Mode" id="allowdhcp">
+          <label class="switch">
+            <input type="checkbox" id="dhcp" />
+            <span class="switch-label">Obtain an IP address automatically (DHCP)</span>
           </label>
-
-          <label class="field">
-            <span class="label">Subnet Mask</span>
-            <input type="text" id="subnetMask" placeholder="e.g., 255.255.255.0" class="text mono" />
-          </label>
-        </div>
-
-        <div class="row">
-          <label class="field">
-            <span class="label">Default Gateway</span>
-            <input type="text" id="gatewayAddress" placeholder="e.g., 192.168.1.1" class="text mono" />
-          </label>
-
-        <label class="field">
-            <span class="label">DNS Server</span>
-            <input type="text" id="dnsAddress" placeholder="e.g., 8.8.8.8" class="text mono" />
-          </label>
-        </div>
-      </fieldset>
-
-      <!-- Device Info -->
-      <fieldset class="fieldset">
-        <legend>Device Info</legend>
-
-        <div class="row">
-          <label class="field">
-            <span class="label">MAC Address</span>
-            <input type="text" id="macAddress" class="text mono" disabled />
-          </label>
-
-          <label class="field">
-            <span class="label">Current IP</span>
-            <input type="text" id="currentIp" class="text mono" disabled />
-          </label>
-        </div>
-      </fieldset>
-
-      <!-- Actions -->
-      <div class="buttons">
-        <a href="/server.html"><button type="button" class="button2 button">Cancel</button></a>
-        <button type="button" id="btnReload" class="button button3">Reload</button>
-        <button type="submit" class="button button4">Save Settings</button>
-        <button type="button" id="btnSaveReboot" class="button button5">Save &amp; Reboot</button>
-      </div>
-
+        </element-group>
+        <element-group legend="Static Settings">
+          <div class="row">
+            <div class="field">
+              <div class="label">IP Address</div>
+              <input type="text" id="ipAddress" placeholder="e.g., 192.168.1.50" class="text mono" />
+            </div>
+            <div class="field">
+              <div class="label">Subnet Mask</div>
+              <input type="text" id="subnetMask" placeholder="e.g., 255.255.255.0" class="text mono" />
+            </div>
+            <div class="field">
+              <div class="label">Default Gateway</div>
+              <input type="text" id="gatewayAddress" placeholder="e.g., 192.168.1.1" class="text mono" />
+            </div>
+            <div class="field">
+              <div class="label">DNS Server</div>
+              <input type="text" id="dnsAddress" placeholder="e.g., 8.8.8.8" class="text mono" />
+            </div>
+          </div>
+        </element-group>
+        <element-group legend="Device Info">
+          <div class="row">
+            <div class="field">
+              <div class="label">MAC Address</div>
+              <div id="macAddress" class="mono">—</div>
+            </div>
+            <div class="field">
+              <div class="label">Current IP</div>
+              <div id="currentIp" class="mono">—</div>
+            </div>
+          </div>
+        </element-group>
+      </element-group>    
+      <config-card>
+          <back-button link="/index.html" color="backward">Cancel</back-button>
+          <button type="button" id="btnReload" class="button buttonOK">Reload</button>
+          <button type="submit" class="button buttonWarn">Save Settings</button>
+          <button type="button" id="btnSaveReboot" class="button buttonError">Save &amp; Reboot</button>        
+      </config-card>
       <div id="msg" class="msg" role="alert" aria-live="polite"></div>
     </form>
-  </div>
-   <!-- Footer populated by footer.js -->
-  <footer id="site-footer"></footer>
-
-  <!-- Existing helper that reads /api/ip-info.json -->
-  <script src="/js/buildinfo.js"></script>
-  <script src="/js/ipinfo.js"></script>
-  <!-- Page logic for loading, validation, and saving -->
-  <script src="/js/ipconfig.js"></script>
-  <!-- Header/Footer scripts (they already call BuildInfo) -->
-  <script src="/js/header.js"></script>
-  <script src="/js/footer.js"></script>
+  </main>
+  
+  <my-footer></my-footer>
 </body>
 </html>

@@ -1,26 +1,20 @@
 <!DOCTYPE html>
-<!-- error.html -->
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta id="refresh-meta" http-equiv="refresh" content="10; url=http://placeholder">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Optional: include CSRF token meta if your backend requires it -->
-  <!-- <meta name="csrf-token" content="YOUR_TOKEN_HERE"> -->
-
-  <!-- External stylesheet -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta id="refresh-meta" http-equiv="refresh" content="" />
+  <!-- Import the JS modules -->
+  <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/redirect.js"></script>
   <link rel="stylesheet" href="/style/style.css">
-  <!-- External script, loads after HTML is parsed -->
-  <script src="/js/buildinfo.js" defer></script>
-  <script src="/js/header.js" defer></script>
-  <script src="/js/footer.js" defer></script>
-  <script src="/js/redirect.js" defer></script>
 </head>
 <body>
-  <!-- Header injected by header.js -->
-  <header id="site-header"></header>
-  <main>
-    <hr style="width:50%">
+  <!-- Use the custom elements -->
+  <my-header></my-header>
+  <ip-redirect></ip-redirect>
+
+  <main class="container">
     <div class="warning-container">
       <h2>404</h2>
       <p class="top-content">Error - Page Not Found</p>
@@ -28,14 +22,14 @@
       <div class="bottom-content">
         <span>
           <br>Please check the URL.<br>
-          <br>Otherwise, <a href="/">click here</a> to be redirected to the homepage.<br>
+          <br>Otherwise, <nav-button link="/index.html" color="forward">Click Here</nav-button> to be redirected to the homepage.<br>
         </span>
       </div>
     </div>
-    <br><br>
-    <hr style="width:50%">
   </main>
-  <!-- Footer injected by footer.js -->
-  <footer id="site-footer"></footer>
+  
+  <my-footer></my-footer>
+
 </body>
 </html>
+

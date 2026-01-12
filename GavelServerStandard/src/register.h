@@ -11,23 +11,18 @@ void registerStaticHTMLFiles(ArrayDirectory* dir) {
   dir->addFile(new StaticFile(serverhtml_string, serverhtml, serverhtml_len));
   dir->addFile(new StaticFile(templatehtml_string, templatehtml, templatehtml_len));
   dir->addFile(new StaticFile(terminalhtml_string, terminalhtml, terminalhtml_len));
-  dir->addFile(new StaticFile(testhtml_string, testhtml, testhtml_len));
 }
 
 void registerStaticJSFiles(ArrayDirectory* dir) {
   dir->addFile(new StaticFile(buildinfojs_string, buildinfojs, buildinfojs_len));
-  dir->addFile(new StaticFile(footerjs_string, footerjs, footerjs_len));
-  dir->addFile(new StaticFile(headerjs_string, headerjs, headerjs_len));
+  dir->addFile(new StaticFile(buttonsjs_string, buttonsjs, buttonsjs_len));
   dir->addFile(new StaticFile(ipconfigjs_string, ipconfigjs, ipconfigjs_len));
   dir->addFile(new StaticFile(ipinfojs_string, ipinfojs, ipinfojs_len));
   dir->addFile(new StaticFile(librarytablejs_string, librarytablejs, librarytablejs_len));
   dir->addFile(new StaticFile(mainjs_string, mainjs, mainjs_len));
-  dir->addFile(new StaticFile(rebootbuttonjs_string, rebootbuttonjs, rebootbuttonjs_len));
   dir->addFile(new StaticFile(redirectjs_string, redirectjs, redirectjs_len));
   dir->addFile(new StaticFile(terminaljs_string, terminaljs, terminaljs_len));
-  dir->addFile(new StaticFile(transferjs_string, transferjs, transferjs_len));
   dir->addFile(new StaticFile(uijs_string, uijs, uijs_len));
-  dir->addFile(new StaticFile(upgradebuttonjs_string, upgradebuttonjs, upgradebuttonjs_len));
   dir->addFile(new StaticFile(utiljs_string, utiljs, utiljs_len));
 }
 
