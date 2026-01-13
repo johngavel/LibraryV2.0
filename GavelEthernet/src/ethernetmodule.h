@@ -32,6 +32,8 @@ public:
   IPAddress getGateway();
   IPAddress getDNS();
   byte* getMACAddress() { return memory.memory.data.macAddress; };
+  byte* getIPAddressByte() { return memory.memory.data.ipAddress; };
+  byte* getSubnetMaskByte() { return memory.memory.data.subnetMask; };
   bool getDHCP() { return memory.memory.data.isDHCP; };
   VirtualServer* getServer(int port);
 

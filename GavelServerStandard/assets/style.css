@@ -55,6 +55,14 @@ td {
   line-height: 1.0;
 }
 
+td.error {
+  background-color: var(--error);
+}
+
+td.warn {
+  background-color: var(--warn);
+}
+
 thead th, tbody td {
   border: 1px solid var(--border);
 }
