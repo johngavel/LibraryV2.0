@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta id="refresh-meta" http-equiv="refresh" content="" />
+  <!-- Import the JS modules -->
+  <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/redirect.js"></script>
+  <link rel="stylesheet" href="/style/style.css">
+</head>
+<body>
+  <!-- Use the custom elements -->
+  <my-header></my-header>
+  <ip-redirect></ip-redirect>
+
+  <main class="container">
+    <div class="warning-container">
+      <h2>404</h2>
+      <p class="top-content">Error - Page Not Found</p>
+      <hr style="width:50%">
+      <div class="bottom-content">
+        <span>
+          <br>Please check the URL.<br>
+          <br>Otherwise, <nav-button link="/index.html" color="forward">Click Here</nav-button> to be redirected to the homepage.<br>
+        </span>
+      </div>
+    </div>
+  </main>
+  
+  <my-footer></my-footer>
+
+</body>
+</html>
+

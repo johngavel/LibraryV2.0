@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Import the JS modules -->
+  <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/librarytable.js"></script>
+  <link rel="stylesheet" href="/style/style.css">
+</head>
+<body>
+  <!-- Use the custom elements -->
+  <my-header></my-header>
+
+  <main class="container">
+    <!-- Your main page content goes here -->
+    <config-card title="Libraries">
+      <library-table></library-table>
+      <br>
+      <config-card>
+        <back-button link="/index.html" color="backward">Cancel</back-button>
+      </config-card>
+    </config-card>
+  </main>
+  
+  <my-footer></my-footer>
+
+</body>
+</html>

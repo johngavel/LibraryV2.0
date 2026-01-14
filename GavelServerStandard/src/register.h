@@ -16,6 +16,7 @@ void registerStaticHTMLFiles(ArrayDirectory* dir) {
 void registerStaticJSFiles(ArrayDirectory* dir) {
   dir->addFile(new StaticFile(buildinfojs_string, buildinfojs, buildinfojs_len));
   dir->addFile(new StaticFile(buttonsjs_string, buttonsjs, buttonsjs_len));
+  dir->addFile(new StaticFile(filebuttonjs_string, filebuttonjs, filebuttonjs_len));
   dir->addFile(new StaticFile(ipconfigjs_string, ipconfigjs, ipconfigjs_len));
   dir->addFile(new StaticFile(ipinfojs_string, ipinfojs, ipinfojs_len));
   dir->addFile(new StaticFile(librarytablejs_string, librarytablejs, librarytablejs_len));

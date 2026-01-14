@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta id="refresh-meta" http-equiv="refresh" content="" />
+  <!-- Import the JS modules -->
+  <script type="module" src="/js/main.js"></script>
+  <link rel="stylesheet" href="/style/style.css">
+  <script src="/js/terminal.js" defer></script>
+</head>
+<body>
+  <!-- Header injected by header.js -->
+  <my-header></my-header>
+
+  <main class="container">
+    <config-card title="Terminal">
+      <div id="terminal" role="log" aria-live="polite" aria-atomic="false"></div>
+      <div class="controls">
+        <label for="input">Enter a command</label>        
+        <!-- Input field -->
+        <input
+          type="text"
+          id="input"
+          name="command"
+          placeholder="Enter a command ('?' or 'help')…"
+          autocomplete="off"
+          spellcheck="false"
+          autofocus
+          aria-label="Command input"
+        />
+        <back-button link="/server.html" color="backward">Cancel</back-button>
+      </div>
+      <div id="status" class="status">Startup…</div>
+    </config-card>
+  </main>
+  
+  <my-footer></my-footer>
+</body>
+</html>

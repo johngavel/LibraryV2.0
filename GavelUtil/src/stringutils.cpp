@@ -122,6 +122,36 @@ char* getMacString(unsigned char* mac, char* buffer, int size) {
   return buffer;
 }
 
+bool parseMacString(const char* macString, unsigned char* buffer) {
+  if (!macString || !buffer) return 0;
+
+  char temp[32];
+  strncpy(temp, macString, sizeof(temp) - 1);
+  temp[sizeof(temp) - 1] = '\0';
+
+  char* token = strtok(temp, ":");
+  int octetCount = 0;
+
+  while (token != NULL) {
+    // Check if token is hex (0-9, a-f, A-F)
+    for (int i = 0; token[i] != '\0'; i++) {
+      if (!isxdigit((unsigned char) token[i])) return 0;
+    }
+
+    char* end = NULL;
+    long value = strtol(token, &end, 16);
+    if (*token == '\0' || *end != '\0') return 0; // ensure full token parsed
+    if (value < 0 || value > 255) return 0;
+
+    if (octetCount >= 6) return 0; // guard overflow
+    buffer[octetCount++] = (unsigned char) value;
+
+    token = strtok(NULL, ":"); // keep delimiter consistent
+  }
+
+  return (octetCount == 6); // MAC must have exactly 6 octets
+}
+
 #define MAX_IP_STRING 16
 char* getIPString(unsigned char* ip, char* buffer, int size) {
   if (!ip || !buffer || size < MAX_IP_STRING) return buffer; // Safety check

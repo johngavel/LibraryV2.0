@@ -16,6 +16,7 @@ char* hexByteString(unsigned char value, char* buffer, int size);
 char* decByteString(unsigned char value, char* buffer, int size);
 
 char* getMacString(unsigned char* mac, char* buffer, int size);
+bool parseMacString(const char* macString, unsigned char* buffer);
 
 char* getIPString(unsigned char* ip, char* buffer, int size);
 bool parseIPAddress(const char* ipString, unsigned char* buffer);
