@@ -138,7 +138,7 @@ public:
         memcpy(memory.data.gatewayAddress, ip_buffer, 4);
       if ((dnsAddress) && parseIPAddress(dnsAddress, ip_buffer)) memcpy(memory.data.dnsAddress, ip_buffer, 4);
     }
-
+    setInternal(true);
     return true;
   };
 

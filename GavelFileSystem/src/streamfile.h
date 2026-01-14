@@ -74,7 +74,7 @@ private:
 
   bool _isOpen = false;
   char _name[200];
-  unsigned char _ringBuffer[8192];
+  unsigned char _ringBuffer[16384];
 };
 
 #endif // __GAVEL_STREAM_FILE_H
