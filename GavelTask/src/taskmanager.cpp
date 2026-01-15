@@ -95,7 +95,7 @@ bool TaskManager::executeTask() {
 
 void TaskManager::addCmd(TerminalCommand* __termCmd) {
   if (__termCmd)
-    __termCmd->addCmd("system", "", "Prints a list of Tasks running in the system",
+    __termCmd->addCmd("system", "[-v]", "Prints a list of Tasks running in the system",
                       [this](TerminalLibrary::OutputInterface* terminal) { system(terminal); });
 }
 
