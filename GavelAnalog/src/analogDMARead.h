@@ -27,9 +27,9 @@ class AnalogDmaRead : public Task {
 public:
   AnalogDmaRead() : Task("AnalogDmaRead") { memset(buffer, 0, CAPTURE_PINS * sizeof(ADC_BUFFER)); };
   void setTransfer(TransferCapture* __transfer) { transfer = __transfer; };
-  void addCmd(TerminalCommand* __termCmd) override {};
-  void reservePins(BackendPinSetup* pinsetup) override {};
-  bool setupTask(OutputInterface* __terminal) override;
+  virtual void addCmd(TerminalCommand* __termCmd) override {};
+  virtual void reservePins(BackendPinSetup* pinsetup) override {};
+  virtual bool setupTask(OutputInterface* __terminal) override;
   bool executeTask();
   ADC_BUFFER* getData();
   AvgStopWatch analysisTime;

@@ -42,25 +42,26 @@ private:
   ScreenInterface* display = nullptr;
 };
 
-class Screen : public Task, public ScreenInterface {
+class Screen : public Task, public ScreenInterface, public Hardware {
 public:
   Screen();
-  void addCmd(TerminalCommand* __termCmd) override;
-  void reservePins(BackendPinSetup* pinsetup) override;
-  bool setupTask(OutputInterface* __terminal) override;
-  bool executeTask() override;
+  virtual void addCmd(TerminalCommand* __termCmd) override;
+  virtual void reservePins(BackendPinSetup* pinsetup) override;
+  virtual bool setupTask(OutputInterface* __terminal) override;
+  virtual bool executeTask() override;
 
   void setRefreshScreen(RefreshScreen* __refreshScreen, unsigned long __refresh) {
     refreshScreen = __refreshScreen;
     refreshScreen->refresh = __refresh;
     refreshScreen->setScreen(this);
   };
-  void setScreen(String line1 = "", String line2 = "", String line3 = "", String line4 = "", String line5 = "",
-                 String line6 = "", String line7 = "", String line8 = "") override;
-  void setScreen(BITMAP bitmap, String caption) override;
-  void setScreen(unsigned char* bitmap, String caption, unsigned long width, unsigned long height) override;
-  Adafruit_SSD1306* getDisplay() override { return &display; };
-  unsigned char* getBitmap(BITMAP bitmap) override;
+  virtual void setScreen(String line1 = "", String line2 = "", String line3 = "", String line4 = "", String line5 = "",
+                         String line6 = "", String line7 = "", String line8 = "") override;
+  virtual void setScreen(BITMAP bitmap, String caption) override;
+  virtual void setScreen(unsigned char* bitmap, String caption, unsigned long width, unsigned long height) override;
+  virtual Adafruit_SSD1306* getDisplay() override { return &display; };
+  virtual unsigned char* getBitmap(BITMAP bitmap) override;
+  virtual bool isWorking() const override { return hardwareStatus; };
 
 private:
   Adafruit_SSD1306 display;
@@ -76,6 +77,7 @@ private:
 
   RefreshScreen* refreshScreen;
   void bitmap(OutputInterface* terminal);
+  bool hardwareStatus = false;
 };
 
 #endif // __GAVEL_SCREEN_CLASS_H

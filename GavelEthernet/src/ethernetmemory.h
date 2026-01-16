@@ -24,11 +24,11 @@ public:
     unsigned char buffer[sizeof(EthernetData)];
   } EthernetUnion;
 
-  EthernetMemory() { memset(memory.buffer, 0, sizeof(EthernetUnion::buffer)); };
+  EthernetMemory() : IMemory("Ethernet Config") { memset(memory.buffer, 0, sizeof(EthernetUnion::buffer)); };
 
   // IMemory overrides
-  const unsigned char& operator[](std::size_t index) const override { return memory.buffer[index]; }
-  unsigned char& operator[](std::size_t index) override { return memory.buffer[index]; }
+  virtual const unsigned char& operator[](std::size_t index) const override { return memory.buffer[index]; }
+  virtual unsigned char& operator[](std::size_t index) override { return memory.buffer[index]; }
   void updateExternal() {
     setInternal(true);
     checkDHCPAllowed();
@@ -42,9 +42,9 @@ public:
     return allowDHCP;
   };
 
-  std::size_t size() const noexcept override { return sizeof(EthernetUnion::buffer); }
+  virtual std::size_t size() const noexcept override { return sizeof(EthernetUnion::buffer); }
 
-  void initMemory() override {
+  virtual void initMemory() override {
     randomSeed(rp2040.hwrand32());
     memory.data.allowDHCP = allowDHCP;
     if (!checkDHCPAllowed())
@@ -76,10 +76,9 @@ public:
     memset(memory.data.spare, 0, sizeof(memory.data.spare));
   }
 
-  void printData(OutputInterface* terminal) override {
+  virtual void printData(OutputInterface* terminal) override {
     StringBuilder sb;
     char buffer[20];
-    terminal->println(HELP, "Ethernet Module Data: ");
     sb = "Allow DHCP: ";
     sb + memory.data.allowDHCP;
     terminal->println(INFO, sb.c_str());

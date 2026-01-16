@@ -91,9 +91,9 @@ fi
 
 if [[ $ACTION == "--build" ]]; then
   {
-    echo "/* Auto-generated: library names, versions, and license names */"
     echo "#ifndef __GAVEL_LIBRARIES_H"
     echo "#define __GAVEL_LIBRARIES_H"
+    echo "/* Auto-generated: library names, versions, and license names */"
     echo
     echo "typedef struct {"
     echo "  const char* name;"

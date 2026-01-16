@@ -1,6 +1,6 @@
-/* Auto-generated: library names, versions, and license names */
 #ifndef __GAVEL_LIBRARIES_H
 #define __GAVEL_LIBRARIES_H
+/* Auto-generated: library names, versions, and license names */
 
 typedef struct {
   const char* name;

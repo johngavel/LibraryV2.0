@@ -13,17 +13,17 @@
 class GPIOManager : public Task, public BackendPinSetup {
 public:
   GPIOManager();
-  void addCmd(TerminalCommand* __termCmd) override;
-  void reservePins(BackendPinSetup* pinsetup) override {};
-  bool setupTask(OutputInterface* __terminal) override;
-  bool executeTask() override;
+  virtual void addCmd(TerminalCommand* __termCmd) override;
+  virtual void reservePins(BackendPinSetup* pinsetup) override {};
+  virtual bool setupTask(OutputInterface* __terminal) override;
+  virtual bool executeTask() override;
 
   GPIOPin* addPin(unsigned int deviceIdx, GpioConfig cfg, int pin, Polarity pol = Polarity::Source);
   GPIOPin* addPin(unsigned int deviceIdx, int pin, int logicalIndex, GpioType type, const char* note,
                   Polarity pol = Polarity::Source);
 
-  bool addReservePin(unsigned int deviceIdx, int pin, const char* note) override;
-  bool addAvailablePin(unsigned int deviceIdx, int pin) override;
+  virtual bool addReservePin(unsigned int deviceIdx, int pin, const char* note) override;
+  virtual bool addAvailablePin(unsigned int deviceIdx, int pin) override;
 
   IGPIOBackend* addDevice(IGPIOBackend* device);
 

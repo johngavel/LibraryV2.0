@@ -96,6 +96,9 @@ void GPIOManager::addCmd(TerminalCommand* __termCmd) {
 
 bool GPIOManager::setupTask(OutputInterface* __terminal) {
   setRefreshMilli(5);
+  for (int i = 0; i < MAX_GPIO_DEVICES; i++) {
+    if (devices_[i] != nullptr) devices_[i]->start();
+  }
   return true;
 }
 

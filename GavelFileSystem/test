@@ -29,7 +29,7 @@ public:
   virtual const char* name() const = 0;
   virtual bool open(FileMode mode = READ_MODE) = 0;
   virtual void close() = 0;
-  bool isDirectory() const override { return false; };
+  virtual bool isDirectory() const override { return false; };
 
   // Stream virtuals
   virtual int available() = 0;
@@ -50,7 +50,7 @@ public:
   virtual const char* name() const = 0;
   virtual bool open(FileMode mode = READ_MODE) = 0;
   virtual void close() = 0;
-  bool isDirectory() const override { return true; };
+  virtual bool isDirectory() const override { return true; };
 
 private:
 };

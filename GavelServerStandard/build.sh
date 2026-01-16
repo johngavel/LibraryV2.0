@@ -51,8 +51,8 @@ createAddFiles() {
   # Remove old temp files on exit
   trap 'rm -f -- '"$TMP_FILE" RETURN
   {
-    echo "#ifndef __GAVEL_SERVER_REGISTER_FILES"
-    echo "#define __GAVEL_SERVER_REGISTER_FILES"
+    echo "#ifndef __GAVEL_SERVER_REGISTER_FILES_H"
+    echo "#define __GAVEL_SERVER_REGISTER_FILES_H"
     echo ""
     echo '#include "GavelServerStandard.h"'
     echo '#include "webpage/webpage_all.h"'
@@ -62,7 +62,7 @@ createAddFiles() {
   addFiles "js" "$TMP_FILE"
   addFiles "css" "$TMP_FILE"
   {
-    echo "#endif // __GAVEL_SERVER_REGISTER_FILES"
+    echo "#endif // __GAVEL_SERVER_REGISTER_FILES_H"
   } >> "$TMP_FILE"
 
   # Only replace if different

@@ -16,16 +16,16 @@ public:
     _name[sizeof(_name) - 1] = 0;
     setPermission(permission);
   };
-  int size() override { return ringBuffer.available(); };
-  int read(unsigned char* buf, int __size) override {
+  virtual int size() override { return ringBuffer.available(); };
+  virtual int read(unsigned char* buf, int __size) override {
     if (!_isOpen) return -1;
     return ringBuffer.read(buf, __size);
   };
-  operator bool() const override { return _isOpen; };
-  bool isOpen() const override { return _isOpen; };
+  virtual operator bool() const override { return _isOpen; };
+  virtual bool isOpen() const override { return _isOpen; };
   // DigitalBase virtuals
-  const char* name() const override { return _name; };
-  bool open(FileMode mode = READ_MODE) override {
+  virtual const char* name() const override { return _name; };
+  virtual bool open(FileMode mode = READ_MODE) override {
     if (_isOpen) return false;
     if ((mode == READ_MODE) && (_permission == WRITE_ONLY)) return false;
     if ((mode == WRITE_MODE) && (_permission == READ_ONLY)) return false;
@@ -36,30 +36,30 @@ public:
     return true;
   };
 
-  bool reset() override { return true; };
+  virtual bool reset() override { return true; };
 
-  void close() override {
+  virtual void close() override {
     if ((_isOpen) && (_mode == WRITE_MODE)) parseWriteData();
     _isOpen = false;
   };
-  bool isDirectory() const override { return false; };
+  virtual bool isDirectory() const override { return false; };
 
   // Stream virtuals
-  int available() override { return ringBuffer.available(); };
-  int read() override {
+  virtual int available() override { return ringBuffer.available(); };
+  virtual int read() override {
     if (!_isOpen) return -1;
     return ringBuffer.pop();
   };
-  int peek() override {
+  virtual int peek() override {
     if (!_isOpen) return -1;
     return ringBuffer.peek();
   };
-  void flush() override {};
-  size_t write(const unsigned char* buffer, size_t __size) override {
+  virtual void flush() override {};
+  virtual size_t write(const unsigned char* buffer, size_t __size) override {
     if (!_isOpen) return 0;
     return ringBuffer.write(buffer, __size);
   };
-  size_t write(unsigned char c) override {
+  virtual size_t write(unsigned char c) override {
     if (!_isOpen) return 0;
     return ringBuffer.push(c);
   };

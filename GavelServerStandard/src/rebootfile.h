@@ -8,7 +8,7 @@
 class RebootFile : public DynamicFile {
 public:
   RebootFile() : DynamicFile("reboot.json", READ_WRITE, _fileBuffer, sizeof(_fileBuffer)){};
-  bool createReadData() override { return true; };
+  virtual bool createReadData() override { return true; };
 
   virtual bool parseWriteData() override {
     pico.rebootPico();
@@ -22,7 +22,7 @@ private:
 class UpgradeFile : public DynamicFile {
 public:
   UpgradeFile() : DynamicFile("upgrade.json", READ_WRITE, _fileBuffer, sizeof(_fileBuffer)){};
-  bool createReadData() override { return true; };
+  virtual bool createReadData() override { return true; };
 
   virtual bool parseWriteData() override {
     picoOTA.begin();

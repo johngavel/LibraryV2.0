@@ -8,6 +8,7 @@
 
 Screen::Screen()
     : Task("Screen"),
+      Hardware("Screen"),
       display(Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, i2cWire.getWire(), OLED_RESET)),
       refreshScreen(nullptr) {}
 
@@ -47,6 +48,7 @@ bool Screen::setupTask(OutputInterface* __terminal) {
   i2cWire.wireGive();
   setScreen(JAXSON, String(ProgramInfo::AppName) + " v" + String(ProgramInfo::MajorVersion) + String(".") +
                         String(ProgramInfo::MinorVersion));
+  hardwareStatus = true;
   return true;
 }
 

@@ -9,14 +9,14 @@
 class IdleTask : public Task {
 public:
   IdleTask();
-  void addCmd(TerminalCommand* __termCmd) override {};
-  void reservePins(BackendPinSetup* pinsetup) override {};
-  bool setupTask(OutputInterface* __terminal) override {
+  virtual void addCmd(TerminalCommand* __termCmd) override {};
+  virtual void reservePins(BackendPinSetup* pinsetup) override {};
+  virtual bool setupTask(OutputInterface* __terminal) override {
     setRefreshMilli(MAX_IDLE_TIME);
     return true;
   };
   bool loop();
-  bool executeTask() override {
+  virtual bool executeTask() override {
     delay(delay_ms);
     delay_ms = 0;
     return true;

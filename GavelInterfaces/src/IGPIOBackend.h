@@ -3,6 +3,8 @@
 
 #define TASK_DEVICE_NAME_LENGTH 20
 
+#include "hardware.h"
+
 #include <GavelUtil.h>
 
 #define MAX_PINS_DEVICE 64
@@ -16,12 +18,13 @@ public:
   virtual bool addAvailablePin(unsigned int deviceIdx, int pin) = 0;
 };
 
-class IGPIOBackend {
+class IGPIOBackend : public Hardware {
 public:
-  IGPIOBackend(char* name, int deviceIdx__) : _deviceIdx(deviceIdx__) {
+  IGPIOBackend(char* name, int deviceIdx__) : Hardware(name), _deviceIdx(deviceIdx__) {
     strncpy(_name, name, TASK_DEVICE_NAME_LENGTH);
   };
   virtual ~IGPIOBackend() = default;
+  virtual void start();
   char* getDeviceName() { return _name; };
   int getDeviceIndex() { return _deviceIdx; };
   virtual void setAvailablePins(BackendPinSetup* pinsetup) = 0;
@@ -37,6 +40,9 @@ public:
   virtual void pwmConfigure(int pin, unsigned long freqHz, unsigned int dutyPct) {}
   virtual void toneStart(int pin, unsigned long freqHz) {}
   virtual void toneStop(int pin) {}
+
+  // Hardware virtual method
+  virtual bool isWorking() const = 0;
 
 private:
   char _name[TASK_DEVICE_NAME_LENGTH];

@@ -34,7 +34,7 @@ public:
   virtual bool open(FileMode mode = READ_MODE) = 0;
   virtual bool reset() = 0;
   virtual void close() = 0;
-  bool isDirectory() const override { return false; };
+  virtual bool isDirectory() const override { return false; };
 
   // Stream virtuals
   virtual int available() = 0;
@@ -62,7 +62,7 @@ public:
     return true;
   };
   virtual void close() = 0;
-  bool isDirectory() const override { return true; };
+  virtual bool isDirectory() const override { return true; };
   DigitalDirectory* getParent() { return _parentDir; };
   void setParent(DigitalDirectory* parent) { _parentDir = parent; };
 

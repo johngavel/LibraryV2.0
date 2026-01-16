@@ -4,9 +4,17 @@
 #include <GavelI2CWire.h>
 #include <TCA9555.h>
 
-static char devicename[] = "TaskManager";
+static char devicename[] = "TCA9555";
 
-Tca9555Backend::Tca9555Backend(unsigned char i2cAddr) : addr_(i2cAddr), dev_(nullptr) : IGPIOBackend(devicename) {
+Tca9555Backend::Tca9555Backend(unsigned char i2cAddr)
+    : IGPIOBackend(devicename, GPIO_DEVICE_TCA9555), addr_(i2cAddr), dev_(nullptr) {}
+
+void Tca9555Backend::setAvailablePins(BackendPinSetup* pinsetup) {
+  for (int i = 0; i < 16; i++) pinsetup->addAvailablePin(getDeviceIndex(), i);
+}
+void Tca9555Backend::setReservePins(BackendPinSetup* pinsetup) {}
+
+void Tca9555Backend::start() {
   i2cWire.wireTake();
   dev_ = new TCA9555(addr_, i2cWire.getWire()); // assumes global WIRE
   if (dev_) {
@@ -18,13 +26,6 @@ Tca9555Backend::Tca9555Backend(unsigned char i2cAddr) : addr_(i2cAddr), dev_(nul
 
 Tca9555Backend::~Tca9555Backend() {
   delete dev_;
-}
-
-static PinList availablePins;
-PinList* InternalBackend::getAvailablePins() {
-  availablePins.numberOfPins = 16;
-  for (int i = 0; i < availablePins.numberOfPins; i++) availablePins.pin[i] = i;
-  return &availablePins;
 }
 
 bool Tca9555Backend::setupInput(int pin) {

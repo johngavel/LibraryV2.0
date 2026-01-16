@@ -5,6 +5,7 @@
 #include "callback.h"
 #include "digitalfile.h"
 #include "dynamicfile.h"
+#include "hardware.h"
 #include "imemory.h"
 #include "json_interface.h"
 #include "networkinterface.h"

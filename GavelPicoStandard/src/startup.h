@@ -31,5 +31,6 @@ extern Watchdog watchdog;
 extern GPIOManager gpioManager;
 extern FileSystem fileSystem;
 extern License license;
+extern HardwareList hardwareList;
 
 #endif // __GAVEL_STARTUP_H

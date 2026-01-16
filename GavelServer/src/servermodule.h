@@ -13,10 +13,10 @@
 class ServerModule : public Task {
 public:
   ServerModule();
-  void addCmd(TerminalCommand* __termCmd) override;
-  void reservePins(BackendPinSetup* pinsetup) override {};
-  bool setupTask(OutputInterface* __terminal) override;
-  bool executeTask() override;
+  virtual void addCmd(TerminalCommand* __termCmd) override;
+  virtual void reservePins(BackendPinSetup* pinsetup) override {};
+  virtual bool setupTask(OutputInterface* __terminal) override;
+  virtual bool executeTask() override;
 
   void configure(VirtualServer* __server, DigitalFileSystem* __dfs) {
     server = __server;

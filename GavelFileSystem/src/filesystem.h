@@ -30,17 +30,17 @@ struct DirectoryStat {
 class FileSystem : public DigitalFileSystem, public Task {
 public:
   FileSystem();
-  void addCmd(TerminalCommand* __termCmd) override;
-  void reservePins(BackendPinSetup* pinsetup) override {};
-  bool setupTask(OutputInterface* __terminal) override;
-  bool executeTask() override;
+  virtual void addCmd(TerminalCommand* __termCmd) override;
+  virtual void reservePins(BackendPinSetup* pinsetup) override {};
+  virtual bool setupTask(OutputInterface* __terminal) override;
+  virtual bool executeTask() override;
 
-  DigitalBase* open(const char* path, FileMode mode = READ_MODE) override;
-  bool format() override;
-  bool verifyFile(const char* path) override;
-  DigitalFile* readFile(const char* path) override;
-  DigitalFile* writeFile(const char* path) override;
-  bool deleteFile(const char* path) override;
+  virtual DigitalBase* open(const char* path, FileMode mode = READ_MODE) override;
+  virtual bool format() override;
+  virtual bool verifyFile(const char* path) override;
+  virtual DigitalFile* readFile(const char* path) override;
+  virtual DigitalFile* writeFile(const char* path) override;
+  virtual bool deleteFile(const char* path) override;
 
 private:
   DigitalBase* getFile(const char* path);

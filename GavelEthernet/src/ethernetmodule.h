@@ -11,13 +11,13 @@
 #include <SPI.h>
 #include <Terminal.h>
 
-class EthernetModule : public Task, public VirtualNetwork, public VirtualServerFactory {
+class EthernetModule : public Task, public VirtualNetwork, public VirtualServerFactory, public Hardware {
 public:
   EthernetModule();
-  void addCmd(TerminalCommand* __termCmd) override;
-  void reservePins(BackendPinSetup* pinsetup) override;
-  bool setupTask(OutputInterface* __terminal) override;
-  bool executeTask() override;
+  virtual void addCmd(TerminalCommand* __termCmd) override;
+  virtual void reservePins(BackendPinSetup* pinsetup) override;
+  virtual bool setupTask(OutputInterface* __terminal) override;
+  virtual bool executeTask() override;
 
   void configure();
   void allowDHCP(bool __allowDHCP);
@@ -25,7 +25,7 @@ public:
   void configure(byte* __macAddress, bool __allowDHCP, bool __isDHCP, byte* __ipAddress, byte* __dnsAddress,
                  byte* __subnetMask, byte* __gatewayAddress);
 
-  bool linkStatus();
+  bool linkStatus() const;
   IMemory* getMemory() { return &memory; };
   IPAddress getIPAddress();
   IPAddress getSubnetMask();
@@ -36,6 +36,7 @@ public:
   byte* getSubnetMaskByte() { return memory.memory.data.subnetMask; };
   bool getDHCP() { return memory.memory.data.isDHCP; };
   VirtualServer* getServer(int port);
+  virtual bool isWorking() const override { return (hardwareStatus && linkStatus()); };
 
 private:
   bool resetW5500();
@@ -50,6 +51,7 @@ private:
 
   void ipConfig(OutputInterface* terminal);
   void ifConfig(OutputInterface* terminal);
+  bool hardwareStatus = false;
 };
 
 #endif //__GAVEL_ETHERNET_MODULE_H

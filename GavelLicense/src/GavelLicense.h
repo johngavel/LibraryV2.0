@@ -11,7 +11,7 @@ class License : public Task, public JsonInterface {
 public:
   License() : Task("License"){};
 
-  void addCmd(TerminalCommand* __termCmd) override {
+  virtual void addCmd(TerminalCommand* __termCmd) override {
     if (__termCmd) {
       __termCmd->addCmd("lib", "", "Prints the list of libraries used by this program",
                         [this](TerminalLibrary::OutputInterface* terminal) { libraryCmd(terminal); });
@@ -19,9 +19,9 @@ public:
                         [this](TerminalLibrary::OutputInterface* terminal) { detailCmd(terminal); });
     }
   };
-  void reservePins(BackendPinSetup* pinsetup) override {};
-  bool setupTask(OutputInterface* __terminal) override { return true; };
-  bool executeTask() override { return true; };
+  virtual void reservePins(BackendPinSetup* pinsetup) override {};
+  virtual bool setupTask(OutputInterface* __terminal) override { return true; };
+  virtual bool executeTask() override { return true; };
 
   bool addLibrary(unsigned int index) {
     if (index >= LIBRARY_COUNT) return false;

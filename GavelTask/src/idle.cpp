@@ -1,8 +1,6 @@
 #include "idle.h"
 
-IdleTask::IdleTask() : Task("IDLE") {
-  id = IDLE_ID;
-};
+IdleTask::IdleTask() : Task("IDLE", idleID()){};
 
 bool IdleTask::loop() {
   bool returnValue = false;

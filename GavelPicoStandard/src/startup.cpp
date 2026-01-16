@@ -17,6 +17,8 @@ Watchdog watchdog;
 FileSystem fileSystem;
 GPIOManager gpioManager;
 License license;
+HardwareList hardwareList;
+RP2040Backend rp2040Backend;
 
 void setup0Start(TerminalCommand* __termCmd) {
   startupMutex.take();
@@ -32,7 +34,7 @@ void setup0Start(TerminalCommand* __termCmd) {
   license.addLibrary(TERMINAL_INDEX);
   license.addLibrary(GAVEL_LIBRARIES_INDEX);
 
-  gpioManager.addDevice(new RP2040Backend());
+  gpioManager.addDevice(&rp2040Backend);
 
   serialPort.configureUSBSerial();
   serialPort.getUSBSerialTerminal()->setBannerFunction(banner);
@@ -46,6 +48,9 @@ void setup0Start(TerminalCommand* __termCmd) {
   taskManager.add(&watchdog);
   taskManager.add(&fileSystem);
   taskManager.add(&license);
+
+  hardwareList.add(&rp2040Backend);
+  hardwareList.add(&blink);
 
   addStandardTerminalCommands(__termCmd);
   if (__termCmd) {

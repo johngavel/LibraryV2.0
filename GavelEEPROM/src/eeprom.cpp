@@ -15,7 +15,7 @@ typedef union {
   unsigned char memoryBuffer[sizeof(DataStruct)];
 } DataHeader;
 
-EEpromMemory::EEpromMemory() : Task("EEPromMemory") {}
+EEpromMemory::EEpromMemory() : Task("EEPromMemory"), Hardware("EEPromMemory") {}
 
 void EEpromMemory::configure(unsigned long size) {
   memorySize = size;
@@ -176,7 +176,8 @@ void EEpromMemory::mem(OutputInterface* terminal) {
   if (dataList.count() != 0) {
     for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
       IMemory* data = getData(dataIndex);
-      sb + "Data ID: " + data->getId() + " Data Size: " + data->size();
+      sb = data->getName();
+      sb + " Data ID: " + data->getId() + " Data Size: " + data->size();
       terminal->println(PROMPT, sb.c_str());
       sb.clear();
       data->printData(terminal);

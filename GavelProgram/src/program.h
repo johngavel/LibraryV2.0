@@ -40,33 +40,32 @@ public:
     unsigned char buffer[sizeof(ProgramData)];
   } ProgramUnion;
 
-  ProgramMemory() { memset(memory.buffer, 0, sizeof(ProgramUnion::buffer)); };
+  ProgramMemory() : IMemory("Program") { memset(memory.buffer, 0, sizeof(ProgramUnion::buffer)); };
 
   // IMemory overrides
-  const unsigned char& operator[](std::size_t index) const override { return memory.buffer[index]; }
-  unsigned char& operator[](std::size_t index) override {
+  virtual const unsigned char& operator[](std::size_t index) const override { return memory.buffer[index]; }
+  virtual unsigned char& operator[](std::size_t index) override {
     // Unchecked, like std::vector::operator[]
     return memory.buffer[index];
   }
 
-  std::size_t size() const noexcept override { return sizeof(ProgramUnion::buffer); }
+  virtual std::size_t size() const noexcept override { return sizeof(ProgramUnion::buffer); }
 
-  void initMemory() override {
+  virtual void initMemory() override {
     memory.data.ProgramNumber = ProgramInfo::ProgramNumber;
     memory.data.MajorVersion = ProgramInfo::MajorVersion;
     memory.data.MinorVersion = ProgramInfo::MinorVersion;
     memory.data.spare = 0;
   }
 
-  void printData(OutputInterface* terminal) override {
+  virtual void printData(OutputInterface* terminal) override {
     StringBuilder sb;
-    terminal->println(HELP, "Program Data: ");
     sb + "Program: " + memory.data.ProgramNumber + " Version: " + memory.data.MajorVersion + "." +
         memory.data.MinorVersion;
     terminal->println(INFO, sb.c_str());
   }
 
-  void updateExternal() override {
+  virtual void updateExternal() override {
     if (memory.data.ProgramNumber != ProgramInfo::ProgramNumber) {
       conflict = true;
     } else {

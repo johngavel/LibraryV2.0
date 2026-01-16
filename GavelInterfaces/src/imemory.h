@@ -10,7 +10,8 @@
 
 class IMemory : public Identifiable, public JsonInterface {
 public:
-  IMemory() : updatedInternal(false) {}
+  IMemory() = delete;
+  IMemory(const char* __name) : Identifiable(memoryID(), __name), updatedInternal(false) {}
   virtual ~IMemory() = default;
 
   // Read-only access (const overload)
@@ -64,17 +65,17 @@ private:
 //   }
 
 //   // IMemory overrides
-//   const unsigned char& operator[](std::size_t index) const override {
+//   virtual const unsigned char& operator[](std::size_t index) const override {
 //     return memory.buffer[index];
 //   }
-//   unsigned char& operator[](std::size_t index) override {
+//   virtual unsigned char& operator[](std::size_t index) override {
 //     // Unchecked, like std::vector::operator[]
 //     return memory.buffer[index];
 //   }
 
-//   std::size_t size() const noexcept override { return sizeof(Memory::buffer); }
+//   virtual std::size_t size() const noexcept override { return sizeof(Memory::buffer); }
 
-//   void initMemory() override {
+//   virtual void initMemory() override {
 //     memory.data.data[0] = 0xDE;
 //     memory.data.data[1] = 0xAD;
 //     memory.data.data[2] = 0xCC;
@@ -84,7 +85,7 @@ private:
 //     memset(memory.data.spare, 0, sizeof(memory.data.spare));
 //   }
 
-//   void printData(OutputInterface* terminal) override {
+//   virtual void printData(OutputInterface* terminal) override {
 //     char buffer[20];
 //     terminal->print(INFO, "Data: ");
 //     terminal->println(INFO, getMacString(memory.data.data, buffer, sizeof(buffer)));

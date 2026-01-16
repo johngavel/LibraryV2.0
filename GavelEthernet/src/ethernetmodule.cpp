@@ -4,7 +4,7 @@
 
 static void ipAddressToBuffer(IPAddress address, unsigned char* buffer);
 
-EthernetModule::EthernetModule() : Task("EthernetModule") {}
+EthernetModule::EthernetModule() : Task("EthernetModule"), Hardware("EthernetModule") {}
 
 bool EthernetModule::resetW5500() {
   pinMode(15, OUTPUT);
@@ -119,7 +119,7 @@ bool EthernetModule::setupTask(OutputInterface* __terminal) {
   } else {
     terminal->println(ERROR, "Ethernet: Disconnected");
   }
-
+  hardwareStatus = status;
   return status;
 }
 
@@ -167,7 +167,7 @@ VirtualServer* EthernetModule::getServer(int port) {
   return new WiredServer(this, port);
 }
 
-bool EthernetModule::linkStatus() {
+bool EthernetModule::linkStatus() const {
   bool status;
   spiWire.wireTake();
   status = Ethernet.linkStatus();

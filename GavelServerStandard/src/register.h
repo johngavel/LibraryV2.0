@@ -1,5 +1,5 @@
-#ifndef __GAVEL_SERVER_REGISTER_FILES
-#define __GAVEL_SERVER_REGISTER_FILES
+#ifndef __GAVEL_SERVER_REGISTER_FILES_H
+#define __GAVEL_SERVER_REGISTER_FILES_H
 
 #include "GavelServerStandard.h"
 #include "webpage/webpage_all.h"
@@ -31,4 +31,4 @@ void registerStaticCSSFiles(ArrayDirectory* dir) {
   dir->addFile(new StaticFile(stylecss_string, stylecss, stylecss_len));
 }
 
-#endif // __GAVEL_SERVER_REGISTER_FILES
+#endif // __GAVEL_SERVER_REGISTER_FILES_H

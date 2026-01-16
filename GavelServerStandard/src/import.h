@@ -32,7 +32,7 @@ class ImportFile : public JsonInterface {
 public:
   ImportFile(EEpromMemory* eeprom) : _eeprom(eeprom) {}
 
-  JsonDocument createJson() override {
+  virtual JsonDocument createJson() override {
     JsonDocument doc;
     if (!_eeprom) { return doc; }
 
@@ -52,7 +52,7 @@ public:
     return doc;
   }
 
-  bool parseJson(JsonDocument& doc) override {
+  virtual bool parseJson(JsonDocument& doc) override {
     if (!_eeprom) return false;
     const unsigned long n = _eeprom->getNumberOfData();
     for (unsigned long i = 0; i < n; ++i) {

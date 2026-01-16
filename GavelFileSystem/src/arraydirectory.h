@@ -10,15 +10,15 @@ public:
   bool addFile(DigitalFile* file);
   bool addDirectory(const char* name);
   bool addDirectory(DigitalDirectory* dir);
-  DigitalBase* getFile(const char* name) override;
+  virtual DigitalBase* getFile(const char* name) override;
   // DigitalDirectory virtuals
-  DigitalBase* getNextFile() override;
-  void rewindDirectory() override;
+  virtual DigitalBase* getNextFile() override;
+  virtual void rewindDirectory() override;
   // DigitalBase virtuals
-  const char* name() const override;
+  virtual const char* name() const override;
   virtual DigitalFile* open(const char* name, FileMode mode = READ_MODE) override;
   virtual DigitalDirectory* getDirectory(const char* name) override;
-  void close() override;
+  virtual void close() override;
 
 private:
   char _name[200];

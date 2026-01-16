@@ -6,9 +6,7 @@
 #include <GavelProgram.h>
 #include <GavelUtil.h>
 
-TaskManager::TaskManager() : Task("TaskManager"), queue(20, sizeof(Task*)) {
-  id = TASK_MANAGER_ID;
-};
+TaskManager::TaskManager() : Task("TaskManager", systemID()), queue(20, sizeof(Task*)){};
 
 void TaskManager::reservePins(BackendPinSetup* pinsetup) {
   if (pinsetup != nullptr) {
@@ -35,7 +33,7 @@ bool TaskManager::setupTask(OutputInterface* terminal) {
     returnValue &= setupValue;
     t->addCmd(TERM_CMD);
     if (terminal) {
-      sb + t->getName() + " Task Initialization Complete";
+      sb + t->getName() + " Task (" + t->getId() + ") Initialization Complete";
       if (setupValue)
         terminal->println(PASSED, sb.c_str());
       else
@@ -49,7 +47,7 @@ bool TaskManager::setupTask(OutputInterface* terminal) {
 
   setupIdle();
   if (terminal) {
-    sb + this->getName() + " Task Initialization Complete";
+    sb + this->getName() + " Task (" + this->getId() + ") Initialization Complete";
     if (returnValue)
       terminal->println(PASSED, sb.c_str());
     else
@@ -80,7 +78,7 @@ bool TaskManager::executeTask() {
   int running_core = rp2040.cpuid();
   for (unsigned long i = 0; i < queue.count(); i++) {
     Task* t = getTask(i);
-    if (t->runTask() && (t->getID() != TASK_MANAGER_ID) && (t->getID() != IDLE_ID)) {
+    if (t->runTask() && (taskID().checkId(t->getId()))) {
       if (t->getCore() == running_core) {
         loopValue = t->loop();
         returnValue &= loopValue;
@@ -138,7 +136,7 @@ void TaskManager::system(OutputInterface* terminal) {
   table.printHeader();
   for (unsigned long i = 0; i < queue.count(); i++) {
     queue.get(i, &task);
-    if (verbose || (task->getID() != IDLE_ID)) {
+    if (verbose || (!idleID().checkId(task->getId()))) {
       StringBuilder id;
       StringBuilder name;
       StringBuilder timeString = "-";
@@ -148,7 +146,7 @@ void TaskManager::system(OutputInterface* terminal) {
       StringBuilder percentString = "-";
       StringBuilder coreString = "-";
 
-      id = task->getID();
+      id = task->getId();
       name = task->getName();
       if (task->runTask()) {
         double time = task->getExecutionTime()->time();
@@ -163,7 +161,7 @@ void TaskManager::system(OutputInterface* terminal) {
         double timeTakenPerSec = timePerSec * time;
         percentString = timeTakenPerSec / 1000000.0 * 100;
         percentString + "%";
-        if (task->getID() != TASK_MANAGER_ID) {
+        if (!systemID().checkId(task->getId())) {
           coreString = task->getCore();
           coreUtil[task->getCore()] += timeTakenPerSec;
         }

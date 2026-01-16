@@ -10,7 +10,7 @@ public:
   SSECmd()
       : DynamicFile("terminal_command.json", READ_WRITE, _fileBuffer, sizeof(_fileBuffer)),
         _stream(_buffer, sizeof(_buffer)){};
-  bool createReadData() override { return true; };
+  virtual bool createReadData() override { return true; };
 
   virtual bool parseWriteData() override {
     JsonDocument doc;
@@ -35,7 +35,7 @@ private:
 class SSEEvent : public StreamFile {
 public:
   SSEEvent() : StreamFile("terminal_events.stream", READ_ONLY), _stream(_buffer, sizeof(_buffer)){};
-  bool createReadData() override {
+  virtual bool createReadData() override {
     char charBuffer[256];
     unsigned int lengthBuffer = 0;
     memset(charBuffer, 0, sizeof(charBuffer));
@@ -107,14 +107,14 @@ public:
     strncpy(promptString, __promptString, 20);
     bannerFunction = function;
   };
-  void addCmd(TerminalCommand* __termCmd) override {
+  virtual void addCmd(TerminalCommand* __termCmd) override {
     if (__termCmd) {
       __termCmd->addCmd("connect", "", "Prints welcome message for connecting clients",
                         [this](TerminalLibrary::OutputInterface* terminal) { connectedCmd(terminal); });
     }
   };
-  void reservePins(BackendPinSetup* pinsetup) override {};
-  bool setupTask(OutputInterface* __terminal) override {
+  virtual void reservePins(BackendPinSetup* pinsetup) override {};
+  virtual bool setupTask(OutputInterface* __terminal) override {
     setRefreshMilli(10);
     terminal.setup();
     terminal.setEcho(false);
@@ -125,7 +125,7 @@ public:
     heartbeat.setRefreshSeconds(5);
     return true;
   };
-  bool executeTask() override {
+  virtual bool executeTask() override {
     if (heartbeat.expired() && event.isOpen()) event.sseBroadcastEvent("heartbeat", "ping");
 
     terminal.loop();

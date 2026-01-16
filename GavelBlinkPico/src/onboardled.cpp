@@ -9,7 +9,7 @@
 static Adafruit_NeoPixel pixels(NUMPIXELS, RP2040_PIN, NEO_GRB + NEO_KHZ800);
 #endif
 
-Blink::Blink() : Task("Blink"){};
+Blink::Blink() : Task("Blink"), Hardware("Blink"){};
 
 void Blink::reservePins(BackendPinSetup* pinsetup) {
 #ifdef ARDUINO_WAVESHARE_RP2040_ZERO

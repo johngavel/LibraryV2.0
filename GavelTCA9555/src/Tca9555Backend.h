@@ -8,19 +8,23 @@ class Tca9555Backend : public IGPIOBackend {
 public:
   explicit Tca9555Backend(unsigned char i2cAddr);
   ~Tca9555Backend();
-  bool setupInput(int pin) override;
-  bool setupOutput(int pin) override;
-  bool setupAdc(int pin, unsigned char bits) override {
+  void start();
+  virtual void setAvailablePins(BackendPinSetup* pinsetup) override;
+  virtual void setReservePins(BackendPinSetup* pinsetup) override;
+  virtual bool setupInput(int pin) override;
+  virtual bool setupOutput(int pin) override;
+  virtual bool setupAdc(int pin, unsigned char bits) override {
     (void) pin;
     (void) bits;
     return false;
   }
-  bool readDigital(int pin) const override;
-  void writeDigital(int pin, bool level) override;
-  unsigned int readAnalog(int pin) const override {
+  virtual bool readDigital(int pin) const override;
+  virtual void writeDigital(int pin, bool level) override;
+  virtual unsigned int readAnalog(int pin) const override {
     (void) pin;
     return 0;
   }
+  virtual bool isWorking() const override { return (dev_) ? true : false; };
 
 private:
   unsigned char addr_;
