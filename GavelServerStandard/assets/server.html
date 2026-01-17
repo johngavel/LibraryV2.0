@@ -6,6 +6,8 @@
   <!-- Import the JS modules -->
   <script type="module" src="/js/main.js"></script>
   <script type="module" src="/js/filebutton.js"></script>
+  <script type="module" src="js/datatable.js"></script>
+  <script type="module" src="js/hwtable.js"></script>
   <link rel="stylesheet" href="/style/style.css">
 </head>
 <body>
@@ -42,6 +44,9 @@
             <div id="prog-device" class="mono">—</div>
           </div>
         </div>
+      </element-group>
+      <element-group legend="Hardware Status">
+        <hardware-table></hardware-table>
       </element-group>
       <element-group legend="IP Information">
         <element-group legend="Mode" id="allowDHCP">

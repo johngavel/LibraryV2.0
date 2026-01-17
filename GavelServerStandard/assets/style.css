@@ -65,6 +65,11 @@ td.warn {
   color: var(--fg);
 }
 
+td.ok {
+  background-color: var(--ok);
+  color: var(--fg);  
+}
+
 thead th, tbody td {
   border: 1px solid var(--border);
 }

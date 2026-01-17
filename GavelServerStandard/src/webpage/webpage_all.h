@@ -3,8 +3,10 @@
 
 #include "buildinfojs.h"
 #include "buttonsjs.h"
+#include "datatablejs.h"
 #include "errorhtml.h"
 #include "filebuttonjs.h"
+#include "hwtablejs.h"
 #include "ipconfightml.h"
 #include "ipconfigjs.h"
 #include "ipinfojs.h"

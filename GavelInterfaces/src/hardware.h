@@ -28,19 +28,19 @@ public:
   }
 
   // Read-only inspection
-  unsigned long long size() const noexcept { return count_; }
+  unsigned int size() const noexcept { return count_; }
   bool empty() const noexcept { return count_ == 0; }
   bool full() const noexcept { return count_ == 10; }
 
   // Direct indexed access (non-owning)
-  Hardware* operator[](unsigned long long index) const {
+  Hardware* operator[](unsigned int index) const {
     if (index >= count_) return 0;
     return items_[index];
   }
 
 private:
-  Hardware* items_[10];      // non-owning pointers
-  unsigned long long count_; // number of active items
+  Hardware* items_[10]; // non-owning pointers
+  unsigned int count_;  // number of active items
 };
 
 #endif // __GAVEL_HARDWARE_H

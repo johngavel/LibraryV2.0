@@ -1,4 +1,3 @@
-
 #ifndef __GAVEL_ID_GENERATOR_H
 #define __GAVEL_ID_GENERATOR_H
 

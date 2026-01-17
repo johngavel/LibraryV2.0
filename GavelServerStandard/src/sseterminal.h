@@ -146,4 +146,5 @@ private:
     terminal->prompt();
   }
 };
+
 #endif // __GAVEL_SSE_TERM_H
