@@ -46,8 +46,8 @@ void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSyst
   dir = static_cast<ArrayDirectory*>(fs->open("/www/api"));
   dir->addFile(new JsonFile(&programMem, "build-info.json", READ_ONLY));
   dir->addFile(new JsonFile(ethernet, "ip-info.json", READ_WRITE));
-  dir->addFile(new JsonFile(new ImportFile(memory), "export.json", READ_WRITE));
-  dir->addFile(new JsonFile(&license, "license-info.json", READ_ONLY));
+  dir->addFile(new JsonFile(new ImportFile(memory), "export.json", READ_WRITE, JsonFile::LARGE_BUFFER_SIZE));
+  dir->addFile(new JsonFile(&license, "license-info.json", READ_ONLY, JsonFile::LARGE_BUFFER_SIZE));
   dir->addFile(new RebootFile());
   dir->addFile(new UpgradeFile());
   dir->addFile(new JsonFile(new HardwareFile(&hardwareList), "hw-info.json", READ_ONLY));

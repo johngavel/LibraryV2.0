@@ -34,7 +34,7 @@ private:
 
 class SSEEvent : public StreamFile {
 public:
-  SSEEvent() : StreamFile("terminal_events.stream", READ_ONLY), _stream(_buffer, sizeof(_buffer)){};
+  SSEEvent() : StreamFile("terminal_events.stream", READ_ONLY, sizeof(_buffer)), _stream(_buffer, sizeof(_buffer)){};
   virtual bool createReadData() override {
     char charBuffer[256];
     unsigned int lengthBuffer = 0;
@@ -96,7 +96,7 @@ public:
   }
 
 private:
-  unsigned char _buffer[8192];
+  unsigned char _buffer[16384];
   CharRingBuffer _stream;
 };
 

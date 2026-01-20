@@ -57,6 +57,7 @@ public:
   };
   virtual bool parseJson(JsonDocument& doc) override {
     if (!doc["tempdrift"].isNull()) { memory.data.drift = doc["tempdrift"]; }
+    setInternal(true);
     return true;
   };
 

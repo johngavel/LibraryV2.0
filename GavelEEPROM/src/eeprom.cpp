@@ -42,7 +42,7 @@ bool EEpromMemory::setupTask(OutputInterface* __terminal) {
   unsigned int fullDataSize = memorySize / 8;
   terminal = __terminal;
 
-  setRefreshMilli(1000);
+  setRefreshMilli(500);
   dataSize = 0;
   for (unsigned long i = 0; i < dataList.count(); i++) {
     dataSize += sizeof(DataHeader);
@@ -74,11 +74,7 @@ bool EEpromMemory::executeTask() {
     if (data->getInternal()) { updated = true; }
   }
 
-  if (updated) {
-    forceWrite();
-  } else {
-    setRefreshMilli(1000);
-  }
+  if (updated) { forceWrite(); }
   return true;
 }
 

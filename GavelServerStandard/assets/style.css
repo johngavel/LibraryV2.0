@@ -7,6 +7,8 @@
   --warn: #ff8c00;
   --error: red;
   --ok: green;
+  --off: black;
+  --on: red;
   --console-bg: #000000;
   --console-fg: #ffffff;
   --console-font: "Courier New", Courier, monospace;
@@ -140,9 +142,11 @@ tbody tr:nth-child(odd) {
   filter: grayscale(10%);
 }
 
-.buttonOK { background-color: var(--ok); }
-.buttonError { background-color: var(--error); }
-.buttonWarn { background-color: var(--warn); }
+.button.buttonOK { background-color: var(--ok); }
+.button.buttonError { background-color: var(--error); }
+.button.buttonWarn { background-color: var(--warn); }
+.button.buttonOff {background-color: var(--off); }
+.button.buttonOn {background-color: var(--on); }
 
 /* Nav buttons */
 .nav-button {
