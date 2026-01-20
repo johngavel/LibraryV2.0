@@ -16,7 +16,7 @@ static const LibraryInfo libraries[] = {
     {"Adafruit NeoPixel", "1.15.2", "COPYING", "https://github.com/adafruit/Adafruit_NeoPixel"},
     {"Adafruit SSD1306", "2.5.16", "license.txt", "https://github.com/adafruit/Adafruit_SSD1306"},
     {"Adafruit Unified Sensor", "1.1.15", "LICENSE.txt", "https://github.com/adafruit/Adafruit_Sensor"},
-    {"arduino-cli", "1.4.0", "LICENSE.txt", "https://github.com/arduino/arduino-cli"},
+    {"arduino-cli", "1.4.1", "LICENSE.txt", "https://github.com/arduino/arduino-cli"},
     {"Arduino IDE", "2.3.7", "LICENSE.txt", "https://github.com/arduino/arduino-ide"},
     {"ArduinoJson", "7.4.2", "LICENSE.txt", "https://arduinojson.org/?utm_source=meta&utm_medium=library.properties"},
     {"Arduino Pico", "5.4.4", "LICENSE", "https://github.com/earlephilhower/arduino-pico"},

@@ -131,7 +131,6 @@
         document.getElementById('ip-mac').textContent=ii.macAddress;
         document.getElementById('cur-ip-addr').textContent=ii.ipAddress;
         document.getElementById('allowDHCP').hidden=!ii.allowDHCP;
-        document.getElementById('dhcp').disabled=!ii.allowDHCP;
         document.getElementById('dhcp').checked=ii.isDHCP;
       } catch (err) {
         console.error('[render error]', err);
