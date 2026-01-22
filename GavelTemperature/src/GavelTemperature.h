@@ -8,7 +8,7 @@
 class Temperature : public Task, public IMemory, public Hardware {
 public:
   typedef struct {
-    unsigned long drift;
+    long drift;
   } TemperatureData;
 
   static_assert(sizeof(TemperatureData) == 4, "ProgramMemory size unexpected - check packing/padding.");
@@ -56,9 +56,11 @@ public:
     return doc;
   };
   virtual bool parseJson(JsonDocument& doc) override {
-    if (!doc["tempdrift"].isNull()) { memory.data.drift = doc["tempdrift"]; }
-    setInternal(true);
-    return true;
+    if (!doc["tempdrift"].isNull()) {
+      setDrift(doc["tempdrift"]);
+      return true;
+    }
+    return false;
   };
 
   void configure(int __pin);
@@ -66,6 +68,10 @@ public:
   bool isConfigured() { return configured; };
   int getTemperature();
   virtual bool isWorking() const override { return validTemp; };
+  void setDrift(long _drift) {
+    memory.data.drift = _drift;
+    setInternal(true);
+  }
 
 private:
   int readTemperature();
@@ -78,6 +84,7 @@ private:
   unsigned long pin;
 
   void temperatureStatus(OutputInterface* terminal);
+  void driftCommand(OutputInterface* terminal);
 };
 
 #endif // __GAVEL_TEMPERATURE_H

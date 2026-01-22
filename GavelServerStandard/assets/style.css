@@ -364,3 +364,20 @@ config-card.row section > h2 {
     padding: 3px 6px;  /* optional: adjust inner spacing */
 }
 
+my-temperature {
+  display: none; 
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* When visible (script toggles style.display), you can override if needed */
+my-temperature[style*="display: inline"],
+my-temperature[style*="display: block"] {
+  display: inline-block;
+}
+
+

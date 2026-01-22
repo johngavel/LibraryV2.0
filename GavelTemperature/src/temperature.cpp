@@ -11,6 +11,8 @@ void Temperature::configure(int __pin) {
 void Temperature::addCmd(TerminalCommand* __termCmd) {
   __termCmd->addCmd("temperature", "", "Temperature Status",
                     [this](TerminalLibrary::OutputInterface* terminal) { Temperature::temperatureStatus(terminal); });
+  __termCmd->addCmd("drift", "[n]", "Set Temperature Drift",
+                    [this](TerminalLibrary::OutputInterface* terminal) { Temperature::driftCommand(terminal); });
 }
 
 void Temperature::reservePins(BackendPinSetup* pinsetup) {
@@ -66,5 +68,16 @@ void Temperature::temperatureStatus(OutputInterface* terminal) {
   terminal->print(INFO, "Temperature: ");
   terminal->print(INFO, String(getTemperature()));
   terminal->println(INFO, "°F.");
+  terminal->prompt();
+}
+
+void Temperature::driftCommand(OutputInterface* terminal) {
+  char* value = terminal->readParameter();
+  if (value != NULL) {
+    long drift = (long) atoi(value);
+    setDrift(drift);
+  } else {
+    terminal->invalidParameter();
+  }
   terminal->prompt();
 }

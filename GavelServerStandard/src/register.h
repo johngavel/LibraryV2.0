@@ -24,6 +24,7 @@ void registerStaticJSFiles(ArrayDirectory* dir) {
   dir->addFile(new StaticFile(librarytablejs_string, librarytablejs, librarytablejs_len));
   dir->addFile(new StaticFile(mainjs_string, mainjs, mainjs_len));
   dir->addFile(new StaticFile(redirectjs_string, redirectjs, redirectjs_len));
+  dir->addFile(new StaticFile(temperaturejs_string, temperaturejs, temperaturejs_len));
   dir->addFile(new StaticFile(terminaljs_string, terminaljs, terminaljs_len));
   dir->addFile(new StaticFile(uijs_string, uijs, uijs_len));
   dir->addFile(new StaticFile(utiljs_string, utiljs, utiljs_len));

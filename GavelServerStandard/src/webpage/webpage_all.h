@@ -16,6 +16,7 @@
 #include "redirectjs.h"
 #include "serverhtml.h"
 #include "stylecss.h"
+#include "temperaturejs.h"
 #include "templatehtml.h"
 #include "terminalhtml.h"
 #include "terminaljs.h"
