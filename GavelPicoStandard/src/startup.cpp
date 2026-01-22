@@ -41,6 +41,8 @@ void setup0Start(TerminalCommand* __termCmd) {
   StringBuilder sb = ProgramInfo::ShortName;
   sb + ":\\>";
   serialPort.getUSBSerialTerminal()->setPromptString(sb.c_str());
+  DBG_REGISTER(serialPort.getSerial1Terminal());
+  DBG_REGISTER(serialPort.getUSBSerialTerminal());
 
   taskManager.add(&gpioManager);
   taskManager.add(&serialPort);

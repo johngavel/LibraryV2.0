@@ -10,7 +10,7 @@ GPIOPin::GPIOPin(int physicalPin, IGPIOBackend* device, GpioConfig cfg, Polarity
 
 bool GPIOPin::setup() {
   bool value = false;
-  timer_.setRefreshMilli(50);
+  timer_.setRefreshMilli(DEBOUNCE_TIMER);
   timer_.runTimer(false);
   switch (cfg_.type) {
   case GpioType::Input: return device_->setupInput(phys_);

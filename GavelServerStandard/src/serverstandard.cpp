@@ -26,6 +26,7 @@ static void setupTerminalAPI(ArrayDirectory* dir, TaskManager* taskManager) {
   dir->addFile(&terminal.command);
   dir->addFile(&terminal.event);
   taskManager->add(&terminal);
+  DBG_REGISTER(&terminal.terminal);
 }
 
 void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSystem* fs, TaskManager* taskManager,

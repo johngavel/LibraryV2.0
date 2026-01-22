@@ -356,3 +356,11 @@ config-card.row section > h2 {
   grid-column: 1 / -1;
   margin-top: 0;
 }
+
+.device-input {
+    font-size: 20px;   /* increase text size */
+    width: 200px;      /* shrink width */
+    height: 25px;      /* shrink height */
+    padding: 3px 6px;  /* optional: adjust inner spacing */
+}
+

@@ -9,6 +9,7 @@ enum FilePermission { READ_ONLY, WRITE_ONLY, READ_WRITE };
 class DigitalBase {
 public:
   virtual bool isDirectory() const = 0;
+  virtual bool isAPI() const { return false; };
   virtual const char* name() const = 0;
   virtual bool open(FileMode mode = READ_MODE) = 0;
   virtual bool reset() = 0;

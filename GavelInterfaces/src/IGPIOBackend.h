@@ -24,7 +24,7 @@ public:
     strncpy(_name, name, TASK_DEVICE_NAME_LENGTH);
   };
   virtual ~IGPIOBackend() = default;
-  virtual void start();
+  virtual bool start();
   char* getDeviceName() { return _name; };
   int getDeviceIndex() { return _deviceIdx; };
   virtual void setAvailablePins(BackendPinSetup* pinsetup) = 0;

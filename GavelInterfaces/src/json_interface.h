@@ -2,6 +2,7 @@
 #define __GAVEL_JSON_INTERFACE_H
 
 #include <ArduinoJson.h>
+#include <Terminal.h>
 
 class JsonInterface {
 public:
@@ -19,13 +20,13 @@ public:
   bool parse(Stream& stream) {
     JsonDocument doc;
     DeserializationError error = deserializeJson(doc, stream);
-    if (error) return false;
+    if (error) { return false; }
     return parseJson(doc);
   };
   bool parse(char* buffer, size_t length) {
     JsonDocument doc;
     DeserializationError error = deserializeJson(doc, buffer, length);
-    if (error) return false;
+    if (error) { return false; }
     return parseJson(doc);
   };
 };

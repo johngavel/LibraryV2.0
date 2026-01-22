@@ -40,7 +40,6 @@ public:
 private:
   IGPIOBackend* devices_[MAX_GPIO_DEVICES];
   ClassicSortList pins_ = ClassicSortList(MAX_PINS, sizeof(GPIOPin));
-  bool initializePins = false;
 };
 
 #endif // __GAVEL_GPIO_MANAGER_H

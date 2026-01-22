@@ -6,7 +6,10 @@
 class RP2040Backend : public IGPIOBackend {
 public:
   RP2040Backend();
-  virtual void start() override {};
+  virtual bool start() override {
+    success_ = true;
+    return success_;
+  };
   virtual void setAvailablePins(BackendPinSetup* pinsetup) override;
   virtual void setReservePins(BackendPinSetup* pinsetup) override;
   virtual bool setupInput(int pin) override;
@@ -18,7 +21,10 @@ public:
   virtual void pwmConfigure(int pin, unsigned long freqHz, unsigned int dutyPct) override;
   virtual void toneStart(int pin, unsigned long freqHz) override;
   virtual void toneStop(int pin) override;
-  virtual bool isWorking() const override { return true; };
+  virtual bool isWorking() const override { return success_; };
+
+private:
+  bool success_;
 };
 
 #endif // __GAVEL_GPIO_INTERNAL_BACKEND_H

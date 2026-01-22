@@ -8,7 +8,7 @@ class Tca9555Backend : public IGPIOBackend {
 public:
   explicit Tca9555Backend(unsigned char i2cAddr);
   ~Tca9555Backend();
-  void start();
+  bool start();
   virtual void setAvailablePins(BackendPinSetup* pinsetup) override;
   virtual void setReservePins(BackendPinSetup* pinsetup) override;
   virtual bool setupInput(int pin) override;
@@ -24,11 +24,12 @@ public:
     (void) pin;
     return 0;
   }
-  virtual bool isWorking() const override { return (dev_) ? true : false; };
+  virtual bool isWorking() const override { return (dev_) ? success_ : false; };
 
 private:
   unsigned char addr_;
   TCA9555* dev_;
+  bool success_;
 };
 
 #endif // __GAVEL_GPIO_EXTERNAL_BACKEND_H

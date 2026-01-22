@@ -6,6 +6,8 @@
 #include <GavelInterfaces.h>
 #include <GavelUtil.h>
 
+#define DEBOUNCE_TIMER 200
+
 class GPIOPin {
 public:
   GPIOPin(int physicalPin, IGPIOBackend* device, GpioConfig cfg, Polarity ledPol = Polarity::Source);

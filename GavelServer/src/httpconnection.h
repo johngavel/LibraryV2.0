@@ -53,6 +53,7 @@ public:
     requestContentLength = 0;
     responseContentLength = 0;
     contentType = "";
+    printableContentType = false;
     closeConnection = true;
     stream = false;
     bytesRecieved = 0;
@@ -82,6 +83,7 @@ public:
   int requestContentLength = 0;
   int responseContentLength = 0;
   String contentType = "";
+  bool printableContentType = false;
   bool closeConnection = true;
   bool stream = false;
   int bytesRecieved = 0;

@@ -1,5 +1,8 @@
 #include "httpconnection.h"
 
+#include "contenttype.h"
+#include "serverdebug.h"
+
 /*
 typedef enum {
   Start,
@@ -60,6 +63,9 @@ ClientState HttpConnection::readRequestLine() {
       clientRead(_client);
       _buffer.trim();
       if (_buffer.isEmpty()) return StartClientConnection;
+#ifdef DEBUG_SERVER
+      DBG_PRINTLNS(_buffer);
+#endif
       String methodStr, pathStr;
       int firstSpace = _buffer.indexOf(' ');
       int secondSpace = _buffer.indexOf(' ', firstSpace + 1);
@@ -121,6 +127,9 @@ ClientState HttpConnection::readHeaders() {
         return ReadingBody; // end of headers
       }
       _buffer.trim();
+#ifdef DEBUG_SERVER
+      DBG_PRINTLNS(_buffer);
+#endif
       int colon = _buffer.indexOf(':');
       if (colon > 0) {
         String key = _buffer.substring(0, colon);
@@ -131,9 +140,10 @@ ClientState HttpConnection::readHeaders() {
         if (key == "content-length") {
           requestContentLength = (unsigned int) val.toInt();
           bytesRecieved = 0;
-        } else if (key == "content-type")
+        } else if (key == "content-type") {
           contentType = val;
-        else if ((key == "connection") && (val == "keep-alive"))
+          printableContentType = isPrintableTextContentType(contentType);
+        } else if ((key == "connection") && (val == "keep-alive"))
           closeConnection = false;
         else if ((key == "accept") && (val == "text/event-stream"))
           stream = true;
@@ -149,7 +159,7 @@ ClientState HttpConnection::readBody() {
   // For write methods (e.g., POST), stream directly to file
   if (!isReadMethod(method) && requestContentLength > 0) {
     Timer t;
-    t.setRefreshMilli(500);
+    t.setRefreshMilli(100);
     t.reset();
     while (!t.expired() && clientConnected(_client) && clientAvailable(_client) &&
            bytesRecieved < requestContentLength) {
@@ -157,11 +167,20 @@ ClientState HttpConnection::readBody() {
       int need = (int) min((size_t) sizeof(buf), (size_t) (requestContentLength - bytesRecieved));
       int n = clientRead(_client, buf, need);
       if (n > 0) {
+#ifdef DEBUG_SERVER
+        if (printableContentType) {
+          String writeDBG = String(buf, n);
+          DBG_PRINT(writeDBG);
+        }
+#endif
         file->write((const unsigned char*) buf, (size_t) n);
         bytesRecieved += n;
       }
     }
     if (bytesRecieved >= requestContentLength) {
+#ifdef DEBUG_SERVER
+      if (printableContentType) DBG_PRINTLN();
+#endif
       code = AcceptedReturnCode;
       return SendHeader;
     }
@@ -177,6 +196,7 @@ ClientState HttpConnection::sendHeader() {
   if (stream) {
     sendHttpHeader(_client, OkReturnCode, "text/event-stream", 0, false);
   } else if (file != nullptr) {
+    printableContentType = isPrintableTextContentType(contentTypeFromPath(file->name()));
     sendHttpHeader(_client, code, contentTypeFromPath(file->name()), responseContentLength, closeConnection);
   } else {
     sendHttpHeader(_client, code, "text/plain");
@@ -187,7 +207,7 @@ ClientState HttpConnection::sendHeader() {
 }
 
 static char fileBuffer[BUFFER_SIZE];
-static bool transferFileToClient(Client* client, DigitalFile* file) {
+static bool transferFileToClient(Client* client, DigitalFile* file, bool printable) {
   memset(fileBuffer, 0, BUFFER_SIZE);
   if (file->available() == 0) return false;
   unsigned long remainder = file->available() % BUFFER_SIZE;
@@ -196,15 +216,27 @@ static bool transferFileToClient(Client* client, DigitalFile* file) {
   for (unsigned long i = 0; i < loops; i++) {
     bytes = file->readBytes(fileBuffer, BUFFER_SIZE);
     clientWrite(client, fileBuffer, bytes);
+#ifdef DEBUG_SERVER
+    if (printable) {
+      String write = String(fileBuffer, bytes);
+      DBG_PRINT(write);
+    }
+#endif
     memset(fileBuffer, 0, BUFFER_SIZE);
   }
   bytes = file->readBytes(fileBuffer, remainder);
   bytes = clientWrite(client, fileBuffer, bytes);
+#ifdef DEBUG_SERVER
+  if (printable) {
+    String write = String(fileBuffer, bytes);
+    DBG_PRINT(write);
+  }
+#endif
   return true;
 }
 
 ClientState HttpConnection::processClient() {
-  if (isReadMethod(method)) transferFileToClient(_client, file);
+  if (isReadMethod(method)) transferFileToClient(_client, file, printableContentType);
   file->close();
   // else reading the body has already written to the file.
 
@@ -215,6 +247,6 @@ ClientState HttpConnection::processClient() {
 }
 
 ClientState HttpConnection::processStream() {
-  if (isReadMethod(method)) transferFileToClient(_client, file);
+  if (isReadMethod(method)) transferFileToClient(_client, file, printableContentType);
   return StreamMode;
 }

@@ -1,0 +1,6 @@
+#ifndef __GAVEL_SERVER_DEBUG_H
+#define __GAVEL_SERVER_DEBUG_H
+
+// #define DEBUG_SERVER 1
+
+#endif // __GAVEL_SERVER_DEBUG_H

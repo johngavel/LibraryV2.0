@@ -95,21 +95,27 @@ void GPIOManager::addCmd(TerminalCommand* __termCmd) {
 }
 
 bool GPIOManager::setupTask(OutputInterface* __terminal) {
+  bool success = true;
   setRefreshMilli(5);
   for (int i = 0; i < MAX_GPIO_DEVICES; i++) {
-    if (devices_[i] != nullptr) devices_[i]->start();
+    if (devices_[i] != nullptr) {
+      bool working = true;
+      working = devices_[i]->start();
+      if (!working) __terminal->println(ERROR, "GPIO Device Not Working");
+      success &= working;
+    }
   }
-  return true;
+  for (unsigned long i = 0; i < pins_.count(); i++) {
+    bool working = true;
+    GPIOPin* _pin = (GPIOPin*) pins_.get(i);
+    working = _pin->setup();
+    if (!working) __terminal->println(ERROR, "GPIO Pin Not Working");
+    success &= working;
+  }
+  return success;
 }
 
 bool GPIOManager::executeTask() {
-  if (!initializePins) {
-    for (unsigned long i = 0; i < pins_.count(); i++) {
-      GPIOPin* _pin = (GPIOPin*) pins_.get(i);
-      _pin->setup();
-    }
-    initializePins = true;
-  }
   for (unsigned long i = 0; i < pins_.count(); i++) {
     GPIOPin* _pin = (GPIOPin*) pins_.get(i);
     _pin->tick();

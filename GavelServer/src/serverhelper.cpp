@@ -1,7 +1,9 @@
 // Helper Functions
 #include "serverhelper.h"
 
-#include "GavelSPIWire.h"
+#include "serverdebug.h"
+
+#include <GavelSPIWire.h>
 
 HttpMethod StringToHttpMethod(const char* methodStr) {
   if (methodStr == NULL) return HTTP_NONE; // Default or handle error
@@ -72,21 +74,36 @@ void sendHttpHeader(Client* client, int code, const char* contentType, size_t co
   char line[128];
 
   int n = snprintf(line, sizeof(line), "HTTP/1.1 %d %s\r\n", code, statusText(code));
+#ifdef DEBUG_SERVER
+  DBG_PRINTLNS(line);
+#endif
   if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
 
   n = snprintf(line, sizeof(line), "Content-Type: %s\r\n", contentType);
+#ifdef DEBUG_SERVER
+  DBG_PRINTLNS(line);
+#endif
   if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
 
   // Always send Content-Length (0 for no body)
   if (contentLength > 0) {
     n = snprintf(line, sizeof(line), "Content-Length: %lu\r\n", (unsigned long) contentLength);
+#ifdef DEBUG_SERVER
+    DBG_PRINTLNS(line);
+#endif
     if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
   }
 
   n = snprintf(line, sizeof(line), "Cache-Control: no-cache\r\n");
+#ifdef DEBUG_SERVER
+  DBG_PRINTLNS(line);
+#endif
   if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
 
   n = snprintf(line, sizeof(line), "Connection: %s\r\n", connectionClose ? "close" : "keep-alive");
+#ifdef DEBUG_SERVER
+  DBG_PRINTLNS(line);
+#endif
   if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
 
   clientWrite(client, "\r\n", 2); // header terminator
@@ -98,7 +115,7 @@ String normalizePath(const String& rawPath) {
   int qpos = p.indexOf('?');
   if (qpos >= 0) p = p.substring(0, qpos);
   if (p == "/") return "/index.html";
-  if (p.indexOf("..") >= 0) return "/404"; // basic traversal protection
+  if (p.indexOf("..") >= 0) return "/index.html"; // basic traversal protection
   return p;
 }
 

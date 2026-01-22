@@ -43,6 +43,7 @@ bool TelnetModule::executeTask() {
       } else {
         terminal_->setStream(client);
       }
+      DBG_REGISTER(terminal_);
       spiWire.wireTake();
       client->print("\x1B[?25h");
       client->print("\xFF\xFB\x01");
@@ -62,6 +63,7 @@ bool TelnetModule::executeTask() {
       spiWire.wireGive();
     } else {
       clientConnected = false;
+      DBG_DEREGISTER(terminal_);
     }
   }
   return true;

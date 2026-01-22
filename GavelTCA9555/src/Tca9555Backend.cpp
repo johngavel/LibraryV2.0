@@ -14,14 +14,18 @@ void Tca9555Backend::setAvailablePins(BackendPinSetup* pinsetup) {
 }
 void Tca9555Backend::setReservePins(BackendPinSetup* pinsetup) {}
 
-void Tca9555Backend::start() {
+bool Tca9555Backend::start() {
+  success_ = true;
   i2cWire.wireTake();
   dev_ = new TCA9555(addr_, i2cWire.getWire()); // assumes global WIRE
   if (dev_) {
-    dev_->begin();
-    dev_->write16(0x00);
+    success_ &= dev_->begin();
+    success_ &= dev_->write16(0x00);
+  } else {
+    success_ = false;
   }
   i2cWire.wireGive();
+  return success_;
 }
 
 Tca9555Backend::~Tca9555Backend() {
@@ -29,19 +33,23 @@ Tca9555Backend::~Tca9555Backend() {
 }
 
 bool Tca9555Backend::setupInput(int pin) {
+  bool working = true;
   if (!dev_) return false;
   i2cWire.wireTake();
-  dev_->pinMode1(pin, INPUT);
+  working = dev_->pinMode1(pin, INPUT);
   i2cWire.wireGive();
-  return true;
+  success_ &= working;
+  return working;
 }
 
 bool Tca9555Backend::setupOutput(int pin) {
+  bool working = true;
   if (!dev_) return false;
   i2cWire.wireTake();
-  dev_->pinMode1(pin, OUTPUT);
+  working = dev_->pinMode1(pin, OUTPUT);
   i2cWire.wireGive();
-  return true;
+  success_ &= working;
+  return working;
 }
 
 bool Tca9555Backend::readDigital(int pin) const {
