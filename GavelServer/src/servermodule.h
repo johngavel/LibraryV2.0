@@ -4,6 +4,7 @@
 #define MAX_PAGES 64
 #define PAGE_NAME_LENGTH 64
 
+#include "apifile.h"
 #include "clientmanagment.h"
 #include "serverhelper.h"
 

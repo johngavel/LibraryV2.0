@@ -119,6 +119,14 @@ String normalizePath(const String& rawPath) {
   return p;
 }
 
+String normalizeQuery(const String& rawPath) {
+  if (rawPath.length() == 0) return "";
+  int qpos = rawPath.indexOf('?');
+  if (qpos < 0) return "";
+  if (qpos > (int) rawPath.length() - 1) return "";
+  return rawPath.substring(qpos);
+}
+
 /* ===========================================================
  * Helpers (String-based, Arduino-safe)
  * =========================================================== */

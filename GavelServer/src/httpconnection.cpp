@@ -99,6 +99,11 @@ ClientState HttpConnection::readRequestLine() {
         code = ServerErrorReturnCode;
         return SendHeader;
       }
+      if (file->isAPI()) {
+        api = (APIFile*) file;
+        api->getAPI()->method_.set(methodStr.c_str());
+        api->getAPI()->query_.processQueryString(normalizeQuery(pathStr).c_str());
+      }
       if (isReadMethod(method))
         responseContentLength = file->size();
       else
@@ -147,6 +152,7 @@ ClientState HttpConnection::readHeaders() {
           closeConnection = false;
         else if ((key == "accept") && (val == "text/event-stream"))
           stream = true;
+        if (api) api->getAPI()->metaHeaders_.set(key.c_str(), val.c_str());
       }
       _buffer = "";
     }
@@ -182,10 +188,13 @@ ClientState HttpConnection::readBody() {
       if (printableContentType) DBG_PRINTLN();
 #endif
       code = AcceptedReturnCode;
+      if (api) api->processAPIWrite();
+      file->close();
       return SendHeader;
     }
   } else {
     // For GET or no body, proceed to header sending
+    if (api) api->processAPIRead();
     code = OkReturnCode;
     return SendHeader;
   }
@@ -197,7 +206,10 @@ ClientState HttpConnection::sendHeader() {
     sendHttpHeader(_client, OkReturnCode, "text/event-stream", 0, false);
   } else if (file != nullptr) {
     printableContentType = isPrintableTextContentType(contentTypeFromPath(file->name()));
-    sendHttpHeader(_client, code, contentTypeFromPath(file->name()), responseContentLength, closeConnection);
+    if (api)
+      sendHttpHeader(_client, code, api->contentType(), responseContentLength, closeConnection);
+    else
+      sendHttpHeader(_client, code, contentTypeFromPath(file->name()), responseContentLength, closeConnection);
   } else {
     sendHttpHeader(_client, code, "text/plain");
   }
@@ -236,9 +248,10 @@ static bool transferFileToClient(Client* client, DigitalFile* file, bool printab
 }
 
 ClientState HttpConnection::processClient() {
-  if (isReadMethod(method)) transferFileToClient(_client, file, printableContentType);
-  file->close();
-  // else reading the body has already written to the file.
+  if (isReadMethod(method)) {
+    transferFileToClient(_client, file, printableContentType);
+    file->close();
+  } // else reading the body has already written to the file.
 
   clearStateMachine();
   if (!closeConnection) { return StartClientConnection; }

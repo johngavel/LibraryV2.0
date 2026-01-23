@@ -41,7 +41,7 @@ void setup0Start(TerminalCommand* __termCmd) {
   StringBuilder sb = ProgramInfo::ShortName;
   sb + ":\\>";
   serialPort.getUSBSerialTerminal()->setPromptString(sb.c_str());
-  DBG_REGISTER(serialPort.getSerial1Terminal());
+
   DBG_REGISTER(serialPort.getUSBSerialTerminal());
 
   taskManager.add(&gpioManager);
@@ -69,6 +69,7 @@ void setup0SerialPort(int __txPin, int __rxPin) {
   StringBuilder sb = ProgramInfo::ShortName;
   sb + ":\\> ";
   serialPort.getSerial1Terminal()->setPromptString(sb.c_str());
+  DBG_REGISTER(serialPort.getSerial1Terminal());
 }
 
 void setup1Start() {

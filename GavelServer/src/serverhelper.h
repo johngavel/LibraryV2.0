@@ -87,5 +87,6 @@ const char* contentTypeFromPath(const char* path);
 void sendHttpHeader(Client* client, int code, const char* contentType, size_t contentLength = 0,
                     bool connectionClose = true);
 String normalizePath(const String& rawPath);
+String normalizeQuery(const String& rawPath);
 
 #endif // __GAVEL_SERVER_HELPER_H

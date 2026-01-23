@@ -1,6 +1,7 @@
 #ifndef __GAVEL_HTTP_CONNECTION_H
 #define __GAVEL_HTTP_CONNECTION_H
 
+#include "apifile.h"
 #include "serverhelper.h"
 
 #include <Client.h>
@@ -43,6 +44,8 @@ public:
   void clearStateMachine() {
     if (file && file->isOpen()) file->close();
     file = nullptr;
+    if (api) api->clear();
+    api = nullptr;
     _buffer = "";
 
     state = StartClientConnection;
@@ -79,6 +82,7 @@ public:
   HttpReturnCode code = BadRequestReturnCode;
   AcceptType type = ACCEPT_ANY;
   DigitalFile* file = nullptr;
+  APIFile* api = nullptr;
 
   int requestContentLength = 0;
   int responseContentLength = 0;

@@ -1,4 +1,5 @@
 #include "GavelServerStandard.h"
+#include "debugAPI.h"
 #include "hardwarefile.h"
 #include "import.h"
 #include "rebootfile.h"
@@ -52,6 +53,7 @@ void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSyst
   dir->addFile(new RebootFile());
   dir->addFile(new UpgradeFile());
   dir->addFile(new JsonFile(new HardwareFile(&hardwareList), "hw-info.json", READ_ONLY));
+  dir->addFile(new APIFile(new DebugAPI(), "debug", READ_WRITE));
   setupTerminalAPI(dir, taskManager);
 
   server->setErrorPage(errorhtml_string);
