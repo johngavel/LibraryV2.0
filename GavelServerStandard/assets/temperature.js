@@ -1,4 +1,3 @@
-
 // temperature-widget.js
 /**
  * <temperature-widget>
@@ -67,14 +66,20 @@ export class TemperatureWidget extends HTMLElement {
 
       const res = await fetch(url.toString(), {
         cache: 'no-store',
-        headers: { 'Accept': 'application/json' },
+        headers: {
+          'Accept': 'application/json'
+        },
         signal: this._abortController.signal
       });
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const data = await res.json();
-      const { tempdrift, tempvalid, temperature } = data ?? {};
+      const {
+        tempdrift,
+        tempvalid,
+        temperature
+      } = data ?? {};
 
       if (tempvalid === true && isFinite(temperature) && isFinite(tempdrift)) {
         const adjusted = Math.round(Number(temperature) - Number(tempdrift));
