@@ -37,4 +37,4 @@ public:
   };
 };
 
-#endif
+#endif // __GAVEL_DEBUG_API_H

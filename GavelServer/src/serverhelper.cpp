@@ -69,7 +69,8 @@ const char* contentTypeFromPath(const char* path) {
   return "application/octet-stream";
 }
 
-void sendHttpHeader(Client* client, int code, const char* contentType, size_t contentLength, bool connectionClose, bool sendContentLength) {
+void sendHttpHeader(Client* client, int code, const char* contentType, size_t contentLength, bool connectionClose,
+                    bool sendContentLength) {
   // Build line-by-line to reduce heap churn
   char line[128];
 

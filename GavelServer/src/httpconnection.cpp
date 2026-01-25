@@ -16,19 +16,19 @@ typedef enum {
 } ClientState;
  */
 void HttpConnection::execute() {
-#ifdef DEBUG_SERVER  
+#ifdef DEBUG_SERVER
   int loopCounter = 0;
-#endif  
+#endif
   if ((_client == nullptr) || (!clientConnected(_client))) {
     state = CompleteClientConnection;
     return;
   }
   ClientState oldState = UnknownClientState;
   while (oldState != state) {
-#ifdef DEBUG_SERVER    
+#ifdef DEBUG_SERVER
     loopCounter++;
     if (loopCounter > 1) DBG_PRINTF("State Machine: %d --> %d\r\n", oldState, state);
-#endif    
+#endif
     oldState = state;
     switch (state) {
     case StartClientConnection:
@@ -53,7 +53,7 @@ void HttpConnection::execute() {
     default: state = StartClientConnection; break;
     }
   }
-#ifdef DEBUG_SERVER  
+#ifdef DEBUG_SERVER
   if (loopCounter > 1) DBG_PRINTF("Loop Counter: %d \r\n", loopCounter);
 #endif
 }
@@ -261,7 +261,10 @@ ClientState HttpConnection::processClient() {
     file->close();
   } // else reading the body has already written to the file.
 
-  if (!closeConnection) {   clearStateMachine(); return StartClientConnection; }
+  if (!closeConnection) {
+    clearStateMachine();
+    return StartClientConnection;
+  }
   clearStateMachine();
   clientClose(_client);
   return CompleteClientConnection;
