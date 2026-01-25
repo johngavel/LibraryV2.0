@@ -85,7 +85,7 @@ HttpMethod StringToHttpMethod(const char* methodStr);
 const char* statusText(int code);
 const char* contentTypeFromPath(const char* path);
 void sendHttpHeader(Client* client, int code, const char* contentType, size_t contentLength = 0,
-                    bool connectionClose = true);
+                    bool connectionClose = true, bool sendContentLength = true);
 String normalizePath(const String& rawPath);
 String normalizeQuery(const String& rawPath);
 

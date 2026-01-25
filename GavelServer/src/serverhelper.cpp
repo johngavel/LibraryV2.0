@@ -69,7 +69,7 @@ const char* contentTypeFromPath(const char* path) {
   return "application/octet-stream";
 }
 
-void sendHttpHeader(Client* client, int code, const char* contentType, size_t contentLength, bool connectionClose) {
+void sendHttpHeader(Client* client, int code, const char* contentType, size_t contentLength, bool connectionClose, bool sendContentLength) {
   // Build line-by-line to reduce heap churn
   char line[128];
 
@@ -86,7 +86,7 @@ void sendHttpHeader(Client* client, int code, const char* contentType, size_t co
   if (n <= 0 || !clientWrite(client, line, (unsigned int) n)) return;
 
   // Always send Content-Length (0 for no body)
-  if (contentLength > 0) {
+  if (sendContentLength) {
     n = snprintf(line, sizeof(line), "Content-Length: %lu\r\n", (unsigned long) contentLength);
 #ifdef DEBUG_SERVER
     DBG_PRINTLNS(line);

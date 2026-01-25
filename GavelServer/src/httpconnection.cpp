@@ -16,12 +16,19 @@ typedef enum {
 } ClientState;
  */
 void HttpConnection::execute() {
+#ifdef DEBUG_SERVER  
+  int loopCounter = 0;
+#endif  
   if ((_client == nullptr) || (!clientConnected(_client))) {
     state = CompleteClientConnection;
     return;
   }
   ClientState oldState = UnknownClientState;
   while (oldState != state) {
+#ifdef DEBUG_SERVER    
+    loopCounter++;
+    if (loopCounter > 1) DBG_PRINTF("State Machine: %d --> %d\r\n", oldState, state);
+#endif    
     oldState = state;
     switch (state) {
     case StartClientConnection:
@@ -46,6 +53,9 @@ void HttpConnection::execute() {
     default: state = StartClientConnection; break;
     }
   }
+#ifdef DEBUG_SERVER  
+  if (loopCounter > 1) DBG_PRINTF("Loop Counter: %d \r\n", loopCounter);
+#endif
 }
 
 static inline bool isReadMethod(HttpMethod method) {
@@ -104,11 +114,6 @@ ClientState HttpConnection::readRequestLine() {
         api->getAPI()->method_.set(methodStr.c_str());
         api->getAPI()->query_.processQueryString(normalizeQuery(pathStr).c_str());
       }
-      if (isReadMethod(method))
-        responseContentLength = file->size();
-      else
-        responseContentLength = 0;
-      _buffer = "";
       return ReadingHeaders;
     }
     _buffer += c;
@@ -163,6 +168,7 @@ ClientState HttpConnection::readHeaders() {
 
 ClientState HttpConnection::readBody() {
   // For write methods (e.g., POST), stream directly to file
+  responseContentLength = 0;
   if (!isReadMethod(method) && requestContentLength > 0) {
     Timer t;
     t.setRefreshMilli(100);
@@ -195,15 +201,17 @@ ClientState HttpConnection::readBody() {
   } else {
     // For GET or no body, proceed to header sending
     if (api) api->processAPIRead();
+    responseContentLength = file->available();
     code = OkReturnCode;
     return SendHeader;
   }
+  _buffer = "";
   return ReadingBody;
 }
 
 ClientState HttpConnection::sendHeader() {
   if (stream) {
-    sendHttpHeader(_client, OkReturnCode, "text/event-stream", 0, false);
+    sendHttpHeader(_client, OkReturnCode, "text/event-stream", 0, false, false);
   } else if (file != nullptr) {
     printableContentType = isPrintableTextContentType(contentTypeFromPath(file->name()));
     if (api)
@@ -253,8 +261,8 @@ ClientState HttpConnection::processClient() {
     file->close();
   } // else reading the body has already written to the file.
 
+  if (!closeConnection) {   clearStateMachine(); return StartClientConnection; }
   clearStateMachine();
-  if (!closeConnection) { return StartClientConnection; }
   clientClose(_client);
   return CompleteClientConnection;
 }

@@ -72,6 +72,7 @@ unsigned int clientWrite(Client* client, char c) {
   unsigned int totalBytes = 0;
   spiWire.wireTake();
   totalBytes = client->write(c);
+  client->flush();
   spiWire.wireGive();
   return totalBytes;
 }
