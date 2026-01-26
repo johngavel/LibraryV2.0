@@ -5,12 +5,17 @@
 
 #include <Arduino.h>
 
+#define ONE_HOUR_MS 3600000000
 class StopWatch {
 public:
   StopWatch() : startTime(0), finishTime(0){};
   void start(unsigned long __time = micros()) { startTime = __time; };
   void stop(unsigned long __time = micros()) { finishTime = __time; };
-  unsigned long time() { return finishTime - startTime; };
+  unsigned long time() {
+    unsigned long calc = finishTime - startTime;
+    calc = (calc > ONE_HOUR_MS) ? 0 : calc;
+    return calc;
+  };
 
 private:
   unsigned long startTime;
