@@ -62,7 +62,7 @@ export class TemperatureWidget extends HTMLElement {
 
     try {
       const url = new URL(this._ENDPOINT, window.location.origin);
-      url.searchParams.set('_', Date.now());
+      // url.searchParams.set('_', Date.now());
 
       const res = await fetch(url.toString(), {
         cache: 'no-store',
@@ -85,6 +85,8 @@ export class TemperatureWidget extends HTMLElement {
         const adjusted = Math.round(Number(temperature) - Number(tempdrift));
         this._container.textContent = `Temperature: ${adjusted} °F`;
         this.style.display = '';
+        // Override stylesheet default (my-temperature { display: none })
+        this.style.display = 'inline-block';
       } else {
         this._hide();
       }
