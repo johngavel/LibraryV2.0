@@ -118,7 +118,8 @@ void EEpromMemory::readEEPROM() {
         eepromIndex += data->size();
       } else {
         StringBuilder sb;
-        sb + "Invalid Data Segment in EEPROM <" + dataHeader.dataStruct.id + "/" + data->getId() + "> ";
+        sb + "Invalid Data Segment in EEPROM <" + dataHeader.dataStruct.id + "/" + data->getId() + "> for " +
+            data->getName();
         sb + "Size <" + dataHeader.dataStruct.size + "/" + data->size() + "> ";
         data->initMemory();
         data->updateExternal();

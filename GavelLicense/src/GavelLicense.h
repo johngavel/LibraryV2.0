@@ -9,7 +9,7 @@
 
 class License : public Task, public JsonInterface {
 public:
-  License() : Task("License"){};
+  License() : Task("License") { runTask(false); };
 
   virtual void addCmd(TerminalCommand* __termCmd) override {
     if (__termCmd) {

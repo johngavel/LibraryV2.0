@@ -3,6 +3,7 @@
 #include <GavelUtil.h>
 
 FileSystem::FileSystem() : Task("FileSystem") {
+  runTask(false);
   root = new ArrayDirectory("/");
 };
 
