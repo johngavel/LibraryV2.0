@@ -7,7 +7,7 @@
 #define TELNET_PORT 23
 #define HTTP_PORT 80
 #define TEST_PORT 4242
-#define MAX_CLIENTS 16
+#define MAX_CLIENTS 32
 
 class VirtualNetwork {
 public:

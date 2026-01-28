@@ -18,7 +18,7 @@ public:
   virtual void reservePins(BackendPinSetup* pinsetup) override;
   virtual bool setupTask(OutputInterface* __terminal) override;
   virtual bool executeTask() override;
-  virtual bool isWorking() const override { return true; };
+  virtual bool isWorking() const override { return status; };
   void forceWrite();
   void setData(IMemory* __data) { dataList.push(&__data); };
   IMemory* getData(unsigned long index) { return (IMemory*) *((IMemory**) dataList.get(index)); };
@@ -41,6 +41,7 @@ private:
   void wipe(OutputInterface* terminal);
   void mem(OutputInterface* terminal);
   void raw(OutputInterface* terminal);
+  bool status = false;
 };
 
 #endif //__GAVEL_EEPROM_CLASS_H

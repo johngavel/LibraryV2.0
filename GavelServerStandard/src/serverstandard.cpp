@@ -30,7 +30,7 @@ static void setupTerminalAPI(ArrayDirectory* dir, TaskManager* taskManager) {
   DBG_REGISTER(&terminal.terminal);
 }
 
-void loadServerStandard(EthernetMemory* ethernet, ServerModule* server, FileSystem* fs, TaskManager* taskManager,
+void loadServerStandard(JsonInterface* ethernet, ServerModule* server, FileSystem* fs, TaskManager* taskManager,
                         EEpromMemory* memory) {
   ArrayDirectory* dir = static_cast<ArrayDirectory*>(fs->open("/"));
   dir->addDirectory("www");

@@ -46,7 +46,8 @@ async function load(IpInfo, els) {
     subnetMask,
     gatewayAddress,
     dnsAddress,
-    msg
+    msg,
+    ipconfig
   } = els;
 
   try {
@@ -60,7 +61,15 @@ async function load(IpInfo, els) {
 
     let dhcpMode = !!info.isDHCP;
     const showDHCP = !!info.allowDHCP;
-
+    const isWifi = !!info.isWifi;
+    if (ipconfig) {
+      if (isWifi) {
+        ipconfig.classList.add('hidden');
+        showMsg('err', 'This Module is Wifi, configuration through Terminal.', msg);
+      } else {
+        ipconfig.classList.remove('hidden');
+      }
+    }
     if (showDHCP === false) {
       allowdhcp.classList.add('hidden');
       dhcpMode = false;
@@ -156,6 +165,7 @@ export async function initIpConfig() {
 
   const msg = $('msg');
   const form = $('ipForm');
+  const ipconfig = $('ipconfig');
   const btnReload = $('btnReload');
   const btnSaveReboot = $('btnSaveReboot');
 
@@ -174,7 +184,8 @@ export async function initIpConfig() {
       subnetMask,
       gatewayAddress,
       dnsAddress,
-      msg
+      msg,
+      ipconfig
     });
   }
   btnReload?.addEventListener('click', reload);
@@ -225,7 +236,8 @@ export async function initIpConfig() {
     subnetMask,
     gatewayAddress,
     dnsAddress,
-    msg
+    msg,
+    ipconfig
   });
 }
 

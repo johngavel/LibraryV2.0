@@ -8,11 +8,15 @@
 class I2CWire {
 public:
   I2CWire(){};
-  void begin(unsigned long __pinSDA, unsigned long __pinSCL) {
+  void begin(unsigned long __pinSDA, unsigned long __pinSCL, bool isWire0 = true) {
     wireTake();
     pinSDA = __pinSDA;
     pinSCL = __pinSCL;
-    wire = &Wire;
+    if (isWire0) {
+      wire = &Wire;
+    } else {
+      wire = &Wire1;
+    }
     wire->setSDA(pinSDA);
     wire->setSCL(pinSCL);
     wire->begin();

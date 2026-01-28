@@ -113,6 +113,7 @@ public:
     doc["dnsAddress"] = getIPString(memory.data.dnsAddress, temp, sizeof(temp));
     doc["isDHCP"] = memory.data.isDHCP;
     doc["allowDHCP"] = memory.data.allowDHCP;
+    doc["isWifi"] = false;
 
     return doc;
   };

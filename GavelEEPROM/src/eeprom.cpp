@@ -56,15 +56,15 @@ bool EEpromMemory::setupTask(OutputInterface* __terminal) {
     dataSize = fullDataSize;
   }
   i2cWire.wireTake();
-  //  i2c_eeprom = new I2C_eeprom(0x50, I2C_DEVICESIZE_24LC16, WIRE);
   i2c_eeprom = new I2C_eeprom(0x50, memorySize, i2cWire.getWire());
   i2c_eeprom->begin();
-  runTimer(i2c_eeprom->isConnected());
+  status = i2c_eeprom->isConnected();
   i2cWire.wireGive();
+  runTimer(status);
   readEEPROM();
-  if (!getTimerRun()) terminal->println(ERROR, "EEPROM Not Connected");
+  if (!status) terminal->println(ERROR, "EEPROM Not Connected");
   if (getNumberOfData() == 0) { terminal->println(WARNING, "No User Data Available!"); }
-  return getTimerRun();
+  return status;
 }
 
 bool EEpromMemory::executeTask() {
@@ -103,7 +103,7 @@ void EEpromMemory::writeEEPROMbyte(unsigned long address, byte value) {
 }
 
 void EEpromMemory::readEEPROM() {
-  if (getTimerRun()) {
+  if (status) {
     i2cWire.wireTake();
     unsigned long eepromIndex = 0;
     for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
@@ -127,6 +127,11 @@ void EEpromMemory::readEEPROM() {
       }
     }
     i2cWire.wireGive();
+  } else {
+    for (unsigned long dataIndex = 0; dataIndex < dataList.count(); dataIndex++) {
+      IMemory* data = getData(dataIndex);
+      data->initMemory();
+    }
   }
 }
 

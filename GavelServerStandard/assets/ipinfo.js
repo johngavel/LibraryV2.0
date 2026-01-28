@@ -19,7 +19,8 @@ const IpInfo = (() => {
         gatewayAddress: json.gatewayAddress || 'unknown',
         dnsAddress: json.dnsAddress || 'unknown',
         isDHCP: typeof json.isDHCP === 'boolean' ? json.isDHCP : null,
-        allowDHCP: typeof json.allowDHCP === 'boolean' ? json.allowDHCP : null
+        allowDHCP: typeof json.allowDHCP === 'boolean' ? json.allowDHCP : null,
+        isWifi: typeof json.isWifi === 'boolean' ? json.isWifi : null
       };
     } catch (err) {
       return {
@@ -29,7 +30,8 @@ const IpInfo = (() => {
         gatewayAddress: 'unknown',
         dnsAddress: 'unknown',
         isDHCP: true,
-        allowDHCP: true
+        allowDHCP: true,
+        isWifi: false
       };
     } finally {
       inflight = null;

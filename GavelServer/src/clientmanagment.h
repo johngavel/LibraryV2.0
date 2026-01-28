@@ -7,7 +7,7 @@
 #include <GavelInterfaces.h>
 #include <GavelSPIWire.h>
 
-#define CLIENT_FILE_POOL_CAPACITY 10
+#define CLIENT_FILE_POOL_CAPACITY MAX_CLIENTS
 
 struct ClientFileEntry {
   HttpConnection connection;

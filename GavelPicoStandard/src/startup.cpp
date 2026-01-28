@@ -29,7 +29,6 @@ void setup0Start(TerminalCommand* __termCmd) {
   license.addLibrary(ARDUINO_IDE_INDEX);
   license.addLibrary(ARDUINO_PICO_INDEX);
   license.addLibrary(ARDUINOJSON_INDEX);
-  license.addLibrary(ETHERNET_INDEX);
   license.addLibrary(I2C_EEPROM_INDEX);
   license.addLibrary(TERMINAL_INDEX);
   license.addLibrary(GAVEL_LIBRARIES_INDEX);
@@ -47,7 +46,6 @@ void setup0Start(TerminalCommand* __termCmd) {
   taskManager.add(&gpioManager);
   taskManager.add(&serialPort);
   taskManager.add(&blink);
-  taskManager.add(&watchdog);
   taskManager.add(&fileSystem);
   taskManager.add(&license);
 
@@ -79,6 +77,8 @@ void setup1Start() {
 void setup0Complete() {
   startupMutex.give();
   startupMutex1.take();
+
+  taskManager.add(&watchdog);
   taskManager.reservePins(&gpioManager);
   taskManager.setup(serialPort.getMainSerialPort());
 

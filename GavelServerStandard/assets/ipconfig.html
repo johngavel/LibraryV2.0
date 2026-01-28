@@ -13,7 +13,7 @@
   <my-header></my-header>
   <main class="container">
     <form id="ipForm" novalidate>
-      <element-group legend="IP Information">
+      <element-group id="ipconfig" legend="IP Information">
         <element-group legend="Mode" id="allowdhcp">
           <label class="switch">
             <input type="checkbox" id="dhcp" />
@@ -59,8 +59,8 @@
           <button type="submit" class="button buttonWarn">Save Settings</button>
           <button type="button" id="btnSaveReboot" class="button buttonError">Save &amp; Reboot</button>        
       </config-card>
-      <div id="msg" class="msg" role="alert" aria-live="polite"></div>
     </form>
+    <div id="msg" class="msg" role="alert" aria-live="polite"></div>
   </main>
   
   <my-footer></my-footer>

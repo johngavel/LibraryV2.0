@@ -3,6 +3,7 @@
 #include <GavelSPIWire.h>
 
 static void ipAddressToBuffer(IPAddress address, unsigned char* buffer);
+static bool configParser(OutputInterface* terminal, EthernetMemory* memory);
 
 EthernetModule::EthernetModule() : Task("EthernetModule"), Hardware("EthernetModule") {}
 
@@ -244,9 +245,9 @@ bool configParser(OutputInterface* terminal, EthernetMemory* memory) {
 
 void EthernetModule::ipConfig(OutputInterface* terminal) {
   char buffer[20];
-  bool linked = linkStatus();
 
   if (!configParser(terminal, &memory)) {
+    bool linked = linkStatus();
     terminal->println(PROMPT, "Configured network parameters (from memory):");
     terminal->print(INFO, "MAC Address:  ");
     terminal->println(INFO, getMacString(memory.memory.data.macAddress, buffer, sizeof(buffer)));
