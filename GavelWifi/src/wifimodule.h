@@ -1,5 +1,5 @@
-#ifndef __GAVEL_WIFI
-#define __GAVEL_WIFI
+#ifndef __GAVEL_WIFI_MODULE_H
+#define __GAVEL_WIFI_MODULE_H
 
 #include "wifimemory.h"
 
@@ -86,4 +86,4 @@ private:
   int port;
 };
 
-#endif
+#endif // __GAVEL_WIFI_MODULE_H
