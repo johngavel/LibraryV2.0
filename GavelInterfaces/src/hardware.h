@@ -1,6 +1,8 @@
 #ifndef __GAVEL_HARDWARE_H
 #define __GAVEL_HARDWARE_H
 
+#include "json_interface.h"
+
 #include <GavelUtil.h>
 #include <string.h>
 
@@ -15,7 +17,7 @@ public:
 private:
 };
 
-class HardwareList {
+class HardwareList : public JsonInterface {
 public:
   HardwareList() : count_(0) {}
 
@@ -37,6 +39,21 @@ public:
     if (index >= count_) return 0;
     return items_[index];
   }
+
+  virtual JsonDocument createJson() override {
+    JsonDocument doc;
+    doc["numberhw"] = size();
+    JsonArray data = doc["hwtable"].to<JsonArray>();
+    for (unsigned int i = 0; i < size(); i++) {
+      JsonObject object = data.add<JsonObject>();
+      object["hwname"] = items_[i]->getName();
+      object["hwid"] = items_[i]->getId();
+      object["hwstatus"] = items_[i]->isWorking();
+    }
+    return doc;
+  };
+
+  virtual bool parseJson(JsonDocument& doc) override { return false; };
 
 private:
   Hardware* items_[10]; // non-owning pointers

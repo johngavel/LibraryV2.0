@@ -248,3 +248,55 @@ void EEpromMemory::raw(OutputInterface* terminal) {
   terminal->println();
   terminal->prompt();
 }
+
+/**
+ * Merge all key/value pairs from src into dst.
+ * - Later values overwrite earlier ones (simple policy).
+ * - Null values in src are ignored.
+ * - Handles nested objects recursively.
+ * - Arrays are replaced (not appended) for simplicity.
+ */
+static inline void mergeJsonObjects(JsonObject dst, JsonObjectConst src) {
+  for (JsonPairConst kvp : src) {
+    JsonVariantConst val = kvp.value();
+    if (val.isNull()) continue;
+
+    if (val.is<JsonObject>()) {
+      // Merge nested object recursively
+      JsonObject subDst = dst[kvp.key().c_str()].to<JsonObject>();
+      mergeJsonObjects(subDst, val.as<JsonObjectConst>());
+    } else {
+      // Scalars and arrays: overwrite
+      dst[kvp.key().c_str()] = val;
+    }
+  }
+}
+
+JsonDocument EEpromMemory::createJson() {
+  JsonDocument doc;
+
+  JsonObject merged = doc.to<JsonObject>();
+
+  const unsigned long n = getNumberOfData();
+  for (unsigned long i = 0; i < n; ++i) {
+    auto* item = getData(i);
+    if (!item) continue;
+
+    JsonDocument part = item->createJson();
+    if (!part.is<JsonObject>()) continue;
+
+    mergeJsonObjects(merged, part.as<JsonObjectConst>());
+  }
+
+  return doc;
+}
+
+bool EEpromMemory::parseJson(JsonDocument& doc) {
+  const unsigned long n = getNumberOfData();
+  for (unsigned long i = 0; i < n; ++i) {
+    auto* item = getData(i);
+    if (!item) continue;
+    item->parseJson(doc);
+  }
+  return true;
+}

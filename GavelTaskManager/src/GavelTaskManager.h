@@ -2,11 +2,9 @@
 #define __GAVEL_TASK_MANAGER_H
 
 #include "idle.h"
-#include "taskclass.h"
 
+#include <GavelTask.h>
 #include <GavelUtil.h>
-
-#define CPU_CORES 2
 
 class TaskManager : public Task {
 public:

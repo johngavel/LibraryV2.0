@@ -1,7 +1,8 @@
 #ifndef __GAVEL_STREAM_FILE_H
 #define __GAVEL_STREAM_FILE_H
 
-#include <GavelFileSystem.h>
+#include "filesystem.h"
+
 #include <GavelUtil.h>
 
 class StreamFile : public DigitalFile {

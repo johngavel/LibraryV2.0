@@ -1,8 +1,6 @@
 #ifndef __GAVEL_DEBUG_API_H
 #define __GAVEL_DEBUG_API_H
 
-#include "api.h"
-
 #include <GavelServer.h>
 
 class DebugAPI : public API {

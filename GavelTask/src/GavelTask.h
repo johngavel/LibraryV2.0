@@ -2,6 +2,5 @@
 #define __GAVELTASK_H
 
 #include "taskclass.h"
-#include "taskmanager.h"
 
 #endif // __GAVELTASK_H

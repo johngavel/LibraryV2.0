@@ -2,8 +2,10 @@
 #define __GAVEL_SSE_TERM_H
 
 #include <GavelFileSystem.h>
-#include <GavelTask.h>
+#include <GavelTaskManager.h>
 #include <GavelUtil.h>
+
+void setupTerminalAPI(ArrayDirectory* dir, TaskManager* taskManager);
 
 class SSECmd : public DynamicFile {
 public:

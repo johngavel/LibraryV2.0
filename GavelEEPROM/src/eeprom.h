@@ -2,7 +2,6 @@
 #define __GAVEL_EEPROM_CLASS_H
 
 #include <GavelInterfaces.h>
-#include <GavelProgram.h>
 #include <GavelTask.h>
 #include <GavelUtil.h>
 #include <I2C_eeprom.h>
@@ -10,7 +9,7 @@
 
 #define MAX_DATA_SEGMENTS 10
 
-class EEpromMemory : public Task, public Hardware {
+class EEpromMemory : public Task, public JsonInterface, public Hardware {
 public:
   EEpromMemory();
   void configure(unsigned long size);
@@ -26,6 +25,8 @@ public:
   unsigned long getLength();
   unsigned long getMemorySize() { return memorySize; };
   void reinitializeMemory();
+  virtual JsonDocument createJson() override;
+  virtual bool parseJson(JsonDocument& doc) override;
 
 private:
   void readEEPROM();

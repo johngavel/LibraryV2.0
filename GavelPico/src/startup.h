@@ -1,16 +1,17 @@
 #ifndef __GAVEL_STARTUP_H
 #define __GAVEL_STARTUP_H
 
-#include "filesystem.h"
+#include "picocmd.h"
 
+#include <Arduino.h>
 #include <GavelBlinkPico.h>
 #include <GavelFileSystem.h>
 #include <GavelGPIO.h>
+#include <GavelInterfaces.h>
 #include <GavelLicense.h>
-#include <GavelPico.h>
 #include <GavelProgram.h>
 #include <GavelSerialPort.h>
-#include <GavelTask.h>
+#include <GavelTaskManager.h>
 #include <GavelWatchdog.h>
 
 void setup0Start(TerminalCommand* __termCmd);

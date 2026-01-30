@@ -3,7 +3,6 @@
 
 #include "arraydirectory.h"
 
-#include <GavelFileSystem.h>
 #include <GavelInterfaces.h>
 #include <GavelTask.h>
 

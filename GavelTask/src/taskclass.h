@@ -5,6 +5,8 @@
 #include <GavelUtil.h>
 #include <Terminal.h>
 
+#define CPU_CORES 2
+
 class Task : public Timer, public Identifiable {
 public:
   Task() = delete;

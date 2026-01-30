@@ -3,6 +3,7 @@
 
 #include "IGPIOBackend.h"
 #include "callback.h"
+#include "devicecmd.h"
 #include "digitalfile.h"
 #include "dynamicfile.h"
 #include "hardware.h"

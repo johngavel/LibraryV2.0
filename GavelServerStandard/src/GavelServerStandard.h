@@ -1,14 +1,13 @@
 #ifndef __GAVEL_SERVER_STD_H
 #define __GAVEL_SERVER_STD_H
 
-#include <GavelEEProm.h>
 #include <GavelFileSystem.h>
 #include <GavelInterfaces.h>
-#include <GavelPicoStandard.h>
 #include <GavelServer.h>
-#include <GavelTask.h>
+#include <GavelTaskManager.h>
 
-void loadServerStandard(JsonInterface* ethernet, ServerModule* server, FileSystem* fs, TaskManager* taskManager,
-                        EEpromMemory* memory);
+void loadServerStandard(JsonInterface* programMem, JsonInterface* hwlist, JsonInterface* license,
+                        JsonInterface* ethernet, ServerModule* server, FileSystem* fs, TaskManager* taskManager,
+                        JsonInterface* memory, DeviceCmd* device);
 
 #endif // __GAVEL_SERVER_STD_H

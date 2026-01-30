@@ -1,7 +1,7 @@
 #ifndef __GAVEL_IDLE_H
 #define __GAVEL_IDLE_H
 
-#include "taskclass.h"
+#include <GavelTask.h>
 
 #define MAX_IDLE_TIME 100
 #define MIN_IDLE_TIME 2
