@@ -1,6 +1,7 @@
 #ifndef __GAVEL_TASK_MANAGER_H
 #define __GAVEL_TASK_MANAGER_H
 
+#include "dailyreboot.h"
 #include "idle.h"
 
 #include <GavelTask.h>
