@@ -19,6 +19,7 @@ GPIOManager gpioManager;
 License license;
 HardwareList hardwareList;
 RP2040Backend rp2040Backend;
+RebootTask rebootTask;
 
 void setup0Start(TerminalCommand* __termCmd) {
   startupMutex.take();
@@ -48,6 +49,7 @@ void setup0Start(TerminalCommand* __termCmd) {
   taskManager.add(&blink);
   taskManager.add(&fileSystem);
   taskManager.add(&license);
+  taskManager.add(&rebootTask);
 
   hardwareList.add(&rp2040Backend);
   hardwareList.add(&blink);
