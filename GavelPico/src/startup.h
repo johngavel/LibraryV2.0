@@ -1,8 +1,8 @@
 #ifndef __GAVEL_STARTUP_H
 #define __GAVEL_STARTUP_H
 
-#include "picocmd.h"
 #include "dailyreboot.h"
+#include "picocmd.h"
 
 #include <Arduino.h>
 #include <GavelBlinkPico.h>

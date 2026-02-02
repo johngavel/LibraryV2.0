@@ -1,34 +1,53 @@
-// hwtable.js (wrapper)
+// hwtable.js (fixed)
 // Thin wrapper that instantiates <data-table> with Hardware-specific config
 
+import {
+  ServerInfo
+} from '/js/serverinfo.js';
+
 class HardwareTableWrapper extends HTMLElement {
-  connectedCallback() {
-    const el = document.createElement('data-table');
-    el.setAttribute('src', this.getAttribute('src') || '/api/hw-info.json');
-    el.setAttribute('interval-ms', this.getAttribute('interval-ms') || '5000');
-    el.setAttribute('row-key', this.getAttribute('row-key') || 'auto');
-    el.setAttribute('summary', JSON.stringify({
-      text: 'hwSummary'
-    }));
-    el.setAttribute('columns', JSON.stringify([{
-        header: 'Name',
-        field: 'hwname'
-      },
-      // { header: 'ID',     field: 'hwid' },
-      {
-        header: 'Status',
-        field: 'hwstatus',
-        text: 'hwOnlineText',
-        classFor: 'hwOnlineClass'
+  async connectedCallback() {
+    try {
+      // Ensure there is a fresh fetch if nothing has been loaded yet.
+      // getServerInfo() in your serverinfo.js returns a Promise of the cached result.
+      const server = await ServerInfo.getServerInfo(); // <-- await the Promise
+
+      if (server?.hwInfo) {
+        const el = document.createElement('data-table');
+        el.setAttribute('src', this.getAttribute('src') ?? '/api/hw-info.json');
+        el.setAttribute('interval-ms', this.getAttribute('interval-ms') ?? '5000');
+        el.setAttribute('row-key', this.getAttribute('row-key') ?? 'auto');
+        el.setAttribute('summary', JSON.stringify({
+          text: 'hwSummary'
+        }));
+        el.setAttribute('columns', JSON.stringify([{
+            header: 'Name',
+            field: 'hwname'
+          },
+          // { header: 'ID', field: 'hwid' },
+          {
+            header: 'Status',
+            field: 'hwstatus',
+            text: 'hwOnlineText',
+            classFor: 'hwOnlineClass'
+          },
+        ]));
+        this.replaceChildren(el);
+      } else {
+        // If hardware info is not available, render nothing or a placeholder.
+        this.replaceChildren(); // or show a message if you prefer
       }
-    ]));
-    this.replaceChildren(el);
+    } catch (err) {
+      // Avoid throwing out of lifecycle; fail quietly and optionally log.
+      console.error('[hardware-table] failed to initialize:', err);
+    }
   }
 }
+
 customElements.define('hardware-table', HardwareTableWrapper);
 
 // Hardware-specific function registry kept local to this file
-window._datatableFns = Object.assign(window._datatableFns || {}, {
+window._datatableFns = Object.assign(window._datatableFns ?? {}, {
   hwOnlineText: (v) => (v ? 'Online' : 'Offline'),
   hwOnlineClass: (v) => (v ? 'ok' : 'error'),
   hwSummary: (data) => {

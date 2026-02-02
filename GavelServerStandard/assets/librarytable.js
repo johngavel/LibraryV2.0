@@ -1,6 +1,10 @@
 // /js/library-table.element.js
 // <library-table> rendered in LIGHT DOM (no Shadow DOM)
 
+import {
+  ServerInfo
+} from '/js/serverinfo.js';
+
 class LibraryTableElement extends HTMLElement {
   static get observedAttributes() {
     return ['src', 'count-target'];
@@ -14,19 +18,27 @@ class LibraryTableElement extends HTMLElement {
     this._src = '/api/license-info.json'; // default preserves original path
   }
 
-  connectedCallback() {
-    // Read attributes (if present)
-    if (this.hasAttribute('src')) {
-      const s = this.getAttribute('src');
-      if (s && s.trim()) this._src = s.trim();
-    }
-    if (this.hasAttribute('count-target')) {
-      const sel = this.getAttribute('count-target');
-      if (sel && sel.trim()) this._countTargetSelector = sel.trim();
-    }
+  async connectedCallback() {
+    try {
+      const server = await ServerInfo.getServerInfo(); // <-- await the Promise
+      if (server.licenseInfo) {
+        // Read attributes (if present)
+        if (this.hasAttribute('src')) {
+          const s = this.getAttribute('src');
+          if (s && s.trim()) this._src = s.trim();
+        }
+        if (this.hasAttribute('count-target')) {
+          const sel = this.getAttribute('count-target');
+          if (sel && sel.trim()) this._countTargetSelector = sel.trim();
+        }
 
-    // Initial render
-    this.render();
+        // Initial render
+        this.render();
+      }
+    } catch (err) {
+      // Avoid throwing out of lifecycle; fail quietly and optionally log.
+      console.error('[library-table] failed to initialize:', err);
+    }
   }
 
   attributeChangedCallback(name, _oldVal, newVal) {

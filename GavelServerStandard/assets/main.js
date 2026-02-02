@@ -3,6 +3,9 @@ import {
   BuildInfo
 } from '/js/buildinfo.js';
 import {
+  ServerInfo
+} from '/js/serverinfo.js'
+import {
   IpInfo
 } from '/js/ipinfo.js';
 import {
@@ -30,19 +33,28 @@ export class MyHeader extends HTMLElement {
 
     // Now perform async work
     try {
-      const info = await BuildInfo.getBuildInfo();
-      document.title = `${info.product}`;
-
       // Target the header inside THIS component (safer than querying document)
       const hostEl = this.querySelector('#site-header');
       if (!hostEl) return;
 
-      hostEl.innerHTML = `
-        <h1>${escapeHtml(info.product)}</h1>
-        <hr style="width:50%">
-      `;
+      const server = await ServerInfo.getServerInfo();
+      if (server.programInfo) {
+        const info = await BuildInfo.getBuildInfo();
+        document.title = `${info.product}`;
+        hostEl.innerHTML = `
+          <h1>${escapeHtml(info.product)}</h1>
+          <hr style="width:50%">
+        `;
+      } else {
+        document.title = `Program`;
+        hostEl.innerHTML = `
+          <h1>Program</h1>
+          <hr style="width:50%">
+        `;
+      }
+
     } catch (err) {
-      console.error('Failed to load build info:', err);
+      console.error('Failed to load build/server info:', err);
     }
   }
 }
@@ -62,13 +74,14 @@ export class MyFooter extends HTMLElement {
 
     // Now perform async work
     try {
-      const info = await BuildInfo.getBuildInfo();
-
       // Target the header inside THIS component (safer than querying document)
       const hostEl = this.querySelector('#site-footer');
       if (!hostEl) return;
 
-      hostEl.innerHTML = `
+      const server = await ServerInfo.getServerInfo();
+      if (server.programInfo) {
+        const info = await BuildInfo.getBuildInfo();
+        hostEl.innerHTML = `
     <div class="footer-content">
       <div>${escapeHtml(info.product)}</div>
       <div>Ver. ${escapeHtml(info.version)}</div>
@@ -76,6 +89,16 @@ export class MyFooter extends HTMLElement {
       <div>Author: ${escapeHtml(info.author)}</div>
     </div>
       `;
+      } else {
+        hostEl.innerHTML = `
+    <div class="footer-content">
+      <div> </div>
+      <div> </div>
+      <div> </div>
+      <div> </div>
+    </div>
+    `;
+      }
     } catch (err) {
       console.error('Failed to load build info:', err);
     }

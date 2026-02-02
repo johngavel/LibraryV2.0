@@ -1,13 +1,13 @@
-// build-info.js
+// server-info.js
 // Fetches build info once and caches it. Safe for embedded environments.
-const BuildInfo = (() => {
+const ServerInfo = (() => {
   let cache = null;
   let inflight = null;
 
   // Single-shot fetch with cache-busting, returns a normalized object.
-  async function fetchBuildInfoOnce() {
+  async function fetchServerInfoOnce() {
     try {
-      const url = `/api/build-info.json`; // bust HTTP caches
+      const url = `/api/server-info.json`; // bust HTTP caches
       const resp = await fetch(url, {
         headers: {
           'Accept': 'application/json',
@@ -19,31 +19,38 @@ const BuildInfo = (() => {
       const json = await resp.json();
       return {
         // Normalize keys (accept multiple casings)
-        product: json.product || json.name || 'unknown',
-        version: json.version || json.ver || 'unknown',
-        build_date: json.build_date || json.date || 'unknown',
-        build_time: json.build_time || json.time || 'unknown',
-        author: json.author || json.built_by || 'unknown',
-        device: json.device || json.board || undefined
+        programInfo: json.programInfo || false,
+        ethernetInfo: json.ethernetInfo || false,
+        memoryInfo: json.memoryInfo || false,
+        licenseInfo: json.licenseInfo || false,
+        hwInfo: json.hwInfo || false,
+        rebootInfo: json.rebootInfo || false,
+        upgradeInfo: json.upgradeInfo || false,
+        uploadInfo: json.uploadInfo || false,
+        terminalInfo: json.terminalInfo || false
       };
     } catch (err) {
       // Fallback if endpoint is unavailable
       return {
-        product: 'unknown',
-        version: 'unknown',
-        build_date: 'unknown',
-        build_time: 'unknown',
-        author: 'unknown'
+        programInfo: false,
+        ethernetInfo: false,
+        memoryInfo: false,
+        licenseInfo: false,
+        hwInfo: false,
+        rebootInfo: false,
+        upgradeInfo: false,
+        uploadInfo: false,
+        terminalInfo: false
       };
     }
   }
 
-  async function getBuildInfo() {
+  async function getServerInfo() {
     if (cache) return cache;
     if (inflight) return inflight;
 
     inflight = (async () => {
-      const result = await fetchBuildInfoOnce();
+      const result = await fetchServerInfoOnce();
       cache = result;
       inflight = null;
       return result;
@@ -53,9 +60,9 @@ const BuildInfo = (() => {
   }
 
   // Forces a fresh fetch and replaces the cache.
-  async function refreshBuildInfo() {
+  async function refreshServerInfo() {
     const p = (async () => {
-      const result = await fetchBuildInfoOnce();
+      const result = await fetchServerInfoOnce();
       cache = result;
       return result;
     })();
@@ -64,18 +71,18 @@ const BuildInfo = (() => {
   }
 
   // Optional: clear the cache without refetching.
-  function clearBuildInfoCache() {
+  function clearServerInfoCache() {
     cache = null;
     // leave inflight as-is; callers may still await an ongoing fetch
   }
 
   return {
-    getBuildInfo,
-    refreshBuildInfo,
-    clearBuildInfoCache
+    getServerInfo,
+    refreshServerInfo,
+    clearServerInfoCache
   };
 })();
 
 export {
-  BuildInfo
+  ServerInfo
 };

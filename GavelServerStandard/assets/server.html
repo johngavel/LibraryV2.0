@@ -6,8 +6,8 @@
   <!-- Import the JS modules -->
   <script type="module" src="/js/main.js" defer></script>
   <script type="module" src="/js/filebutton.js" defer></script>
-  <script type="module" src="js/datatable.js" defer></script>
-  <script type="module" src="js/hwtable.js" defer></script>
+  <script type="module" src="/js/datatable.js" defer></script>
+  <script type="module" src="/js/hwtable.js" defer></script>
   <link rel="stylesheet" href="/style/style.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
   <main class="container">
     <!-- Your main page content goes here -->
     <config-card title="Server">
-      <element-group legend="Program Information">
+      <element-group id="programInfo" legend="Program Information">
         <div class="row">
           <div class="field">
             <div class="label">Product</div>
@@ -45,10 +45,10 @@
           </div>
         </div>
       </element-group>
-      <element-group legend="Hardware Status">
+      <element-group id="hwInfo" legend="Hardware Status">
         <hardware-table></hardware-table>
       </element-group>
-      <element-group legend="IP Information">
+      <element-group id="ethernetInfo" legend="IP Information">
         <element-group legend="Mode" id="allowDHCP">
           <label class="switch">
             <input type="checkbox" id="dhcp" disabled/>
@@ -92,46 +92,76 @@
     <config-card title="Configuration and Control">
       <element-group legend="Configuration">
         <back-button link="/index.html" color="backward">Cancel</back-button>
-        <nav-button link="/license.html" color="forward">Code</nav-button>
-        <download-button color="forward" url="/api/export.json" filename="export.json">Export</download-button>
-        <nav-button link="/ipconfig.html" color="forward">Configure</nav-button>
+        <nav-button id="licenseInfo" link="/license.html" color="forward">Code</nav-button>
+        <download-button id="exportInfo" color="forward" url="/api/export.json" filename="export.json">Export</download-button>
+        <nav-button id="configureInfo" link="/ipconfig.html" color="forward">Configure</nav-button>
       </element-group>
       <element-group legend="Control">
-        <nav-button link="/terminal.html" color="forward">Terminal</nav-button>
-        <upload-button color="danger" endpoint="/api/export.json">Import</upload-button>
-        <upgrade-button color="danger" upload-url="/var/pico.bin" upgrade-url="/api/upgrade.json">Upgrade</upgrade-button>
-        <reboot-button color="danger">Reboot</reboot-button>
+        <nav-button id="terminalInfo" link="/terminal.html" color="forward">Terminal</nav-button>
+        <upload-button id="importInfo" color="danger" endpoint="/api/export.json">Import</upload-button>
+        <upgrade-button id="upgradeInfo" color="danger" upload-url="/var/pico.bin" upgrade-url="/api/upgrade.json">Upgrade</upgrade-button>
+        <reboot-button id="rebootInfo" color="danger">Reboot</reboot-button>
       </element-group>
     </config-card>
   </main>
   
   <my-footer></my-footer>
 
-  <script type="module"> 
+  <script type="module">
+    import { ServerInfo } from '/js/serverinfo.js';
     import { BuildInfo } from '/js/buildinfo.js';
     import { IpInfo } from '/js/ipinfo.js';
 
     async function render() {
       try {
-        BuildInfo.refreshBuildInfo();
-        const bi = await BuildInfo.getBuildInfo();
-        document.getElementById('prog-product').textContent=bi.product;
-        document.getElementById('prog-version').textContent=bi.version;
-        document.getElementById('prog-date').textContent=bi.build_date;
-        document.getElementById('prog-time').textContent=bi.build_time;
-        document.getElementById('prog-author').textContent=bi.author;
-        document.getElementById('prog-device').textContent=bi.device;
-        
-        IpInfo.refreshIpInfo();
-        const ii = await IpInfo.getIpInfo();
-        document.getElementById('ip-addr').textContent=ii.ipAddress;
-        document.getElementById('ip-mask').textContent=ii.subnetMask;
-        document.getElementById('ip-gw').textContent=ii.gatewayAddress;
-        document.getElementById('ip-dns').textContent=ii.dnsAddress;
-        document.getElementById('ip-mac').textContent=ii.macAddress;
-        document.getElementById('cur-ip-addr').textContent=ii.ipAddress;
-        document.getElementById('allowDHCP').hidden=!ii.allowDHCP;
-        document.getElementById('dhcp').checked=ii.isDHCP;
+        await ServerInfo.refreshServerInfo();
+        const si = await ServerInfo.getServerInfo();
+        if (si.programInfo) {
+          await BuildInfo.refreshBuildInfo();
+          const bi = await BuildInfo.getBuildInfo();
+          document.getElementById('prog-product').textContent=bi.product;
+          document.getElementById('prog-version').textContent=bi.version;
+          document.getElementById('prog-date').textContent=bi.build_date;
+          document.getElementById('prog-time').textContent=bi.build_time;
+          document.getElementById('prog-author').textContent=bi.author;
+          document.getElementById('prog-device').textContent=bi.device;
+        } else {
+          document.getElementById('programInfo').hidden=true;
+        }
+        if (si.ethernetInfo) {
+          await IpInfo.refreshIpInfo();
+          const ii = await IpInfo.getIpInfo();
+          document.getElementById('ip-addr').textContent=ii.ipAddress;
+          document.getElementById('ip-mask').textContent=ii.subnetMask;
+          document.getElementById('ip-gw').textContent=ii.gatewayAddress;
+          document.getElementById('ip-dns').textContent=ii.dnsAddress;
+          document.getElementById('ip-mac').textContent=ii.macAddress;
+          document.getElementById('cur-ip-addr').textContent=ii.ipAddress;
+          document.getElementById('allowDHCP').hidden=!ii.allowDHCP;
+          document.getElementById('dhcp').checked=ii.isDHCP;
+        } else {
+          document.getElementById('ethernetInfo').hidden=true;
+          document.getElementById('configureInfo').hidden=true;
+        }
+        if (!si.memoryInfo) {
+          document.getElementById('exportInfo').hidden=true;
+          document.getElementById('importInfo').hidden=true;
+        }
+        if (!si.licenseInfo) {
+          document.getElementById('licenseInfo').hidden=true;
+        }
+        if (!si.hwInfo) {
+          document.getElementById('hwInfo').hidden=true;
+        }
+        if (!si.upgradeInfo) {
+          document.getElementById('upgradeInfo').hidden=true;
+        }
+        if (!si.rebootInfo) {
+          document.getElementById('rebootInfo').hidden=true;
+        }
+        if (!si.terminalInfo) {
+          document.getElementById('terminalInfo').hidden=true;          
+        }
       } catch (err) {
         console.error('[render error]', err);
       }
