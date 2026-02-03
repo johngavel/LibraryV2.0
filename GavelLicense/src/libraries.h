@@ -13,7 +13,7 @@ static const LibraryInfo libraries[] = {
     {"Adafruit BusIO", "1.17.4", "LICENSE", "https://github.com/adafruit/Adafruit_BusIO"},
     {"Adafruit GFX Library", "1.12.4", "license.txt", "https://github.com/adafruit/Adafruit-GFX-Library"},
     {"Adafruit MCP4725", "2.0.2", "license.txt", "https://github.com/adafruit/Adafruit_MCP4725"},
-    {"Adafruit NeoPixel", "1.15.2", "COPYING", "https://github.com/adafruit/Adafruit_NeoPixel"},
+    {"Adafruit NeoPixel", "1.15.3", "COPYING", "https://github.com/adafruit/Adafruit_NeoPixel"},
     {"Adafruit SSD1306", "2.5.16", "license.txt", "https://github.com/adafruit/Adafruit_SSD1306"},
     {"Adafruit Unified Sensor", "1.1.15", "LICENSE.txt", "https://github.com/adafruit/Adafruit_Sensor"},
     {"arduino-cli", "1.4.1", "LICENSE.txt", "https://github.com/arduino/arduino-cli"},

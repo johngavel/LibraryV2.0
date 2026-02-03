@@ -1,6 +1,7 @@
 #include "servermodule.h"
 
 #include "asciitable/asciitable.h"
+#include "serverdebug.h"
 #include "serverhelper.h"
 
 #include <GavelSPIWire.h>
@@ -33,6 +34,9 @@ bool ServerModule::executeTask() {
     spiWire.wireTake();
     client = server->accept();
     spiWire.wireGive();
+#ifdef DEBUG_SERVER
+    if (clientConnected(client)) DBG_PRINTF("New Client\r\n");
+#endif
     if (clientConnected(client)) clientPool.add(client, dfs, errorPage);
 
     for (unsigned int i = 0; i < clientPool.capacity(); i++) {
