@@ -27,6 +27,7 @@ public:
                          String line6 = "", String line7 = "", String line8 = "") = 0;
   virtual void setScreen(BITMAP bitmap, String caption) = 0;
   virtual void setScreen(unsigned char* bitmap, String caption, unsigned long width, unsigned long height) = 0;
+  virtual void setSplashScreen(BITMAP bitmap, String caption) = 0;
   virtual Adafruit_SSD1306* getDisplay() = 0;
   virtual unsigned char* getBitmap(BITMAP bitmap) = 0;
 };
@@ -59,6 +60,10 @@ public:
                          String line6 = "", String line7 = "", String line8 = "") override;
   virtual void setScreen(BITMAP bitmap, String caption) override;
   virtual void setScreen(unsigned char* bitmap, String caption, unsigned long width, unsigned long height) override;
+  virtual void setSplashScreen(BITMAP bitmap, String caption) override {
+    splashScreen = bitmap;
+    splashCaption = caption;
+  };
   virtual Adafruit_SSD1306* getDisplay() override { return &display; };
   virtual unsigned char* getBitmap(BITMAP bitmap) override;
   virtual bool isWorking() const override { return hardwareStatus; };
@@ -78,6 +83,8 @@ private:
   RefreshScreen* refreshScreen;
   void bitmap(OutputInterface* terminal);
   bool hardwareStatus = false;
+  BITMAP splashScreen;
+  String splashCaption;
 };
 
 #endif // __GAVEL_SCREEN_CLASS_H

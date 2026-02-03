@@ -4,7 +4,6 @@
 
 #include <Adafruit_SSD1306.h>
 #include <GavelI2CWire.h>
-#include <GavelProgram.h>
 
 Screen::Screen()
     : Task("Screen"),
@@ -46,8 +45,7 @@ bool Screen::setupTask(OutputInterface* __terminal) {
   // Clear the buffer
   display.clearDisplay();
   i2cWire.wireGive();
-  setScreen(JAXSON, String(ProgramInfo::AppName) + " v" + String(ProgramInfo::MajorVersion) + String(".") +
-                        String(ProgramInfo::MinorVersion));
+  setScreen(splashScreen, splashCaption);
   hardwareStatus = true;
   return true;
 }

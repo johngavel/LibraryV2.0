@@ -1,7 +1,6 @@
 
 #include "gpio_manager.h"
 
-#include <GavelProgram.h>
 #include <GavelUtil.h>
 #include <asciitable/asciitable.h>
 
