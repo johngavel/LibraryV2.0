@@ -59,8 +59,8 @@ void ServerModule::clientCmd(OutputInterface* terminal) {
   table.addColumn(Green, "Used", 7);
   table.addColumn(Green, "Valid", 7);
   table.addColumn(Yellow, "State", 7);
-  table.addColumn(Normal, "File", 20);
-  table.addColumn(Normal, "File Stat", 7);
+  table.addColumn(Normal, "File", 24);
+  table.addColumn(Normal, "File Stat", 10);
   table.printHeader();
   for (unsigned int i = 0; i < clientPool.capacity(); i++) {
     ClientFileEntry* cfe = clientPool.at(i);
