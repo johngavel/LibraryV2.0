@@ -73,6 +73,38 @@ public:
   }
   bool hasSpace() const { return usedCount() < CLIENT_FILE_POOL_CAPACITY; }
 
+  // --- NEW MONITORING METHODS ---
+  size_t activeCount() const {
+    size_t n = 0;
+    for (size_t i = 0; i < CLIENT_FILE_POOL_CAPACITY; ++i)
+      if (slots[i].used && slots[i].isValid()) ++n;
+    return n;
+  }
+
+  size_t staleCount() const {
+    size_t n = 0;
+    for (size_t i = 0; i < CLIENT_FILE_POOL_CAPACITY; ++i)
+      if (slots[i].used && !slots[i].isValid()) ++n;
+    return n;
+  }
+
+  float utilizationPercent() const { return (float(usedCount()) / float(CLIENT_FILE_POOL_CAPACITY)) * 100.0f; }
+
+  // Force cleanup of stale connections
+  void forceCleanup() {
+    for (size_t i = 0; i < CLIENT_FILE_POOL_CAPACITY; ++i) {
+      if (slots[i].used && !slots[i].isValid()) { clearSlot(i); }
+    }
+  }
+
+  // Get detailed status for debugging
+  void getPoolStatus(size_t& total, size_t& used, size_t& active, size_t& stale) const {
+    total = CLIENT_FILE_POOL_CAPACITY;
+    used = usedCount();
+    active = activeCount();
+    stale = staleCount();
+  }
+
   // Access a slot directly (read‑only).
   ClientFileEntry* at(size_t idx) { return &slots[idx]; }
 

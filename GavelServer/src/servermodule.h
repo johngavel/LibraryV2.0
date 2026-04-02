@@ -29,11 +29,20 @@ public:
   VirtualServer* getServer() { return server; };
   void clientCmd(OutputInterface* terminal);
 
+  // --- NEW MONITORING METHODS ---
+  void poolStatusCmd(OutputInterface* terminal);
+  void getPoolStatistics(size_t& total, size_t& used, size_t& active, float& utilization);
+
 private:
   VirtualServer* server = nullptr;
   DigitalFileSystem* dfs = nullptr;
   String errorPage = "";
   ClientFilePool clientPool;
+
+  // --- NEW MONITORING VARIABLES ---
+  unsigned long lastPoolWarning = 0;
+  unsigned long poolWarningInterval = 30000; // 30 seconds between warnings
+  float poolWarningThreshold = 80.0f;        // Warn when pool is 80% full
 };
 
 #endif // __GAVEL_SERVER_MODULE_H
