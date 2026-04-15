@@ -11,7 +11,7 @@ typedef struct {
 
 static const LibraryInfo libraries[] = {
     {"Adafruit BusIO", "1.17.4", "LICENSE", "https://github.com/adafruit/Adafruit_BusIO"},
-    {"Adafruit GFX Library", "1.12.5", "license.txt", "https://github.com/adafruit/Adafruit-GFX-Library"},
+    {"Adafruit GFX Library", "1.12.6", "license.txt", "https://github.com/adafruit/Adafruit-GFX-Library"},
     {"Adafruit MCP4725", "2.0.2", "license.txt", "https://github.com/adafruit/Adafruit_MCP4725"},
     {"Adafruit NeoPixel", "1.15.4", "COPYING", "https://github.com/adafruit/Adafruit_NeoPixel"},
     {"Adafruit SSD1306", "2.5.16", "license.txt", "https://github.com/adafruit/Adafruit_SSD1306"},
