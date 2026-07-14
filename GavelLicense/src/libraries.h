@@ -26,7 +26,7 @@ static const LibraryInfo libraries[] = {
     {"Gavel Libraries", "2.0.0", "", "https://github.com/johngavel/LibraryV2.0"},
     {"I2C_EEPROM", "1.9.4", "LICENSE", "https://github.com/RobTillaart/I2C_EEPROM.git"},
     {"TCA9555", "0.4.4", "LICENSE", "https://github.com/RobTillaart/TCA9555"},
-    {"Terminal", "1.0.12", "license.txt", "https://github.com/johngavel/Terminal"},
+    {"Terminal", "1.0.13", "license.txt", "https://github.com/johngavel/Terminal"},
 };
 
 #define LIBRARY_COUNT (sizeof(libraries) / sizeof(libraries[0]))
