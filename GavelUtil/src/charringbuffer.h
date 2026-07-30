@@ -62,6 +62,10 @@ public:
     return 0;
   }
 
+  virtual size_t write(const uint8_t* buffer, size_t size) {
+    return (size_t) write((const unsigned char*) buffer, (int) size);
+  }
+
   // read up to len bytes; returns number actually read
   int read(unsigned char* dst, int len) {
     if (!dst || len == 0) return 0;

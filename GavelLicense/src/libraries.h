@@ -19,7 +19,7 @@ static const LibraryInfo libraries[] = {
     {"arduino-cli", "1.5.1", "LICENSE.txt", "https://github.com/arduino/arduino-cli"},
     {"Arduino IDE", "2.3.7", "LICENSE.txt", "https://github.com/arduino/arduino-ide"},
     {"ArduinoJson", "7.4.3", "LICENSE.txt", "https://arduinojson.org/?utm_source=meta&utm_medium=library.properties"},
-    {"Arduino Pico", "5.7.0", "LICENSE", "https://github.com/earlephilhower/arduino-pico"},
+    {"Arduino Pico", "6.0.0", "LICENSE", "https://github.com/earlephilhower/arduino-pico"},
     {"Credential", "1.0.0", "N/A", "https://github.com/"},
     {"DHT sensor library", "1.4.7", "license.txt", "https://github.com/adafruit/DHT-sensor-library"},
     {"Ethernet", "2.0.2", "README.adoc", "https://www.arduino.cc/en/Reference/Ethernet"},
