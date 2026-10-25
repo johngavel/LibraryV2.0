@@ -35,6 +35,8 @@ bool ServerModule::executeTask() {
   Client* client;
 
   if (server) {
+    clientPool.sweepDisconnected();
+
     spiWire.wireTake();
     client = server->accept();
     spiWire.wireGive();
@@ -75,7 +77,11 @@ bool ServerModule::executeTask() {
         lastPoolWarning = millis();
       }
 
-      if (client) { clientPool.add(client, dfs, errorPage); }
+      if (client) {
+        if (!clientPool.add(client, dfs, errorPage)) { client->stop(); }
+      }
+    } else if (client) {
+      client->stop();
     }
 
     // Execute client connections with monitoring

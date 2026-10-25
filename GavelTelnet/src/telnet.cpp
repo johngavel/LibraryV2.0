@@ -64,6 +64,9 @@ bool TelnetModule::executeTask() {
     } else {
       clientConnected = false;
       DBG_DEREGISTER(terminal_);
+      spiWire.wireTake();
+      client->stop();
+      spiWire.wireGive();
     }
   }
   return true;

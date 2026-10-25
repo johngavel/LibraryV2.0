@@ -2,11 +2,12 @@
 
 Client* WiredClientManager::setClient(EthernetClient __client) {
   for (unsigned int i = 0; i < MAX_CLIENTS; i++) {
-    if (!client[i].connected()) {
+    if (!client[i]) {
       client[i] = __client;
       return &client[i];
     }
   }
+  __client.stop();
   return (&errorClient);
 }
 

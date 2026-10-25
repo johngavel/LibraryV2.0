@@ -118,12 +118,16 @@ void EEpromMemory::readEEPROM() {
         eepromIndex += data->size();
       } else {
         StringBuilder sb;
+        unsigned long segmentSize = dataHeader.dataStruct.size;
         sb + "Invalid Data Segment in EEPROM <" + dataHeader.dataStruct.id + "/" + data->getId() + "> for " +
             data->getName();
         sb + "Size <" + dataHeader.dataStruct.size + "/" + data->size() + "> ";
         data->initMemory();
         data->updateExternal();
         terminal->println(ERROR, sb.c_str());
+        if ((segmentSize == 0) || (segmentSize > (memorySize / 8))) { segmentSize = data->size(); }
+        eepromIndex = ((eepromIndex + segmentSize) > (memorySize / 8)) ? (memorySize / 8)
+                                                                       : (eepromIndex + segmentSize);
       }
     }
     i2cWire.wireGive();

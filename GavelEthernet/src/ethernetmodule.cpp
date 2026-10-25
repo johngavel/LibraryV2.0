@@ -28,12 +28,10 @@ bool EthernetModule::setupW5500() {
     Ethernet.begin(memory.memory.data.macAddress, 3000, 1500);
     spiWire.wireGive();
   } else {
-    if (memory.getInternal()) {
-      spiWire.wireTake();
-      Ethernet.begin(memory.memory.data.macAddress, memory.memory.data.ipAddress, memory.memory.data.dnsAddress,
-                     memory.memory.data.gatewayAddress, memory.memory.data.subnetMask);
-      spiWire.wireGive();
-    }
+    spiWire.wireTake();
+    Ethernet.begin(memory.memory.data.macAddress, memory.memory.data.ipAddress, memory.memory.data.dnsAddress,
+                   memory.memory.data.gatewayAddress, memory.memory.data.subnetMask);
+    spiWire.wireGive();
   }
   spiWire.wireTake();
   int hardwareStatus = Ethernet.hardwareStatus();
@@ -105,7 +103,7 @@ bool EthernetModule::setupTask(OutputInterface* __terminal) {
 
   setRefreshMilli(60000);
   memory.checkDHCPAllowed();
-  if (memory.getInternal()) { status &= setupW5500(); }
+  status &= setupW5500();
   status &= updateMemory();
   runTimer(status);
 
@@ -296,14 +294,31 @@ void EthernetModule::ifConfig(OutputInterface* terminal) {
 
 bool EthernetModule::updateMemory() {
   unsigned char buffer[4];
+  bool updated = false;
+
+  if (!memory.memory.data.isDHCP) { return true; }
+
   ipAddressToBuffer(getIPAddress(), buffer);
-  memcpy(memory.memory.data.ipAddress, buffer, sizeof(memory.memory.data.ipAddress));
+  if ((buffer[0] == 0) && (buffer[1] == 0) && (buffer[2] == 0) && (buffer[3] == 0)) { return true; }
+  if (memcmp(memory.memory.data.ipAddress, buffer, sizeof(memory.memory.data.ipAddress)) != 0) {
+    memcpy(memory.memory.data.ipAddress, buffer, sizeof(memory.memory.data.ipAddress));
+    updated = true;
+  }
   ipAddressToBuffer(getDNS(), buffer);
-  memcpy(memory.memory.data.dnsAddress, buffer, sizeof(memory.memory.data.dnsAddress));
+  if (memcmp(memory.memory.data.dnsAddress, buffer, sizeof(memory.memory.data.dnsAddress)) != 0) {
+    memcpy(memory.memory.data.dnsAddress, buffer, sizeof(memory.memory.data.dnsAddress));
+    updated = true;
+  }
   ipAddressToBuffer(getSubnetMask(), buffer);
-  memcpy(memory.memory.data.subnetMask, buffer, sizeof(memory.memory.data.subnetMask));
+  if (memcmp(memory.memory.data.subnetMask, buffer, sizeof(memory.memory.data.subnetMask)) != 0) {
+    memcpy(memory.memory.data.subnetMask, buffer, sizeof(memory.memory.data.subnetMask));
+    updated = true;
+  }
   ipAddressToBuffer(getGateway(), buffer);
-  memcpy(memory.memory.data.gatewayAddress, buffer, sizeof(memory.memory.data.gatewayAddress));
-  memory.setInternal(true);
+  if (memcmp(memory.memory.data.gatewayAddress, buffer, sizeof(memory.memory.data.gatewayAddress)) != 0) {
+    memcpy(memory.memory.data.gatewayAddress, buffer, sizeof(memory.memory.data.gatewayAddress));
+    updated = true;
+  }
+  if (updated) { memory.setInternal(true); }
   return true;
 }

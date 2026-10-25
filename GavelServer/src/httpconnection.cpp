@@ -114,6 +114,7 @@ ClientState HttpConnection::readRequestLine() {
         api->getAPI()->method_.set(methodStr.c_str());
         api->getAPI()->query_.processQueryString(normalizeQuery(pathStr).c_str());
       }
+      _buffer = "";
       return ReadingHeaders;
     }
     _buffer += c;
@@ -222,14 +223,13 @@ ClientState HttpConnection::sendHeader() {
     sendHttpHeader(_client, code, "text/plain");
   }
   if ((!closeConnection) && (stream)) return StreamMode;
-  if (!closeConnection) return KeepAlive;
-  return CompleteClientConnection;
+  return KeepAlive;
 }
 
 static char fileBuffer[BUFFER_SIZE];
 static bool transferFileToClient(Client* client, DigitalFile* file, bool printable) {
   memset(fileBuffer, 0, BUFFER_SIZE);
-  if (file->available() == 0) return false;
+  if (file == nullptr || file->available() == 0) return false;
   unsigned long remainder = file->available() % BUFFER_SIZE;
   unsigned long loops = file->available() / BUFFER_SIZE;
   unsigned long bytes = 0;
@@ -256,7 +256,7 @@ static bool transferFileToClient(Client* client, DigitalFile* file, bool printab
 }
 
 ClientState HttpConnection::processClient() {
-  if (isReadMethod(method)) {
+  if (file != nullptr && isReadMethod(method)) {
     transferFileToClient(_client, file, printableContentType);
     file->close();
   } // else reading the body has already written to the file.
@@ -271,6 +271,6 @@ ClientState HttpConnection::processClient() {
 }
 
 ClientState HttpConnection::processStream() {
-  if (isReadMethod(method)) transferFileToClient(_client, file, printableContentType);
+  if (file != nullptr && isReadMethod(method)) transferFileToClient(_client, file, printableContentType);
   return StreamMode;
 }
