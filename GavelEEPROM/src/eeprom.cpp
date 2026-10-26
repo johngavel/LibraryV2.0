@@ -126,8 +126,7 @@ void EEpromMemory::readEEPROM() {
         data->updateExternal();
         terminal->println(ERROR, sb.c_str());
         if ((segmentSize == 0) || (segmentSize > (memorySize / 8))) { segmentSize = data->size(); }
-        eepromIndex = ((eepromIndex + segmentSize) > (memorySize / 8)) ? (memorySize / 8)
-                                                                       : (eepromIndex + segmentSize);
+        eepromIndex = ((eepromIndex + segmentSize) > (memorySize / 8)) ? (memorySize / 8) : (eepromIndex + segmentSize);
       }
     }
     i2cWire.wireGive();
