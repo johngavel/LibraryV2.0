@@ -7,7 +7,7 @@
 
 class Task {
 public:
-  Task(int i) : id(i){};
+  Task(int i) : id(i) {};
   int id = -1;
   char name[20] = "task";
 };

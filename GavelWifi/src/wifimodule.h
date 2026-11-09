@@ -10,7 +10,7 @@
 
 class WirelessClientManager {
 public:
-  WirelessClientManager(){};
+  WirelessClientManager() {};
   Client* setClient(WiFiClient __client) {
     for (unsigned int i = 0; i < MAX_CLIENTS; i++) {
       if (!client[i].connected()) {
@@ -32,7 +32,7 @@ class WifiModule : public Task,
                    public JsonInterface,
                    public Hardware {
 public:
-  WifiModule() : Task("WifiModule"), Hardware("WifiModule"){};
+  WifiModule() : Task("WifiModule"), Hardware("WifiModule") {};
   bool linkStatus();
   String getSSID();
   WifiMemory* getMemory() { return &memory; };
@@ -74,7 +74,7 @@ private:
 
 class WifiVirtualServer : public VirtualServer {
 public:
-  WifiVirtualServer(VirtualNetwork* __network, int __port) : server(nullptr), network(__network), port(__port){};
+  WifiVirtualServer(VirtualNetwork* __network, int __port) : server(nullptr), network(__network), port(__port) {};
   void begin();
   Client* accept();
   VirtualNetwork* getNetworkInterface() { return network; };

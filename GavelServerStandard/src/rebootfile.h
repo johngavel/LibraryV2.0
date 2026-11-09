@@ -6,7 +6,7 @@
 class RebootFile : public DynamicFile {
 public:
   RebootFile(DeviceCmd* device)
-      : DynamicFile("reboot.json", READ_WRITE, _fileBuffer, sizeof(_fileBuffer)), _device(device){};
+      : DynamicFile("reboot.json", READ_WRITE, _fileBuffer, sizeof(_fileBuffer)), _device(device) {};
   virtual bool createReadData() override { return true; };
 
   virtual bool parseWriteData() override {
@@ -23,7 +23,7 @@ private:
 class UpgradeFile : public DynamicFile {
 public:
   UpgradeFile(DeviceCmd* device)
-      : DynamicFile("upgrade.json", READ_WRITE, _fileBuffer, sizeof(_fileBuffer)), _device(device){};
+      : DynamicFile("upgrade.json", READ_WRITE, _fileBuffer, sizeof(_fileBuffer)), _device(device) {};
   virtual bool createReadData() override { return true; };
 
   virtual bool parseWriteData() override {
@@ -40,7 +40,7 @@ private:
 class UploadFile : public DynamicFile {
 public:
   UploadFile(DeviceCmd* device)
-      : DynamicFile("upload.json", READ_WRITE, _fileBuffer, sizeof(_fileBuffer)), _device(device){};
+      : DynamicFile("upload.json", READ_WRITE, _fileBuffer, sizeof(_fileBuffer)), _device(device) {};
   virtual bool createReadData() override { return true; };
 
   virtual bool parseWriteData() override {

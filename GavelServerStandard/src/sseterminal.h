@@ -11,7 +11,7 @@ class SSECmd : public DynamicFile {
 public:
   SSECmd()
       : DynamicFile("terminal_command.json", READ_WRITE, _fileBuffer, sizeof(_fileBuffer)),
-        _stream(_buffer, sizeof(_buffer)){};
+        _stream(_buffer, sizeof(_buffer)) {};
   virtual bool createReadData() override { return true; };
 
   virtual bool parseWriteData() override {
@@ -36,7 +36,7 @@ private:
 
 class SSEEvent : public StreamFile {
 public:
-  SSEEvent() : StreamFile("terminal_events.stream", READ_ONLY, sizeof(_buffer)), _stream(_buffer, sizeof(_buffer)){};
+  SSEEvent() : StreamFile("terminal_events.stream", READ_ONLY, sizeof(_buffer)), _stream(_buffer, sizeof(_buffer)) {};
   virtual bool createReadData() override {
     char charBuffer[256];
     unsigned int lengthBuffer = 0;
@@ -104,7 +104,7 @@ private:
 
 class SSETerminal : public Task {
 public:
-  SSETerminal() : Task("SSETerminal"), terminal(command.stream(), event.stream()){};
+  SSETerminal() : Task("SSETerminal"), terminal(command.stream(), event.stream()) {};
   void configure(const char* __promptString, void (*function)(OutputInterface*)) {
     strncpy(promptString, __promptString, 20);
     bannerFunction = function;

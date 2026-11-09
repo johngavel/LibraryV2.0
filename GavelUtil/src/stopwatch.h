@@ -8,7 +8,7 @@
 #define ONE_HOUR_MS 3600000000
 class StopWatch {
 public:
-  StopWatch() : startTime(0), finishTime(0){};
+  StopWatch() : startTime(0), finishTime(0) {};
   void start(unsigned long __time = micros()) { startTime = __time; };
   void stop(unsigned long __time = micros()) { finishTime = __time; };
   unsigned long time() {

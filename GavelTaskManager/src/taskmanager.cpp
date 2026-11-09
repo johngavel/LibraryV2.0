@@ -5,7 +5,7 @@
 #include <GavelProgram.h>
 #include <GavelUtil.h>
 
-TaskManager::TaskManager() : Task("TaskManager", systemID()), queue(20, sizeof(Task*)){};
+TaskManager::TaskManager() : Task("TaskManager", systemID()), queue(20, sizeof(Task*)) {};
 
 void TaskManager::reservePins(BackendPinSetup* pinsetup) {
   if (pinsetup != nullptr) {

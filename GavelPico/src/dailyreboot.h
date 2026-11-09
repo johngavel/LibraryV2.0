@@ -6,7 +6,7 @@
 
 class RebootTask : public Task {
 public:
-  RebootTask() : Task("ScheduleReboot"){};
+  RebootTask() : Task("ScheduleReboot") {};
   void configure(DeviceCmd* device) { _device = device; };
   virtual void addCmd(TerminalCommand* __termCmd) override {};
   virtual void reservePins(BackendPinSetup* pinsetup) override {};

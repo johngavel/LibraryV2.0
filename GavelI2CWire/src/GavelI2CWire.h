@@ -7,7 +7,7 @@
 
 class I2CWire {
 public:
-  I2CWire(){};
+  I2CWire() {};
   void begin(unsigned long __pinSDA, unsigned long __pinSCL, bool isWire0 = true) {
     wireTake();
     pinSDA = __pinSDA;

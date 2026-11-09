@@ -2,7 +2,7 @@
 
 #include <GavelUtil.h>
 
-SerialPort::SerialPort() : Task("SerialPort"){};
+SerialPort::SerialPort() : Task("SerialPort") {};
 
 void SerialPort::addCmd(TerminalCommand* __termCmd) {}
 

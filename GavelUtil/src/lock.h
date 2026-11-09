@@ -13,7 +13,7 @@ public:
 
 class Mutex : public Lock {
 public:
-  Mutex() : mutex(xSemaphoreCreateMutex()){};
+  Mutex() : mutex(xSemaphoreCreateMutex()) {};
   void take();
   void give();
 

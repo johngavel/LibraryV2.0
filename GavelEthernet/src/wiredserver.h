@@ -6,7 +6,7 @@
 
 class WiredClientManager {
 public:
-  WiredClientManager(){};
+  WiredClientManager() {};
   Client* setClient(EthernetClient __client);
 
 private:
@@ -16,7 +16,7 @@ private:
 
 class WiredServer : public VirtualServer {
 public:
-  WiredServer(VirtualNetwork* __network, int __port) : network(__network), port(__port){};
+  WiredServer(VirtualNetwork* __network, int __port) : network(__network), port(__port) {};
   void begin();
   Client* accept();
   VirtualNetwork* getNetworkInterface() { return network; };

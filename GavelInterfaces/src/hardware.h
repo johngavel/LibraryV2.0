@@ -11,7 +11,7 @@ public:
   // Explicitly forbid default construction
   Hardware() = delete;
 
-  Hardware(const char* __name) : Identifiable(hardwareID(), __name){};
+  Hardware(const char* __name) : Identifiable(hardwareID(), __name) {};
   virtual bool isWorking() const = 0;
 
 private:

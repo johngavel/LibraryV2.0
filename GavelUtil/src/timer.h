@@ -5,7 +5,7 @@
 
 class Timer {
 public:
-  Timer() : refresh(micros()), timeout(100000), run(true){};
+  Timer() : refresh(micros()), timeout(100000), run(true) {};
   void setRefreshHours(unsigned long time) { setRefreshMinutes(60 * time); };
   void setRefreshMinutes(unsigned long time) { setRefreshSeconds(60 * time); };
   void setRefreshSeconds(unsigned long time) { setRefreshMilli(1000 * time); };

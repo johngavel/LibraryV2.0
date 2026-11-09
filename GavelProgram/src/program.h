@@ -9,7 +9,7 @@ const char* stringHardware(HW_TYPES hw_type);
 
 class ProgramInfo {
 public:
-  ProgramInfo(){};
+  ProgramInfo() {};
   static const char* AppName;
   static const char* ShortName;
   static const HW_TYPES hw_type;

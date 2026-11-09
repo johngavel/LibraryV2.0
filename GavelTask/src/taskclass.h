@@ -10,8 +10,8 @@
 class Task : public Timer, public Identifiable {
 public:
   Task() = delete;
-  Task(const char* __name) : Identifiable(taskID(), __name){};
-  Task(const char* __name, IdGenerator& generator) : Identifiable(generator, __name){};
+  Task(const char* __name) : Identifiable(taskID(), __name) {};
+  Task(const char* __name, IdGenerator& generator) : Identifiable(generator, __name) {};
   bool setup(OutputInterface* __terminal);
   bool loop();
   virtual void addCmd(TerminalCommand* __termCmd) = 0;

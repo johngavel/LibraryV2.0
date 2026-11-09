@@ -5,7 +5,7 @@
 
 class CharRingBuffer : public Stream {
 public:
-  CharRingBuffer(unsigned char* buf, unsigned int size) : buf_(buf), size_(size), head_(0), tail_(0), count_(0){};
+  CharRingBuffer(unsigned char* buf, unsigned int size) : buf_(buf), size_(size), head_(0), tail_(0), count_(0) {};
 
   // number of characters currently stored
   inline virtual int available() override { return count_; };

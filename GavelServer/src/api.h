@@ -297,8 +297,8 @@ class API : public JsonInterface {
 public:
   static const unsigned int DEFAULT_BUFFER_SIZE = 2048;
   static const unsigned int LARGE_BUFFER_SIZE = 16384;
-  API() : API(DEFAULT_BUFFER_SIZE){};
-  API(unsigned int bufferSize) : body_(bufferSize){};
+  API() : API(DEFAULT_BUFFER_SIZE) {};
+  API(unsigned int bufferSize) : body_(bufferSize) {};
   virtual JsonDocument createJson() = 0;
   virtual bool parseJson(JsonDocument& doc) = 0;
 

@@ -12,7 +12,7 @@ class ParameterList {
 public:
   class Parameter {
   public:
-    Parameter() : parameter(""), value(""){};
+    Parameter() : parameter(""), value("") {};
     char parameter[MAX_PARAMETER_LENGTH];
     char value[MAX_VALUE_LENGTH];
   };
@@ -24,7 +24,7 @@ public:
   char* getValue(int index);
 
 private:
-  ParameterList() : parameterCount(0){};
+  ParameterList() : parameterCount(0) {};
   static ParameterList* list;
   Parameter parameters[MAX_PARAMETERS];
   int parameterCount;

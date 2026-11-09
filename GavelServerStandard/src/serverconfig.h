@@ -5,7 +5,7 @@
 
 class ServerConfig : public JsonInterface {
 public:
-  ServerConfig(){};
+  ServerConfig() {};
   virtual JsonDocument createJson() override {
     JsonDocument doc;
     doc["programInfo"] = programInfo;

@@ -9,7 +9,7 @@
 
 class SPIWire {
 public:
-  SPIWire(){};
+  SPIWire() {};
   void begin(unsigned long __pinSCK, unsigned long __pinTX, unsigned long __pinRX, unsigned long __pinCS) {
     pinSCK = __pinSCK;
     pinTX = __pinTX;

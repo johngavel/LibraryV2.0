@@ -5,8 +5,8 @@
 
 class DebugAPI : public API {
 public:
-  DebugAPI() : API(DEFAULT_BUFFER_SIZE){};
-  DebugAPI(unsigned int size) : API(size){};
+  DebugAPI() : API(DEFAULT_BUFFER_SIZE) {};
+  DebugAPI(unsigned int size) : API(size) {};
 
   void debugPrint() {
     DBG_PRINTF("Debug API Method: %s\r\n", method_.get());

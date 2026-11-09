@@ -14,7 +14,7 @@ public:
   virtual bool open(FileMode mode = READ_MODE) = 0;
   virtual bool reset() = 0;
   virtual void close() = 0;
-  virtual ~DigitalBase(){};
+  virtual ~DigitalBase() {};
   void setPermission(FilePermission permission) { _permission = permission; };
   FilePermission getPermission() { return _permission; };
   FileMode getMode() { return _mode; };
