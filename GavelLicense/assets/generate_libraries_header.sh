@@ -137,7 +137,7 @@ if [[ $ACTION == "--build" ]]; then
   # Replace only if content differs
   if [[ ! -f $OUTPUT_FILE ]] || ! cmp -s "$TMP_HEADER" "$OUTPUT_FILE"; then
     mv -f -- "$TMP_HEADER" "$OUTPUT_FILE"
-    log_info "Header file updated: $OUTPUT_FILE"
+    log_passed "Header file updated: $OUTPUT_FILE"
 
   else
     log_info "No changes detected. Existing header kept: $OUTPUT_FILE"
