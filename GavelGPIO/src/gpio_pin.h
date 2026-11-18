@@ -6,7 +6,7 @@
 #include <GavelInterfaces.h>
 #include <GavelUtil.h>
 
-#define DEBOUNCE_TIMER 200
+#define DEBOUNCE_TIMER 50
 
 class GPIOPin {
 public:
